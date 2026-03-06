@@ -5888,7 +5888,7 @@ function Preloader({ onDone }) {
         <div className="preloader__bar-fill" />
       </div>
       <div className="preloader__powered">
-        <img src="/powered-by-white.svg" alt="Wykonał remedium" />
+        <img src={`${import.meta.env.BASE_URL}powered-by-white.svg`} alt="Wykonał remedium" />
       </div>
     </div>
   );
