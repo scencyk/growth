@@ -1,15 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
   server: {
     port: 8080,
-    open: '/klub-medyka-beta/',
   },
-  base: '/klub-medyka-beta/',
+  base: command === 'serve' ? '/' : '/klub-medyka-beta/',
   build: {
     outDir: '../docs',
     emptyOutDir: true,
   },
-});
+}));

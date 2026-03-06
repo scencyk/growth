@@ -1,6 +1,260 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom';
+import { motion, AnimatePresence, useSpring, useTransform, motionValue } from 'motion/react';
+import useMeasure from 'react-use-measure';
 import './styles.css';
+
+// ─── TEXT ROLL ────────────────────────────────────────────────────────────────
+
+function TextRoll({ children, duration = 0.45, stagger = 0.04, className }) {
+  const letters = children.split('');
+  return (
+    <span className={className} aria-label={children}>
+      {letters.map((letter, i) => (
+        <span key={i} className="text-roll__char" aria-hidden="true">
+          <motion.span
+            className="text-roll__enter"
+            initial={{ rotateX: 0 }}
+            animate={{ rotateX: 90 }}
+            transition={{ ease: 'easeIn', duration, delay: i * stagger }}
+          >
+            {letter === ' ' ? '\u00A0' : letter}
+          </motion.span>
+          <motion.span
+            className="text-roll__exit"
+            initial={{ rotateX: 90 }}
+            animate={{ rotateX: 0 }}
+            transition={{ ease: 'easeIn', duration, delay: i * stagger + 0.2 }}
+          >
+            {letter === ' ' ? '\u00A0' : letter}
+          </motion.span>
+          <span className="text-roll__spacer">
+            {letter === ' ' ? '\u00A0' : letter}
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+// ─── TEXT SHIMMER WAVE ────────────────────────────────────────────────────────
+
+function TextShimmerWave({ children, duration = 1, spread = 1, zDistance = 6, yDistance = -2, scaleDistance = 1.05, className }) {
+  const chars = children.split('');
+  return (
+    <span className={className} style={{ display: 'inline-block', perspective: 500 }}>
+      {chars.map((char, i) => {
+        const delay = (i * duration * (1 / spread)) / chars.length;
+        return (
+          <motion.span
+            key={i}
+            style={{ display: 'inline-block', whiteSpace: 'pre', transformStyle: 'preserve-3d' }}
+            animate={{
+              translateZ: [0, zDistance, 0],
+              translateY: [0, yDistance, 0],
+              scale: [1, scaleDistance, 1],
+              color: ['var(--color-muted)', 'var(--color-accent)', 'var(--color-muted)'],
+            }}
+            transition={{ duration, repeat: Infinity, repeatDelay: chars.length * 0.05 / spread, delay, ease: 'easeInOut' }}
+          >
+            {char === ' ' ? '\u00A0' : char}
+          </motion.span>
+        );
+      })}
+    </span>
+  );
+}
+
+// ─── TEXT EFFECT ──────────────────────────────────────────────────────────────
+
+// ─── TextLoop (motion-primitives) ───
+function TextLoop({ children, interval = 3, transition = { duration: 0.3 }, className }) {
+  const items = React.Children.toArray(children);
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setIdx(c => (c + 1) % items.length), interval * 1000);
+    return () => clearInterval(timer);
+  }, [items.length, interval]);
+  return (
+    <span className={className} style={{ position: 'relative', display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', verticalAlign: 'bottom' }}>
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span
+          key={idx}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '-100%', opacity: 0 }}
+          transition={transition}
+          style={{ display: 'inline-block' }}
+        >
+          {items[idx]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+// ─── SlidingNumber (motion-primitives) ───
+const SLIDING_TRANSITION = { type: 'spring', stiffness: 280, damping: 18, mass: 0.3 };
+
+function SlidingDigit({ value, place }) {
+  const valueRoundedToPlace = Math.floor(value / place) % 10;
+  const initial = motionValue(valueRoundedToPlace);
+  const animatedValue = useSpring(initial, SLIDING_TRANSITION);
+  useEffect(() => { animatedValue.set(valueRoundedToPlace); }, [animatedValue, valueRoundedToPlace]);
+  return (
+    <div style={{ position: 'relative', display: 'inline-block', width: '1ch', overflowX: 'visible', overflowY: 'clip', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
+      <div style={{ visibility: 'hidden' }}>0</div>
+      {Array.from({ length: 10 }, (_, i) => <SlidingDigitNum key={i} mv={animatedValue} number={i} />)}
+    </div>
+  );
+}
+
+function SlidingDigitNum({ mv, number }) {
+  const uniqueId = useId();
+  const [ref, bounds] = useMeasure();
+  const y = useTransform(mv, (latest) => {
+    if (!bounds.height) return 0;
+    const placeValue = latest % 10;
+    const offset = (10 + number - placeValue) % 10;
+    let memo = offset * bounds.height;
+    if (offset > 5) memo -= 10 * bounds.height;
+    return memo;
+  });
+  if (!bounds.height) return <span ref={ref} style={{ position: 'absolute', visibility: 'hidden' }}>{number}</span>;
+  return (
+    <motion.span style={{ y, position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }} layoutId={`${uniqueId}-${number}`} transition={SLIDING_TRANSITION} ref={ref}>
+      {number}
+    </motion.span>
+  );
+}
+
+function SlidingNumber({ value, decimalSeparator = ',', suffix = '' }) {
+  const absValue = Math.abs(value);
+  const [intPart, decPart] = absValue.toFixed(2).split('.');
+  const intValue = parseInt(intPart, 10);
+  const intDigits = intPart.split('');
+  const intPlaces = intDigits.map((_, i) => Math.pow(10, intDigits.length - i - 1));
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+      {value < 0 && '−'}
+      {intDigits.map((_, i) => <SlidingDigit key={`i-${intPlaces[i]}`} value={intValue} place={intPlaces[i]} />)}
+      {decPart && (
+        <>
+          <span>{decimalSeparator}</span>
+          {decPart.split('').map((_, i) => <SlidingDigit key={`d-${i}`} value={parseInt(decPart, 10)} place={Math.pow(10, decPart.length - i - 1)} />)}
+        </>
+      )}
+      {suffix && <span>{suffix.replace(/^ /, '\u00A0')}</span>}
+    </span>
+  );
+}
+
+function ServiceTooltip({ text }) {
+  const [show, setShow] = useState(false);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const ref = useRef(null);
+  const handleEnter = () => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setPos({ x: rect.left + rect.width / 2, y: rect.top });
+    setShow(true);
+  };
+  return (
+    <span className="pdp__service-tooltip-wrap" ref={ref} onMouseEnter={handleEnter} onMouseLeave={() => setShow(false)}>
+      <svg className="pdp__service-info-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      {show && createPortal(
+        <div className="pdp__service-tooltip" style={{ position: 'fixed', left: pos.x, top: pos.y - 8, transform: 'translate(-50%, -100%)' }}>{text}</div>,
+        document.body
+      )}
+    </span>
+  );
+}
+
+function PeriodTooltip({ text, children }) {
+  const [show, setShow] = useState(false);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const ref = useRef(null);
+  const handleEnter = () => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setPos({ x: rect.left + rect.width / 2, y: rect.top });
+    setShow(true);
+  };
+  return (
+    <div ref={ref} onMouseEnter={handleEnter} onMouseLeave={() => setShow(false)} style={{ position: 'relative' }}>
+      {children}
+      {show && createPortal(
+        <div className="pdp__service-tooltip" style={{ position: 'fixed', left: pos.x, top: pos.y - 8, transform: 'translate(-50%, -100%)' }}>{text}</div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
+function BorderTrail({ size = 60, transition, style, className }) {
+  const defaultTransition = { repeat: Infinity, duration: 5, ease: 'linear' };
+  return (
+    <div style={{ pointerEvents: 'none', position: 'absolute', inset: 0, borderRadius: 'inherit', border: '1px solid transparent', maskClip: 'padding-box, border-box', maskComposite: 'intersect', WebkitMaskComposite: 'source-in', maskImage: 'linear-gradient(transparent,transparent),linear-gradient(#000,#000)', WebkitMaskImage: 'linear-gradient(transparent,transparent),linear-gradient(#000,#000)' }}>
+      <motion.div
+        className={className}
+        style={{ position: 'absolute', width: size, aspectRatio: '1', offsetPath: `rect(0 auto auto 0 round ${size}px)`, background: 'rgb(206, 255, 62)', ...style }}
+        animate={{ offsetDistance: ['0%', '100%'] }}
+        transition={transition || defaultTransition}
+      />
+    </div>
+  );
+}
+
+function TextEffect({ children, per = 'char', preset = 'fade-in-blur', delay = 0, speedReveal = 1, className, as: Tag = 'span' }) {
+  const presets = {
+    'fade-in-blur': {
+      hidden: { opacity: 0, y: 12, filter: 'blur(8px)' },
+      visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
+    },
+    'blur': {
+      hidden: { opacity: 0, filter: 'blur(12px)' },
+      visible: { opacity: 1, filter: 'blur(0px)' },
+    },
+    'scale': {
+      hidden: { opacity: 0, scale: 0 },
+      visible: { opacity: 1, scale: 1 },
+    },
+    'slide': {
+      hidden: { opacity: 0, y: 16 },
+      visible: { opacity: 1, y: 0 },
+    },
+  };
+  const itemVariants = presets[preset] || presets['fade-in-blur'];
+  const stagger = (per === 'char' ? 0.03 : 0.05) / speedReveal;
+  const segments = per === 'char' ? children.split('') : children.split(/(\s+)/);
+  const MotionTag = motion[Tag];
+
+  return (
+    <MotionTag
+      className={className}
+      initial="hidden"
+      animate="visible"
+      variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: stagger, delayChildren: delay } } }}
+    >
+      {segments.map((seg, i) => (
+        per === 'char' ? (
+          <motion.span key={i} variants={itemVariants} style={{ display: 'inline-block', whiteSpace: 'pre' }} transition={{ duration: 0.3 }}>
+            {seg === ' ' ? '\u00A0' : seg}
+          </motion.span>
+        ) : (
+          <motion.span key={i} style={{ display: 'inline-block', whiteSpace: 'pre' }}>
+            {seg.split('').map((ch, ci) => (
+              <motion.span key={ci} variants={itemVariants} style={{ display: 'inline-block', whiteSpace: 'pre' }} transition={{ duration: 0.3 }}>
+                {ch === ' ' ? '\u00A0' : ch}
+              </motion.span>
+            ))}
+          </motion.span>
+        )
+      ))}
+    </MotionTag>
+  );
+}
 
 // ─── THEME ───────────────────────────────────────────────────────────────────
 
@@ -112,11 +366,27 @@ const MY_SUBS = [
   { id: 4, name: "Autenti",           cat: "Podpis elektroniczny", price: 29,  status: "trial",  renewal: "Próba — 3 dni"},
 ];
 
+const SERVICE_TOOLTIPS = {
+  INSURANCE: "Chroni przed upadkiem i zalaniem\nObejmuje kradzież i rabunek\nNaprawa lub wymiana gratis\nBez udziału własnego\nOchrona przed przepięciami",
+  OTHER: "Zwrot urządzenia już po 6 miesiącach\nBez opłat za wcześniejsze zakończenie\n14 dni na zgłoszenie rezygnacji\nMożliwość wymiany na inny produkt",
+  WARRANTY: "Dłuższa gwarancja producenta\nSerwis door-to-door\nPriorytetowa obsługa zgłoszeń",
+};
+
 const PURCHASE_CATALOG = [
   {
     id: "devices", label: "Sprzęt i elektronika", color: "var(--color-secondary)",
     items: [
       { id: "iphone15", brand: "Apple",  model: "iPhone 15 Pro",      desc: "Smartfon · 256 GB · Tytan naturalny",     monthlyNet: 167.83, monthlyGross: 206.43, contractMonths: 12, emoji: "📱", badge: "Nowość",
+        sellPrice: 5499, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [
+          { numberOfMonths: 12, monthPrice: 167.83 },
+          { numberOfMonths: 24, monthPrice: 97.42 },
+          { numberOfMonths: 36, monthPrice: 72.15 },
+        ],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 12.99, b2cAmount: 15.98, description: "Ochrona przed uszkodzeniem i kradzieżą", tooltip: "Pełna ochrona urządzenia obejmująca:\n• Uszkodzenia mechaniczne (upadek, zalanie)\n• Kradzież z włamaniem i rabunek\n• Przepięcia elektryczne\n• Bezpłatna naprawa lub wymiana\n• Brak udziału własnego", included: true },
+          { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 8.50, b2cAmount: 10.46, description: "Możliwość zwrotu po 6 miesiącach", tooltip: "Elastyczne zakończenie umowy:\n• Zwrot urządzenia po min. 6 miesiącach\n• Bez dodatkowych opłat za wcześniejsze zakończenie\n• 14 dni na zgłoszenie rezygnacji\n• Możliwość wymiany na inny produkt", included: false },
+        ],
         photo: "zdjecia-produktow/iphone15-nat-front.jpg",
         images: [
           { url: "zdjecia-produktow/iphone15-nat-front.jpg", label: "Przód" },
@@ -126,10 +396,10 @@ const PURCHASE_CATALOG = [
         fullDesc: "iPhone 15 Pro z chipem A17 Pro. Tytanowa konstrukcja, najlżejszy iPhone Pro w historii. Kamera 48 MP z 5-krotnym zoomem optycznym. Przycisk Czynność do szybkiego dostępu do ulubionych funkcji. USB-C z obsługą USB 3.",
         variants: [
           { group: "Pamięć wbudowana", options: [
-            { label: "128 GB", diff: -22, default: false },
-            { label: "256 GB", diff: 0, default: true },
-            { label: "512 GB", diff: 35 },
-            { label: "1 TB", diff: 78 },
+            { label: "128 GB", diff: -22, default: false, clientProductId: "iphone15-128" },
+            { label: "256 GB", diff: 0, default: true, clientProductId: "iphone15-256" },
+            { label: "512 GB", diff: 35, clientProductId: "iphone15-512" },
+            { label: "1 TB", diff: 78, clientProductId: "iphone15-1tb" },
           ]},
           { group: "Kolor obudowy", isColor: true, options: [
             { label: "Tytan naturalny", diff: 0, default: true, colorHex: "#F5F0EB" },
@@ -154,6 +424,16 @@ const PURCHASE_CATALOG = [
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "ipad",     brand: "Apple",  model: "iPad Pro M4",        desc: "Tablet · 11\" · idealny do gabinetu",     monthlyNet: 152.42, monthlyGross: 187.48, contractMonths: 12, emoji: "📲", badge: "Nowość",
+        sellPrice: 4999, vat: 23, categoryId: "tablets", productSellType: "PRODUCT_HERO",
+        pricing: [
+          { numberOfMonths: 12, monthPrice: 152.42 },
+          { numberOfMonths: 24, monthPrice: 88.51 },
+          { numberOfMonths: 36, monthPrice: 65.80 },
+        ],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 11.49, b2cAmount: 14.13, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true },
+          { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 7.80, b2cAmount: 9.59, description: "Możliwość zwrotu po 6 miesiącach", included: false },
+        ],
         photo: "zdjecia-produktow/ipad-czarny-front.jpg",
         images: [
           { url: "zdjecia-produktow/ipad-czarny-front.jpg", label: "Przód" },
@@ -188,6 +468,16 @@ const PURCHASE_CATALOG = [
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "macbook",  brand: "Apple",  model: "MacBook Air M3",     desc: "Laptop · 15\" · 16 GB RAM",               monthlyNet: 206.25, monthlyGross: 253.69, contractMonths: 12, emoji: "💻",
+        sellPrice: 6799, vat: 23, categoryId: "laptops", productSellType: "PRODUCT_HERO",
+        pricing: [
+          { numberOfMonths: 12, monthPrice: 206.25 },
+          { numberOfMonths: 24, monthPrice: 119.73 },
+          { numberOfMonths: 36, monthPrice: 88.95 },
+        ],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 14.99, b2cAmount: 18.44, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true },
+          { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 9.90, b2cAmount: 12.18, description: "Możliwość zwrotu po 6 miesiącach", included: false },
+        ],
         photo: "zdjecia-produktow/macbook-szary-front.jpg",
         images: [
           { url: "zdjecia-produktow/macbook-szary-front.jpg", label: "Północ" },
@@ -229,6 +519,14 @@ const PURCHASE_CATALOG = [
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "sony",     brand: "Sony",   model: "WH-1000XM5",        desc: "Słuchawki · ANC · na dyżury i do nauki",  monthlyNet: 34.92, monthlyGross: 42.95, contractMonths: 12, emoji: "🎧",
+        sellPrice: 1499, vat: 23, categoryId: "audio", productSellType: "PRODUCT_HERO",
+        pricing: [
+          { numberOfMonths: 12, monthPrice: 34.92 },
+          { numberOfMonths: 24, monthPrice: 20.28 },
+        ],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 4.99, b2cAmount: 6.14, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true },
+        ],
         photo: "zdjecia-produktow/sony-xm5-front.jpg",
         images: [
           { url: "zdjecia-produktow/sony-xm5-front.jpg", label: "Przód" },
@@ -248,6 +546,15 @@ const PURCHASE_CATALOG = [
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "monitor",  brand: "Dell",   model: "UltraSharp U2724D", desc: "Monitor · 27\" · 4K IPS · USB-C",         monthlyNet: 76.25, monthlyGross: 93.79, contractMonths: 12, emoji: "🖥️",
+        sellPrice: 2499, vat: 23, categoryId: "monitors", productSellType: "PRODUCT_HERO",
+        pricing: [
+          { numberOfMonths: 12, monthPrice: 76.25 },
+          { numberOfMonths: 24, monthPrice: 44.28 },
+          { numberOfMonths: 36, monthPrice: 32.90 },
+        ],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 6.99, b2cAmount: 8.60, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true },
+        ],
         photo: "zdjecia-produktow/dell-u2724d-front.jpg",
         images: [
           { url: "zdjecia-produktow/dell-u2724d-front.jpg", label: "Przód" },
@@ -267,70 +574,144 @@ const PURCHASE_CATALOG = [
       },
       // ── Produkty ze sklepu klubmedyka.store ──
       { id: "iphone17promax", brand: "Apple", model: "iPhone 17 Pro Max", desc: "Smartfon · 256 GB · Głębinowy błękit", monthlyNet: 181.96, monthlyGross: 223.81, contractMonths: 12, emoji: "📱", badge: "Nowość",
+        sellPrice: 5999, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 181.96 }, { numberOfMonths: 24, monthPrice: 105.63 }, { numberOfMonths: 36, monthPrice: 78.45 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 13.99, b2cAmount: 17.21, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }, { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 8.50, b2cAmount: 10.46, description: "Możliwość zwrotu po 6 miesiącach", included: false }],
         photo: "https://klubmedyka.store/8275-home_default/apple-iphone-17-pro-max-256gb-glebinowy-blekit.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "iphone17pro", brand: "Apple", model: "iPhone 17 Pro", desc: "Smartfon · 256 GB · Kosmiczny pomarańcz", monthlyNet: 167.83, monthlyGross: 206.43, contractMonths: 12, emoji: "📱",
+        sellPrice: 5499, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 167.83 }, { numberOfMonths: 24, monthPrice: 97.42 }, { numberOfMonths: 36, monthPrice: 72.15 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 12.99, b2cAmount: 15.98, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/8231-home_default/apple-iphone-17-pro-256gb-kosmiczny-pomarancz.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "iphone17", brand: "Apple", model: "iPhone 17", desc: "Smartfon · 256 GB · Szałwia", monthlyNet: 116.99, monthlyGross: 143.90, contractMonths: 12, emoji: "📱",
+        sellPrice: 3799, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 116.99 }, { numberOfMonths: 24, monthPrice: 67.92 }, { numberOfMonths: 36, monthPrice: 50.45 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 8.99, b2cAmount: 11.06, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/8175-home_default/apple-iphone-17-256gb-szalwia.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "galaxy-z-fold7", brand: "Samsung", model: "Galaxy Z Fold7", desc: "Składany · 12/256 GB · Srebrny", monthlyNet: 264.58, monthlyGross: 325.43, contractMonths: 12, emoji: "📱", badge: "Nowość",
+        sellPrice: 8699, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 264.58 }, { numberOfMonths: 24, monthPrice: 153.58 }, { numberOfMonths: 36, monthPrice: 114.08 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 18.99, b2cAmount: 23.36, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }, { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 12.50, b2cAmount: 15.38, description: "Możliwość zwrotu po 6 miesiącach", included: false }],
         photo: "https://klubmedyka.store/7972-home_default/samsung-galaxy-z-fold7-12-256gb-srebrny.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "galaxy-s25-ultra", brand: "Samsung", model: "Galaxy S25 Ultra 5G", desc: "Smartfon · 12/256 GB · Tytan czarny", monthlyNet: 176.20, monthlyGross: 216.73, contractMonths: 12, emoji: "📱",
+        sellPrice: 5799, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 176.20 }, { numberOfMonths: 24, monthPrice: 102.30 }, { numberOfMonths: 36, monthPrice: 75.98 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 13.49, b2cAmount: 16.59, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/6176-home_default/samsung-galaxy-s25-ultra-5g-12256gb-tytan-czarny.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "galaxy-z-flip6", brand: "Samsung", model: "Galaxy Z Flip 6 5G", desc: "Składany · 12/256 GB · Miętowy", monthlyNet: 156.22, monthlyGross: 192.15, contractMonths: 12, emoji: "📱",
+        sellPrice: 5099, vat: 23, categoryId: "smartphones", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 156.22 }, { numberOfMonths: 24, monthPrice: 90.71 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 11.99, b2cAmount: 14.75, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/7257-home_default/samsung-galaxy-z-flip-6-5g-12-256gb-szary.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "macbook-pro-m4", brand: "Apple", model: "MacBook Pro 14\" M4", desc: "Laptop · 16 GB RAM · 512 GB SSD", monthlyNet: 236.07, monthlyGross: 290.37, contractMonths: 12, emoji: "💻", badge: "Nowość",
+        sellPrice: 7799, vat: 23, categoryId: "laptops", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 236.07 }, { numberOfMonths: 24, monthPrice: 137.05 }, { numberOfMonths: 36, monthPrice: 101.82 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 16.99, b2cAmount: 20.90, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }, { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 11.50, b2cAmount: 14.15, description: "Możliwość zwrotu po 6 miesiącach", included: false }],
         photo: "https://klubmedyka.store/5658-home_default/macbook-pro-14-m4-16gb-ram-512gb-ssd-srebrny.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "macbook-pro-16-m4pro", brand: "Apple", model: "MacBook Pro 16\" M4 Pro", desc: "Laptop · 24 GB RAM · 512 GB SSD", monthlyNet: 378.61, monthlyGross: 465.69, contractMonths: 12, emoji: "💻",
+        sellPrice: 12499, vat: 23, categoryId: "laptops", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 378.61 }, { numberOfMonths: 24, monthPrice: 219.80 }, { numberOfMonths: 36, monthPrice: 163.29 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 24.99, b2cAmount: 30.74, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }, { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 18.50, b2cAmount: 22.76, description: "Możliwość zwrotu po 6 miesiącach", included: false }],
         photo: "https://klubmedyka.store/5666-home_default/macbook-pro-16-m4-pro-24gb-ram-512gb-ssd-srebrny.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "ipad-air-m3", brand: "Apple", model: "iPad Air M3 11\"", desc: "Tablet · 256 GB · Wi-Fi", monthlyNet: 99.23, monthlyGross: 122.05, contractMonths: 12, emoji: "📲",
+        sellPrice: 3249, vat: 23, categoryId: "tablets", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 99.23 }, { numberOfMonths: 24, monthPrice: 57.62 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 7.49, b2cAmount: 9.21, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/7889-home_default/tablet-apple-ipad-pro-2024-11-m4-256gb-wi-fi-srebrny.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "apple-watch-11", brand: "Apple", model: "Watch Series 11", desc: "Smartwatch · GPS · 46 mm · Srebrny", monthlyNet: 63.32, monthlyGross: 77.88, contractMonths: 12, emoji: "⌚",
+        sellPrice: 2099, vat: 23, categoryId: "wearables", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 63.32 }, { numberOfMonths: 24, monthPrice: 36.76 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 5.49, b2cAmount: 6.75, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/8389-home_default/apple-watch-11-gps-46mm-koperta-z-aluminium-srebrny-pasek-sportowy-ml.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "apple-watch-ultra3", brand: "Apple", model: "Watch Ultra 3", desc: "Smartwatch · GPS+Cellular · 49 mm · Tytan", monthlyNet: 111.34, monthlyGross: 136.95, contractMonths: 12, emoji: "⌚", badge: "Premium",
+        sellPrice: 3699, vat: 23, categoryId: "wearables", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 111.34 }, { numberOfMonths: 24, monthPrice: 64.63 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 8.99, b2cAmount: 11.06, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/8335-home_default/apple-watch-ultra-3-gps-cellular-49mm-koperta-tytanowa-naturalny-opaska-trail-ml.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
       { id: "ps5-digital", brand: "Sony", model: "PlayStation 5 Digital Slim", desc: "Konsola · 1 TB · bez napędu", monthlyNet: 73.57, monthlyGross: 90.49, contractMonths: 12, emoji: "🎮",
+        sellPrice: 2399, vat: 23, categoryId: "gaming", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 73.57 }, { numberOfMonths: 24, monthPrice: 42.72 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 6.49, b2cAmount: 7.98, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/5874-home_default/konsola-sony-playstation-5-digital-slim-d-chassis-1tb.jpg",
         delivery: "Wysyłka w 1–2 dni robocze",
       },
       { id: "nintendo-switch2", brand: "Nintendo", model: "Switch 2", desc: "Konsola przenośna · nowa generacja", monthlyNet: 70.72, monthlyGross: 86.99, contractMonths: 12, emoji: "🎮", badge: "Nowość",
+        sellPrice: 2299, vat: 23, categoryId: "gaming", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 70.72 }, { numberOfMonths: 24, monthPrice: 41.06 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 5.99, b2cAmount: 7.37, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/7636-home_default/nintendo-switch-oled-white.jpg",
         delivery: "Wysyłka w 1–2 dni robocze",
       },
       { id: "gopro-hero13", brand: "GoPro", model: "HERO 13 Black", desc: "Kamera sportowa · 5.3K · Wi-Fi", monthlyNet: 55.04, monthlyGross: 67.70, contractMonths: 12, emoji: "📷",
+        sellPrice: 1799, vat: 23, categoryId: "cameras", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 55.04 }, { numberOfMonths: 24, monthPrice: 31.95 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 4.49, b2cAmount: 5.52, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/7899-home_default/kamera-sportowa-gopro-hero-13-black.jpg",
         delivery: "Wysyłka w 1–2 dni robocze",
       },
       { id: "garmin-fenix8", brand: "Garmin", model: "Fenix 8 47mm AMOLED", desc: "Smartwatch · Szafirowe szkło · Tytanowy", monthlyNet: 142.82, monthlyGross: 175.67, contractMonths: 12, emoji: "⌚",
+        sellPrice: 4699, vat: 23, categoryId: "wearables", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 142.82 }, { numberOfMonths: 24, monthPrice: 82.90 }, { numberOfMonths: 36, monthPrice: 61.44 }],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 9.99, b2cAmount: 12.29, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true },
+          { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 7.50, b2cAmount: 9.23, description: "Możliwość zwrotu po 6 miesiącach", included: false },
+        ],
         photo: "https://klubmedyka.store/7744-home_default/smartwatch-garmin-fenix-8-43-mm-amoled-srebrny-z-paskiem-silikonowym-w-kolorze-whitestone.jpg",
         delivery: "Wysyłka w 1–2 dni robocze",
       },
       { id: "xiaomi-vacuum-x20", brand: "Xiaomi", model: "Robot Vacuum X20+", desc: "Robot sprzątający · stacja dokująca", monthlyNet: 76.39, monthlyGross: 93.96, contractMonths: 12, emoji: "🤖",
+        sellPrice: 2499, vat: 23, categoryId: "home", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 76.39 }, { numberOfMonths: 24, monthPrice: 44.35 }],
+        additionalServices: [{ id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 5.99, b2cAmount: 7.37, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true }],
         photo: "https://klubmedyka.store/7631-home_default/xiaomi-robot-vacuum-x20-max-czarny.jpg",
         delivery: "Wysyłka w 1–2 dni robocze",
       },
       { id: "macbook-air-m4", brand: "Apple", model: "MacBook Air 15\" M4", desc: "Laptop · 32 GB RAM · 1 TB SSD", monthlyNet: 270.93, monthlyGross: 333.24, contractMonths: 12, emoji: "💻", badge: "Nowość",
+        sellPrice: 8999, vat: 23, categoryId: "laptops", productSellType: "PRODUCT_HERO",
+        pricing: [{ numberOfMonths: 12, monthPrice: 270.93 }, { numberOfMonths: 24, monthPrice: 157.24 }, { numberOfMonths: 36, monthPrice: 116.52 }],
+        additionalServices: [
+          { id: 1, name: "Safe Up", serviceType: "INSURANCE", b2bAmount: 14.99, b2cAmount: 18.44, description: "Ochrona przed uszkodzeniem i kradzieżą", included: true },
+          { id: 2, name: "Flex — wcześniejszy zwrot", serviceType: "OTHER", serviceCustomType: "FLEX", b2bAmount: 10.50, b2cAmount: 12.92, description: "Możliwość zwrotu po 6 miesiącach", included: false },
+        ],
+        variants: [
+          { group: "Pamięć RAM", options: [
+            { label: "16 GB", diff: -35, clientProductId: "macbook-air-m4-16" },
+            { label: "32 GB", diff: 0, default: true, clientProductId: "macbook-air-m4-32" },
+          ]},
+          { group: "Dysk SSD", options: [
+            { label: "512 GB", diff: -40, clientProductId: "macbook-air-m4-512" },
+            { label: "1 TB", diff: 0, default: true, clientProductId: "macbook-air-m4-1tb" },
+            { label: "2 TB", diff: 55, clientProductId: "macbook-air-m4-2tb" },
+          ]},
+          { group: "Kolor", isColor: true, options: [
+            { label: "Srebrny", colorHex: "#C0C0C0", default: true },
+            { label: "Gwiezdna szarość", colorHex: "#4A4A4A" },
+            { label: "Księżycowa poświata", colorHex: "#F5E6D3" },
+            { label: "Północny błękit", colorHex: "#5B7B8F" },
+          ]},
+        ],
         photo: "https://klubmedyka.store/7952-home_default/apple-macbook-air-15-m4-10-core-cpu-10-core-gpu-32gb-1tb-ssd-2025-srebrny.jpg",
         delivery: "Wysyłka w 1 dzień roboczy",
       },
@@ -1047,6 +1428,7 @@ function SectionHeader({ title, action, onAction }) {
       {action && (
         <button className="section-header__action" onClick={onAction}>
           {action}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </button>
       )}
     </div>
@@ -1246,6 +1628,23 @@ function Onboarding({ onComplete, setProfile }) {
             </Btn>
           </div>
         )}
+        <div className="onboarding__powered">
+          <svg width="205" height="18" viewBox="0 0 205 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M119.945 9.25593V7.64731H118.442V14.7002H119.945V11.4848C119.945 10.7269 120.268 9.98875 120.871 9.5294C121.494 9.05396 122.332 8.81803 123.273 8.81803V7.5061C121.82 7.5061 120.51 8.12453 119.945 9.25593V9.25593Z" fill="#2E35FF"/><path d="M128.135 7.37679C125.424 7.37679 123.804 8.84421 123.804 11.1857C123.804 13.5271 125.423 14.9695 128.237 14.9695C129.883 14.9695 131.103 14.5709 132.067 13.7076L131.192 12.7675C130.422 13.4502 129.611 13.7845 128.314 13.7845C126.54 13.7845 125.423 13.0374 125.282 11.5056H132.272C132.297 11.4287 132.311 11.3376 132.311 11.1714C132.311 8.69943 130.666 7.375 128.135 7.375V7.37679ZM125.348 10.4403C125.63 9.19275 126.672 8.56181 128.15 8.56181C129.538 8.56181 130.539 9.14091 130.861 10.4278L125.348 10.4403Z" fill="#2E35FF"/><path d="M144.615 7.38953C143.125 7.38953 141.917 8.16167 141.403 9.3449C141.042 8.18669 140.143 7.38953 138.563 7.38953C137.214 7.38953 136.109 8.02046 135.556 9.01066V7.64691H134.053V14.6998H135.556V11.2395C135.556 9.83285 136.673 8.65319 138.078 8.63889C138.09 8.63889 138.101 8.63889 138.114 8.63889C139.488 8.63889 140.105 9.43605 140.105 10.7373V14.7016H141.595L141.585 11.2449C141.581 9.89004 142.615 8.72111 143.966 8.64604C144.032 8.64247 144.098 8.64068 144.165 8.64068C145.54 8.64068 146.157 9.43784 146.157 10.739V14.7034H147.635V10.6497C147.635 8.82299 146.735 7.3931 144.615 7.3931V7.38953Z" fill="#2E35FF"/><path d="M153.73 7.37679C151.019 7.37679 149.398 8.84421 149.398 11.1857C149.398 13.5271 151.017 14.9695 153.832 14.9695C155.477 14.9695 156.698 14.5709 157.661 13.7076L156.787 12.7675C156.016 13.4502 155.206 13.7845 153.908 13.7845C152.134 13.7845 151.017 13.0374 150.876 11.5056H157.867C157.892 11.4287 157.906 11.3376 157.906 11.1714C157.906 8.69943 156.26 7.375 153.73 7.375V7.37679ZM150.942 10.4403C151.224 9.19275 152.266 8.56181 153.744 8.56181C155.133 8.56181 156.134 9.14091 156.455 10.4278L150.942 10.4403V10.4403Z" fill="#2E35FF"/><path d="M166.199 8.90681C165.596 8.0185 164.464 7.38756 162.96 7.38756C160.672 7.38756 159.157 8.89251 159.157 11.1839C159.157 13.4753 160.674 14.9552 162.96 14.9552C164.463 14.9552 165.594 14.3243 166.199 13.4503V14.6979H167.702V5.1748H166.199V8.90681ZM164.438 13.5414C164.095 13.638 163.729 13.6809 163.345 13.6809C161.598 13.6809 160.622 12.78 160.622 11.1839C160.622 9.5878 161.598 8.67446 163.345 8.67446C163.724 8.67446 164.086 8.71557 164.425 8.80851C165.482 9.09449 166.199 10.0811 166.199 11.1768C166.199 12.2688 165.487 13.2483 164.438 13.5414Z" fill="#2E35FF"/><path d="M171.554 7.64758H170.064V14.7005H171.554V7.64758Z" fill="#2E35FF"/><path d="M170.794 5.00818C170.241 5.00818 169.831 5.35671 169.831 5.84466C169.831 6.30759 170.241 6.68115 170.794 6.68115C171.348 6.68115 171.746 6.30759 171.746 5.84466C171.746 5.35493 171.348 5.00818 170.794 5.00818Z" fill="#2E35FF"/><path d="M180.246 11.1401C180.246 11.9998 179.819 12.8148 179.086 13.2635C178.598 13.562 178.033 13.7085 177.417 13.7085C176.016 13.7085 175.309 12.9614 175.309 11.5726V7.64758H173.819V11.6763C173.819 13.5816 174.886 14.9579 177.031 14.9579C178.47 14.9579 179.626 14.4556 180.244 13.4529V14.7005H181.747V7.64758H180.244V11.1419L180.246 11.1401Z" fill="#2E35FF"/><path d="M194.63 7.38953C193.14 7.38953 191.932 8.16167 191.418 9.3449C191.057 8.18669 190.158 7.38953 188.578 7.38953C187.229 7.38953 186.125 8.02046 185.571 9.01066V7.64691H184.069V14.6998H185.571V11.2395C185.571 9.83285 186.689 8.65319 188.093 8.63889C188.106 8.63889 188.116 8.63889 188.129 8.63889C189.503 8.63889 190.12 9.43605 190.12 10.7373V14.7016H191.611L191.6 11.2449C191.596 9.89004 192.63 8.72111 193.981 8.64604C194.047 8.64247 194.113 8.64068 194.181 8.64068C195.555 8.64068 196.172 9.43784 196.172 10.739V14.7034H197.65V10.6497C197.65 8.82299 196.75 7.3931 194.63 7.3931V7.38953Z" fill="#2E35FF"/><path d="M204.767 3.33522C202.931 3.33522 201.437 1.83919 201.437 0H200.188C200.188 1.83919 198.694 3.33522 196.857 3.33522V4.58637C198.694 4.58637 200.188 6.08239 200.188 7.92158H201.437C201.437 6.08239 202.931 4.58637 204.767 4.58637V3.33522ZM200.812 5.6141C200.414 4.93133 199.843 4.35937 199.161 3.96079C199.843 3.56042 200.412 2.99025 200.812 2.30748C201.212 2.99025 201.781 3.56042 202.463 3.96079C201.781 4.36116 201.212 4.93133 200.812 5.6141Z" fill="#2E35FF"/>
+            <path d="M103.801 14.7718C103.164 14.7718 102.602 14.6111 102.115 14.2896C101.628 13.9648 101.247 13.5074 100.972 12.9174C100.697 12.3241 100.559 11.6231 100.559 10.8144C100.559 10.0123 100.697 9.31632 100.972 8.72636C101.247 8.1364 101.63 7.68067 102.12 7.35918C102.611 7.03768 103.177 6.87693 103.82 6.87693C104.318 6.87693 104.71 6.95979 104.999 7.12551C105.29 7.28792 105.512 7.47352 105.665 7.68233C105.821 7.88782 105.942 8.05686 106.028 8.18943H106.127V4.43091H107.301V14.6127H106.167V13.4394H106.028C105.942 13.5786 105.819 13.7543 105.66 13.9664C105.501 14.1752 105.274 14.3625 104.979 14.5282C104.684 14.6906 104.291 14.7718 103.801 14.7718ZM103.96 13.7178C104.43 13.7178 104.828 13.5952 105.153 13.3499C105.478 13.1014 105.725 12.7583 105.894 12.3208C106.063 11.88 106.147 11.3712 106.147 10.7945C106.147 10.2245 106.064 9.72565 105.899 9.2981C105.733 8.86723 105.488 8.53247 105.163 8.29383C104.838 8.05188 104.437 7.93091 103.96 7.93091C103.462 7.93091 103.048 8.05851 102.717 8.31372C102.389 8.56562 102.142 8.90865 101.976 9.34284C101.814 9.77371 101.732 10.2576 101.732 10.7945C101.732 11.3381 101.815 11.8319 101.981 12.2761C102.15 12.7169 102.399 13.0682 102.727 13.3301C103.058 13.5886 103.469 13.7178 103.96 13.7178Z" fill="#4B5563"/>
+            <path d="M95.6658 14.7718C94.9764 14.7718 94.3715 14.6078 93.8512 14.2797C93.3341 13.9515 92.9298 13.4925 92.6381 12.9025C92.3497 12.3126 92.2056 11.6232 92.2056 10.8343C92.2056 10.0389 92.3497 9.34452 92.6381 8.75124C92.9298 8.15797 93.3341 7.69727 93.8512 7.36914C94.3715 7.04102 94.9764 6.87695 95.6658 6.87695C96.3552 6.87695 96.9584 7.04102 97.4754 7.36914C97.9958 7.69727 98.4002 8.15797 98.6885 8.75124C98.9802 9.34452 99.126 10.0389 99.126 10.8343C99.126 11.6232 98.9802 12.3126 98.6885 12.9025C98.4002 13.4925 97.9958 13.9515 97.4754 14.2797C96.9584 14.6078 96.3552 14.7718 95.6658 14.7718ZM95.6658 13.7179C96.1895 13.7179 96.6203 13.5836 96.9584 13.3152C97.2965 13.0467 97.5467 12.6937 97.7091 12.2562C97.8715 11.8187 97.9527 11.3448 97.9527 10.8343C97.9527 10.3239 97.8715 9.84831 97.7091 9.40749C97.5467 8.96668 97.2965 8.61038 96.9584 8.3386C96.6203 8.06682 96.1895 7.93093 95.6658 7.93093C95.1421 7.93093 94.7112 8.06682 94.3732 8.3386C94.0351 8.61038 93.7849 8.9667 93.6225 9.40749C93.4601 9.84831 93.3789 10.3239 93.3789 10.8343C93.3789 11.3448 93.4601 11.8187 93.6225 12.2562C93.7849 12.6937 94.0351 13.0467 94.3732 13.3152C94.7112 13.5837 95.1421 13.7179 95.6658 13.7179Z" fill="#4B5563"/>
+            <path d="M78.9812 14.6128L76.6545 6.97644H77.8875L79.5381 12.823H79.6176L81.2483 6.97644H82.5011L84.1119 12.8031H84.1915L85.842 6.97644H87.075L84.7483 14.6128H83.5949L81.9244 8.74633H81.8051L80.1347 14.6128H78.9812Z" fill="#4B5563"/>
+            <path d="M72.2595 14.7719C71.5702 14.7719 70.9653 14.6078 70.4449 14.2797C69.9279 13.9515 69.5235 13.4925 69.2318 12.9025C68.9435 12.3126 68.7993 11.6232 68.7993 10.8344C68.7993 10.0389 68.9435 9.34454 69.2318 8.75127C69.5235 8.15799 69.9279 7.69729 70.4449 7.36916C70.9653 7.04104 71.5702 6.87698 72.2595 6.87698C72.9489 6.87698 73.5522 7.04104 74.0692 7.36916C74.5896 7.69729 74.9939 8.15799 75.2823 8.75127C75.5739 9.34454 75.7198 10.0389 75.7198 10.8344C75.7198 11.6232 75.5739 12.3126 75.2823 12.9025C74.9939 13.4925 74.5896 13.9515 74.0692 14.2797C73.5522 14.6078 72.9489 14.7719 72.2595 14.7719ZM72.2595 13.7179C72.7832 13.7179 73.2141 13.5837 73.5522 13.3152C73.8902 13.0467 74.1405 12.6937 74.3029 12.2562C74.4653 11.8187 74.5465 11.3448 74.5465 10.8344C74.5465 10.3239 74.4653 9.84833 74.3029 9.40752C74.1405 8.9667 73.8902 8.6104 73.5522 8.33862C73.2141 8.06684 72.7832 7.93095 72.2595 7.93095C71.7359 7.93095 71.305 8.06684 70.9669 8.33862C70.6289 8.6104 70.3786 8.9667 70.2162 9.40752C70.0538 9.84833 69.9726 10.3239 69.9726 10.8344C69.9726 11.3448 70.0538 11.8187 70.2162 12.2562C70.3786 12.6937 70.6289 13.0467 70.9669 13.3152C71.305 13.5837 71.7359 13.7179 72.2595 13.7179ZM71.7226 5.94232L72.9357 3.6355H74.3078L72.7567 5.94232H71.7226Z" fill="#4B5563"/>
+            <path d="M62.9502 11.8286L62.9303 10.3769H63.1689L66.5099 6.97636H67.9616L64.4019 10.5758H64.3025L62.9502 11.8286ZM61.8564 14.6127V4.43091H63.0297V14.6127H61.8564ZM66.7087 14.6127L63.7258 10.8343L64.561 10.019L68.2002 14.6127H66.7087Z" fill="#4B5563"/>
+            <path d="M54.8193 17.4764C54.6204 17.4764 54.4431 17.4599 54.2874 17.4267C54.1316 17.3969 54.0239 17.3671 53.9642 17.3372L54.2625 16.3031C54.5475 16.3761 54.7994 16.4026 55.0182 16.3827C55.2369 16.3628 55.4308 16.265 55.5999 16.0894C55.7722 15.917 55.9296 15.637 56.0722 15.2492L56.2909 14.6526L53.467 6.97644H54.7398L56.8477 13.0617H56.9273L59.0352 6.97644H60.308L57.0665 15.7264C56.9206 16.1209 56.74 16.4473 56.5246 16.7058C56.3091 16.9677 56.0589 17.1616 55.7739 17.2875C55.4921 17.4135 55.174 17.4764 54.8193 17.4764Z" fill="#4B5563"/>
+            <path d="M48.2517 14.7718C47.6154 14.7718 47.0536 14.6111 46.5664 14.2896C46.0791 13.9648 45.698 13.5074 45.4229 12.9174C45.1478 12.3241 45.0103 11.6231 45.0103 10.8144C45.0103 10.0123 45.1478 9.31632 45.4229 8.72636C45.698 8.1364 46.0808 7.68067 46.5713 7.35918C47.0619 7.03768 47.6286 6.87693 48.2716 6.87693C48.7688 6.87693 49.1615 6.95979 49.4499 7.12551C49.7416 7.28792 49.9636 7.47352 50.1161 7.68233C50.2719 7.88782 50.3928 8.05686 50.479 8.18943H50.5784V4.43091H51.7517V14.6127H50.6182V13.4394H50.479C50.3928 13.5786 50.2702 13.7543 50.1111 13.9664C49.952 14.1752 49.725 14.3625 49.43 14.5282C49.135 14.6906 48.7423 14.7718 48.2517 14.7718ZM48.4108 13.7178C48.8815 13.7178 49.2792 13.5952 49.604 13.3499C49.9288 13.1014 50.1757 12.7583 50.3448 12.3208C50.5138 11.88 50.5983 11.3712 50.5983 10.7945C50.5983 10.2245 50.5155 9.72565 50.3497 9.2981C50.184 8.86723 49.9388 8.53247 49.6139 8.29383C49.2891 8.05188 48.8881 7.93091 48.4108 7.93091C47.9137 7.93091 47.4994 8.05851 47.1679 8.31372C46.8398 8.56562 46.5929 8.90865 46.4272 9.34284C46.2648 9.77371 46.1836 10.2576 46.1836 10.7945C46.1836 11.3381 46.2664 11.8319 46.4321 12.2761C46.6012 12.7169 46.8497 13.0682 47.1779 13.3301C47.5093 13.5886 47.9203 13.7178 48.4108 13.7178Z" fill="#4B5563"/>
+            <path d="M40.4215 14.7718C39.6857 14.7718 39.051 14.6094 38.5174 14.2846C37.9871 13.9565 37.5777 13.4991 37.2894 12.9125C37.0043 12.3225 36.8618 11.6364 36.8618 10.8542C36.8618 10.072 37.0043 9.38263 37.2894 8.78604C37.5777 8.18614 37.9788 7.71881 38.4925 7.38406C39.0095 7.04599 39.6128 6.87695 40.3022 6.87695C40.6999 6.87695 41.0926 6.94324 41.4804 7.07582C41.8682 7.20839 42.2212 7.42383 42.5394 7.72212C42.8576 8.0171 43.1111 8.4082 43.3 8.89542C43.4889 9.38263 43.5834 9.98254 43.5834 10.6951V11.1923H37.697V10.1781H42.3902C42.3902 9.74722 42.3041 9.36275 42.1317 9.02468C41.9627 8.68661 41.7207 8.4198 41.4059 8.22425C41.0943 8.0287 40.7264 7.93093 40.3022 7.93093C39.8348 7.93093 39.4305 8.04693 39.0891 8.27894C38.751 8.50763 38.4908 8.80593 38.3086 9.17383C38.1263 9.54173 38.0351 9.93614 38.0351 10.3571V11.0332C38.0351 11.6099 38.1345 12.0988 38.3334 12.4998C38.5356 12.8975 38.8157 13.2008 39.1736 13.4096C39.5316 13.6151 39.9475 13.7179 40.4215 13.7179C40.7297 13.7179 41.0081 13.6748 41.2567 13.5886C41.5086 13.4991 41.7257 13.3665 41.908 13.1909C42.0903 13.0119 42.2311 12.7898 42.3306 12.5247L43.4641 12.8429C43.3448 13.2273 43.1442 13.5654 42.8625 13.8571C42.5808 14.1454 42.2328 14.3708 41.8185 14.5332C41.4042 14.6923 40.9385 14.7718 40.4215 14.7718Z" fill="#4B5563"/>
+            <path d="M25.0518 14.6127V6.97638H26.1853V8.16957H26.2847C26.4438 7.7619 26.7007 7.44537 27.0553 7.21999C27.4099 6.9913 27.8358 6.87695 28.333 6.87695C28.8368 6.87695 29.2561 6.9913 29.5908 7.21999C29.9289 7.44537 30.1924 7.7619 30.3813 8.16957H30.4608C30.6564 7.77515 30.9497 7.46194 31.3408 7.22994C31.7319 6.99461 32.2009 6.87695 32.7478 6.87695C33.4305 6.87695 33.989 7.09073 34.4232 7.51829C34.8574 7.94253 35.0745 8.60375 35.0745 9.50195V14.6127H33.9012V9.50195C33.9012 8.93851 33.7471 8.53581 33.4388 8.29386C33.1306 8.05191 32.7677 7.93093 32.3501 7.93093C31.8131 7.93093 31.3972 8.09334 31.1022 8.41815C30.8072 8.73964 30.6597 9.14731 30.6597 9.64116V14.6127H29.4665V9.38263C29.4665 8.94845 29.3257 8.59878 29.0439 8.33363C28.7622 8.06516 28.3993 7.93093 27.9552 7.93093C27.6502 7.93093 27.3652 8.01213 27.1001 8.17454C26.8382 8.33694 26.6261 8.56232 26.4637 8.85067C26.3046 9.13571 26.2251 9.4655 26.2251 9.84002V14.6127H25.0518Z" fill="#4B5563"/>
+            <path d="M15.4728 14.7917C14.9889 14.7917 14.5497 14.7006 14.1553 14.5183C13.7609 14.3327 13.4477 14.0659 13.2157 13.7179C12.9837 13.3665 12.8677 12.9423 12.8677 12.4451C12.8677 12.0076 12.9539 11.653 13.1262 11.3812C13.2985 11.1061 13.5289 10.8907 13.8172 10.7349C14.1056 10.5791 14.4238 10.4631 14.7718 10.3869C15.1231 10.3074 15.4761 10.2444 15.8307 10.198C16.2948 10.1383 16.6709 10.0936 16.9593 10.0637C17.251 10.0306 17.4631 9.97591 17.5957 9.89968C17.7315 9.82345 17.7995 9.69087 17.7995 9.50195V9.46218C17.7995 8.97165 17.6653 8.59049 17.3968 8.31871C17.1316 8.04693 16.7289 7.91104 16.1887 7.91104C15.6286 7.91104 15.1894 8.03368 14.8712 8.27894C14.553 8.52421 14.3293 8.78604 14.2001 9.06445L13.0864 8.66673C13.2853 8.20271 13.5504 7.84144 13.8819 7.58292C14.2166 7.32108 14.5812 7.13879 14.9756 7.03604C15.3734 6.92998 15.7645 6.87695 16.1489 6.87695C16.3942 6.87695 16.6759 6.90678 16.9941 6.96644C17.3156 7.02279 17.6255 7.14045 17.9238 7.31942C18.2254 7.4984 18.4756 7.76852 18.6745 8.12979C18.8734 8.49106 18.9728 8.97496 18.9728 9.5815V14.6127H17.7995V13.5787H17.7398C17.6603 13.7444 17.5277 13.9217 17.3421 14.1106C17.1565 14.2995 16.9096 14.4603 16.6013 14.5929C16.2931 14.7254 15.9169 14.7917 15.4728 14.7917ZM15.6518 13.7377C16.1158 13.7377 16.5069 13.6466 16.8251 13.4643C17.1466 13.282 17.3885 13.0467 17.5509 12.7583C17.7166 12.47 17.7995 12.1667 17.7995 11.8485V10.7747C17.7498 10.8343 17.6404 10.889 17.4714 10.9387C17.3056 10.9851 17.1134 11.0266 16.8947 11.063C16.6792 11.0962 16.4688 11.126 16.2633 11.1525C16.0611 11.1757 15.897 11.1956 15.7711 11.2122C15.4662 11.252 15.1811 11.3166 14.916 11.4061C14.6541 11.4922 14.442 11.6232 14.2796 11.7988C14.1205 11.9712 14.041 12.2065 14.041 12.5048C14.041 12.9125 14.1918 13.2207 14.4934 13.4295C14.7983 13.635 15.1844 13.7377 15.6518 13.7377Z" fill="#4B5563"/>
+            <path d="M11.0766 4.43091V14.6127H9.90332V4.43091H11.0766Z" fill="#4B5563"/>
+            <path d="M3.14205 14.6127H0V4.43091H3.28125C4.26894 4.43091 5.11411 4.63474 5.81676 5.04241C6.51941 5.44677 7.058 6.02845 7.43253 6.78744C7.80705 7.54312 7.99432 8.44795 7.99432 9.50193C7.99432 10.5625 7.8054 11.4757 7.42756 12.2413C7.04972 13.0036 6.49953 13.5902 5.77699 14.0012C5.05445 14.4089 4.17614 14.6127 3.14205 14.6127ZM1.23295 13.519H3.0625C3.90436 13.519 4.60204 13.3566 5.15554 13.0318C5.70904 12.707 6.12169 12.2446 6.39347 11.6447C6.66525 11.0448 6.80114 10.3305 6.80114 9.50193C6.80114 8.67996 6.6669 7.97234 6.39844 7.37906C6.12997 6.78247 5.72893 6.32508 5.19531 6.0069C4.6617 5.68541 3.99716 5.52466 3.2017 5.52466H1.23295V13.519Z" fill="#4B5563"/>
+          </svg>
+        </div>
       </div>
     </div>
   );
@@ -1261,7 +1660,33 @@ function Sidebar({ active, setActive, theme, setTheme, profile }) {
       {/* Logo */}
       <div className="sidebar__header">
         <div className="sidebar__logo" onClick={() => setActive("overview")} style={{ cursor: "pointer" }}>
-          <img src="Logo.png" alt="Klub Medyka" />
+          <svg className="sidebar__logo-light" viewBox="0 0 178 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M27.125 0H3.875C1.7349 0 0 1.7349 0 3.875V27.125C0 29.2651 1.7349 31 3.875 31H27.125C29.2651 31 31 29.2651 31 27.125V3.875C31 1.7349 29.2651 0 27.125 0Z" fill="#0E0E10"/>
+            <path d="M15.6838 15.0354L22.8913 10.2498L19.8979 5.09602L8.10822 12.5554L8.13728 12.6038C8.13728 12.6038 8.1179 12.6038 8.10822 12.6038V18.5616C12.0801 18.5616 15.306 21.8651 15.306 25.9145H21.2638C21.2638 21.4291 19.0551 17.4573 15.6838 15.0451V15.0354Z" fill="#CEFF3E"/>
+            <path d="M170.654 23.3242C169.89 23.3242 169.201 23.1881 168.589 22.9159C167.982 22.6384 167.5 22.2301 167.144 21.691C166.794 21.1518 166.618 20.487 166.618 19.6966C166.618 19.0161 166.744 18.4534 166.995 18.0084C167.246 17.5635 167.589 17.2075 168.024 16.9406C168.458 16.6736 168.948 16.4721 169.492 16.336C170.042 16.1946 170.61 16.0925 171.196 16.0297C171.903 15.9564 172.476 15.891 172.915 15.8334C173.355 15.7706 173.674 15.6764 173.873 15.5508C174.078 15.4199 174.18 15.2184 174.18 14.9462V14.899C174.18 14.3075 174.004 13.8495 173.654 13.525C173.303 13.2004 172.798 13.0381 172.138 13.0381C171.442 13.0381 170.89 13.1899 170.481 13.4935C170.078 13.7972 169.806 14.1557 169.665 14.5693L167.011 14.1924C167.22 13.4595 167.566 12.8471 168.047 12.355C168.529 11.8577 169.118 11.4861 169.814 11.24C170.51 10.9888 171.28 10.8631 172.122 10.8631C172.703 10.8631 173.282 10.9312 173.858 11.0673C174.433 11.2034 174.96 11.4285 175.436 11.7426C175.912 12.0514 176.294 12.4728 176.582 13.0067C176.875 13.5407 177.022 14.2081 177.022 15.009V23.0808H174.29V21.424H174.195C174.023 21.759 173.779 22.0731 173.465 22.3662C173.156 22.6542 172.766 22.8871 172.295 23.0651C171.829 23.2378 171.282 23.3242 170.654 23.3242ZM171.392 21.2356C171.963 21.2356 172.457 21.123 172.876 20.8979C173.295 20.6676 173.617 20.364 173.842 19.9871C174.072 19.6102 174.187 19.1993 174.187 18.7544V17.3332C174.098 17.4064 173.947 17.4745 173.732 17.5373C173.523 17.6001 173.287 17.6551 173.025 17.7022C172.764 17.7493 172.505 17.7912 172.248 17.8278C171.992 17.8645 171.769 17.8959 171.581 17.922C171.157 17.9796 170.777 18.0738 170.442 18.2047C170.107 18.3356 169.843 18.5188 169.649 18.7544C169.455 18.9847 169.359 19.283 169.359 19.6495C169.359 20.1729 169.55 20.5682 169.932 20.8351C170.314 21.1021 170.801 21.2356 171.392 21.2356Z" fill="#0E0E10"/>
+            <path d="M157.555 19.2962L157.547 15.8649H158.002L162.336 11.0202H165.658L160.326 16.9563H159.737L157.555 19.2962ZM154.963 23.0808V7H157.806V23.0808H154.963ZM162.533 23.0808L158.607 17.5923L160.523 15.59L165.933 23.0808H162.533Z" fill="#0E0E10"/>
+            <path d="M144.359 27.6035C143.971 27.6035 143.613 27.5721 143.283 27.5093C142.959 27.4517 142.699 27.3836 142.506 27.3051L143.165 25.0909C143.579 25.2113 143.948 25.2689 144.272 25.2636C144.597 25.2584 144.882 25.1563 145.128 24.9574C145.38 24.7637 145.592 24.4392 145.764 23.9838L146.008 23.332L141.634 11.0202H144.649L147.429 20.1284H147.555L150.342 11.0202H153.365L148.536 24.5412C148.311 25.1799 148.013 25.7269 147.641 26.1823C147.269 26.6429 146.814 26.9937 146.275 27.2345C145.741 27.4805 145.102 27.6035 144.359 27.6035Z" fill="#0E0E10"/>
+            <path d="M133.509 23.2928C132.561 23.2928 131.713 23.0494 130.965 22.5626C130.216 22.0757 129.625 21.3691 129.19 20.4425C128.756 19.516 128.539 18.3906 128.539 17.0662C128.539 15.7261 128.758 14.5955 129.198 13.6742C129.643 12.7476 130.242 12.0488 130.996 11.5777C131.75 11.1013 132.59 10.8632 133.517 10.8632C134.223 10.8632 134.804 10.9836 135.26 11.2243C135.715 11.4599 136.076 11.7452 136.343 12.0802C136.61 12.41 136.817 12.7215 136.964 13.0146H137.081V7H139.932V23.0808H137.136V21.1806H136.964C136.817 21.4738 136.605 21.7852 136.328 22.115C136.05 22.4395 135.684 22.717 135.228 22.9473C134.773 23.1776 134.2 23.2928 133.509 23.2928ZM134.302 20.9608C134.904 20.9608 135.417 20.7985 135.841 20.4739C136.265 20.1442 136.587 19.6861 136.807 19.0999C137.027 18.5136 137.136 17.8305 137.136 17.0505C137.136 16.2705 137.027 15.5926 136.807 15.0168C136.592 14.441 136.273 13.9935 135.849 13.6742C135.43 13.3548 134.914 13.1952 134.302 13.1952C133.669 13.1952 133.14 13.3601 132.716 13.6899C132.292 14.0196 131.972 14.4751 131.758 15.0561C131.543 15.6371 131.436 16.3019 131.436 17.0505C131.436 17.8043 131.543 18.4769 131.758 19.0684C131.978 19.6547 132.3 20.118 132.724 20.4582C133.153 20.7933 133.679 20.9608 134.302 20.9608Z" fill="#0E0E10"/>
+            <path d="M121.634 23.3163C120.425 23.3163 119.381 23.0651 118.501 22.5625C117.627 22.0548 116.954 21.3376 116.483 20.4111C116.012 19.4793 115.777 18.3827 115.777 17.1211C115.777 15.8805 116.012 14.7917 116.483 13.8547C116.96 12.9125 117.624 12.1797 118.478 11.6562C119.331 11.1275 120.333 10.8631 121.485 10.8631C122.228 10.8631 122.93 10.9835 123.589 11.2243C124.254 11.4599 124.84 11.8263 125.348 12.3236C125.861 12.8209 126.264 13.4543 126.557 14.2238C126.851 14.988 126.997 15.8989 126.997 16.9563V17.8278H117.112V15.9119H124.272C124.267 15.3675 124.149 14.8833 123.919 14.4593C123.689 14.0301 123.367 13.6925 122.953 13.4464C122.545 13.2004 122.069 13.0774 121.524 13.0774C120.943 13.0774 120.433 13.2187 119.993 13.5014C119.553 13.7788 119.211 14.1453 118.965 14.6007C118.724 15.0508 118.601 15.5455 118.596 16.0847V17.7572C118.596 18.4586 118.724 19.0606 118.98 19.5631C119.237 20.0604 119.595 20.4425 120.056 20.7095C120.517 20.9712 121.056 21.1021 121.673 21.1021C122.087 21.1021 122.461 21.0445 122.796 20.9293C123.131 20.8089 123.422 20.6336 123.668 20.4033C123.914 20.1729 124.1 19.8876 124.225 19.5474L126.879 19.8458C126.712 20.5472 126.393 21.1597 125.921 21.6831C125.456 22.2014 124.859 22.6044 124.131 22.8923C123.404 23.175 122.571 23.3163 121.634 23.3163Z" fill="#0E0E10"/>
+            <path d="M96.7509 7H100.316L105.09 18.6523H105.278L110.052 7H113.617V23.0808H110.822V12.0331H110.672L106.228 23.0337H104.14L99.6953 12.0095H99.5461V23.0808H96.7509V7Z" fill="#0E0E10"/>
+            <path d="M78.0759 23.0808V7H80.9183V13.0146H81.0361C81.1827 12.7215 81.3895 12.41 81.6564 12.0802C81.9234 11.7452 82.2846 11.4599 82.74 11.2243C83.1954 10.9836 83.7764 10.8632 84.4831 10.8632C85.4149 10.8632 86.255 11.1013 87.0036 11.5777C87.7574 12.0488 88.3541 12.7476 88.7938 13.6742C89.2388 14.5955 89.4613 15.7261 89.4613 17.0662C89.4613 18.3906 89.244 19.516 88.8095 20.4425C88.3751 21.3691 87.7836 22.0757 87.035 22.5626C86.2864 23.0494 85.4384 23.2928 84.491 23.2928C83.8 23.2928 83.2268 23.1776 82.7714 22.9473C82.316 22.717 81.9496 22.4395 81.6721 22.115C81.3999 21.7852 81.1879 21.4738 81.0361 21.1806H80.8712V23.0808H78.0759ZM80.8634 17.0505C80.8634 17.8305 80.9733 18.5136 81.1932 19.0999C81.4182 19.6861 81.7402 20.1442 82.1589 20.4739C82.5829 20.7985 83.0959 20.9608 83.6979 20.9608C84.3261 20.9608 84.8522 20.7933 85.2762 20.4582C85.7002 20.118 86.0195 19.6547 86.2341 19.0684C86.454 18.4769 86.5639 17.8043 86.5639 17.0505C86.5639 16.3019 86.4566 15.6371 86.242 15.0561C86.0273 14.4751 85.708 14.0196 85.284 13.6899C84.86 13.3601 84.3313 13.1952 83.6979 13.1952C83.0907 13.1952 82.5751 13.3548 82.1511 13.6742C81.7271 13.9935 81.4052 14.441 81.1853 15.0168C80.9707 15.5926 80.8634 16.2705 80.8634 17.0505Z" fill="#0E0E10"/>
+            <path d="M72.5535 18.0084V11.0202H75.3959V23.0808H72.6399V20.9372H72.5143C72.2421 21.6125 71.7945 22.1647 71.1716 22.594C70.5539 23.0232 69.7922 23.2378 68.8867 23.2378C68.0962 23.2378 67.3974 23.0625 66.7902 22.7117C66.1882 22.3558 65.7171 21.8402 65.3768 21.1649C65.0366 20.4844 64.8665 19.6626 64.8665 18.6994V11.0202H67.7089V18.2597C67.7089 19.0239 67.9182 19.6312 68.337 20.0813C68.7558 20.5315 69.3054 20.7566 69.9859 20.7566C70.4047 20.7566 70.8104 20.6545 71.203 20.4504C71.5956 20.2462 71.9175 19.9426 72.1688 19.5396C72.4253 19.1313 72.5535 18.6209 72.5535 18.0084Z" fill="#0E0E10"/>
+            <path d="M62.3121 7V23.0808H59.4697V7H62.3121Z" fill="#0E0E10"/>
+            <path d="M45 23.0808V7H47.9131V14.3887H48.1094L54.3831 7H57.94L51.7213 14.2159L57.995 23.0808H54.493L49.6955 16.1868L47.9131 18.2911V23.0808H45Z" fill="#0E0E10"/>
+          </svg>
+          <svg className="sidebar__logo-dark" viewBox="0 0 178 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M27.125 0C29.2651 0 31 1.7349 31 3.875V27.125C31 29.2651 29.2651 31 27.125 31H3.875C1.7349 31 0 29.2651 0 27.125V3.875C0 1.7349 1.7349 0 3.875 0H27.125ZM8.1084 12.5557L8.1377 12.6035C8.1377 12.6035 8.11814 12.6035 8.1084 12.6035V18.5615C12.0801 18.5616 15.3055 21.8649 15.3057 25.9141H21.2637C21.2635 21.4289 19.0547 17.457 15.6836 15.0449V15.0352L22.8916 10.25L19.8975 5.0957L8.1084 12.5557Z" fill="#CEFF3E"/>
+            <path d="M170.654 23.3242C169.89 23.3242 169.201 23.1881 168.589 22.9159C167.982 22.6384 167.5 22.2301 167.144 21.691C166.794 21.1518 166.618 20.487 166.618 19.6966C166.618 19.0161 166.744 18.4534 166.995 18.0084C167.246 17.5635 167.589 17.2075 168.024 16.9406C168.458 16.6736 168.948 16.4721 169.492 16.336C170.042 16.1946 170.61 16.0925 171.196 16.0297C171.903 15.9564 172.476 15.891 172.915 15.8334C173.355 15.7706 173.674 15.6764 173.873 15.5508C174.078 15.4199 174.18 15.2184 174.18 14.9462V14.899C174.18 14.3075 174.004 13.8495 173.654 13.525C173.303 13.2004 172.798 13.0381 172.138 13.0381C171.442 13.0381 170.89 13.1899 170.481 13.4935C170.078 13.7972 169.806 14.1557 169.665 14.5693L167.011 14.1924C167.22 13.4595 167.566 12.8471 168.047 12.355C168.529 11.8577 169.118 11.4861 169.814 11.24C170.51 10.9888 171.28 10.8631 172.122 10.8631C172.703 10.8631 173.282 10.9312 173.858 11.0673C174.433 11.2034 174.96 11.4285 175.436 11.7426C175.912 12.0514 176.294 12.4728 176.582 13.0067C176.875 13.5407 177.022 14.2081 177.022 15.009V23.0808H174.29V21.424H174.195C174.023 21.759 173.779 22.0731 173.465 22.3662C173.156 22.6542 172.766 22.8871 172.295 23.0651C171.829 23.2378 171.282 23.3242 170.654 23.3242ZM171.392 21.2356C171.963 21.2356 172.457 21.123 172.876 20.8979C173.295 20.6676 173.617 20.364 173.842 19.9871C174.072 19.6102 174.187 19.1993 174.187 18.7544V17.3332C174.098 17.4064 173.947 17.4745 173.732 17.5373C173.523 17.6001 173.287 17.6551 173.025 17.7022C172.764 17.7493 172.505 17.7912 172.248 17.8278C171.992 17.8645 171.769 17.8959 171.581 17.922C171.157 17.9796 170.777 18.0738 170.442 18.2047C170.107 18.3356 169.843 18.5188 169.649 18.7544C169.455 18.9847 169.359 19.283 169.359 19.6495C169.359 20.1729 169.55 20.5682 169.932 20.8351C170.314 21.1021 170.801 21.2356 171.392 21.2356Z" fill="white"/>
+            <path d="M157.555 19.2962L157.547 15.8649H158.002L162.336 11.0202H165.658L160.326 16.9563H159.737L157.555 19.2962ZM154.963 23.0808V7H157.806V23.0808H154.963ZM162.533 23.0808L158.607 17.5923L160.523 15.59L165.933 23.0808H162.533Z" fill="white"/>
+            <path d="M144.359 27.6035C143.971 27.6035 143.613 27.5721 143.283 27.5093C142.959 27.4517 142.699 27.3836 142.506 27.3051L143.165 25.0909C143.579 25.2113 143.948 25.2689 144.272 25.2636C144.597 25.2584 144.882 25.1563 145.128 24.9574C145.38 24.7637 145.592 24.4392 145.764 23.9838L146.008 23.332L141.634 11.0202H144.649L147.429 20.1284H147.555L150.342 11.0202H153.365L148.536 24.5412C148.311 25.1799 148.013 25.7269 147.641 26.1823C147.269 26.6429 146.814 26.9937 146.275 27.2345C145.741 27.4805 145.102 27.6035 144.359 27.6035Z" fill="white"/>
+            <path d="M133.509 23.2928C132.561 23.2928 131.713 23.0494 130.965 22.5626C130.216 22.0757 129.625 21.3691 129.19 20.4425C128.756 19.516 128.539 18.3906 128.539 17.0662C128.539 15.7261 128.758 14.5955 129.198 13.6742C129.643 12.7476 130.242 12.0488 130.996 11.5777C131.75 11.1013 132.59 10.8632 133.517 10.8632C134.223 10.8632 134.804 10.9836 135.26 11.2243C135.715 11.4599 136.076 11.7452 136.343 12.0802C136.61 12.41 136.817 12.7215 136.964 13.0146H137.081V7H139.932V23.0808H137.136V21.1806H136.964C136.817 21.4738 136.605 21.7852 136.328 22.115C136.05 22.4395 135.684 22.717 135.228 22.9473C134.773 23.1776 134.2 23.2928 133.509 23.2928ZM134.302 20.9608C134.904 20.9608 135.417 20.7985 135.841 20.4739C136.265 20.1442 136.587 19.6861 136.807 19.0999C137.027 18.5136 137.136 17.8305 137.136 17.0505C137.136 16.2705 137.027 15.5926 136.807 15.0168C136.592 14.441 136.273 13.9935 135.849 13.6742C135.43 13.3548 134.914 13.1952 134.302 13.1952C133.669 13.1952 133.14 13.3601 132.716 13.6899C132.292 14.0196 131.972 14.4751 131.758 15.0561C131.543 15.6371 131.436 16.3019 131.436 17.0505C131.436 17.8043 131.543 18.4769 131.758 19.0684C131.978 19.6547 132.3 20.118 132.724 20.4582C133.153 20.7933 133.679 20.9608 134.302 20.9608Z" fill="white"/>
+            <path d="M121.634 23.3163C120.425 23.3163 119.381 23.0651 118.501 22.5625C117.627 22.0548 116.954 21.3376 116.483 20.4111C116.012 19.4793 115.777 18.3827 115.777 17.1211C115.777 15.8805 116.012 14.7917 116.483 13.8547C116.96 12.9125 117.625 12.1797 118.478 11.6562C119.331 11.1275 120.333 10.8631 121.485 10.8631C122.228 10.8631 122.93 10.9835 123.589 11.2243C124.254 11.4599 124.84 11.8263 125.348 12.3236C125.861 12.8209 126.264 13.4543 126.557 14.2238C126.851 14.988 126.997 15.8989 126.997 16.9563V17.8278H117.112V15.9119H124.273C124.267 15.3675 124.149 14.8833 123.919 14.4593C123.689 14.0301 123.367 13.6925 122.953 13.4464C122.545 13.2004 122.069 13.0774 121.524 13.0774C120.943 13.0774 120.433 13.2187 119.993 13.5014C119.553 13.7788 119.211 14.1453 118.965 14.6007C118.724 15.0508 118.601 15.5455 118.596 16.0847V17.7572C118.596 18.4586 118.724 19.0606 118.98 19.5631C119.237 20.0604 119.595 20.4425 120.056 20.7095C120.517 20.9712 121.056 21.1021 121.674 21.1021C122.087 21.1021 122.461 21.0445 122.796 20.9293C123.131 20.8089 123.422 20.6336 123.668 20.4033C123.914 20.1729 124.1 19.8876 124.225 19.5474L126.879 19.8458C126.712 20.5472 126.393 21.1597 125.921 21.6831C125.456 22.2014 124.859 22.6044 124.131 22.8923C123.404 23.175 122.571 23.3163 121.634 23.3163Z" fill="white"/>
+            <path d="M96.7509 7H100.316L105.09 18.6523H105.278L110.052 7H113.617V23.0808H110.822V12.0331H110.672L106.228 23.0337H104.14L99.6954 12.0095H99.5462V23.0808H96.7509V7Z" fill="white"/>
+            <path d="M78.076 23.0808V7H80.9184V13.0146H81.0361C81.1827 12.7215 81.3895 12.41 81.6564 12.0802C81.9234 11.7452 82.2846 11.4599 82.74 11.2243C83.1954 10.9836 83.7765 10.8632 84.4831 10.8632C85.4149 10.8632 86.2551 11.1013 87.0036 11.5777C87.7574 12.0488 88.3542 12.7476 88.7939 13.6742C89.2388 14.5955 89.4613 15.7261 89.4613 17.0662C89.4613 18.3906 89.244 19.516 88.8096 20.4425C88.3751 21.3691 87.7836 22.0757 87.035 22.5626C86.2865 23.0494 85.4385 23.2928 84.491 23.2928C83.8 23.2928 83.2268 23.1776 82.7714 22.9473C82.316 22.717 81.9496 22.4395 81.6721 22.115C81.3999 21.7852 81.1879 21.4738 81.0361 21.1806H80.8713V23.0808H78.076ZM80.8634 17.0505C80.8634 17.8305 80.9733 18.5136 81.1932 19.0999C81.4183 19.6861 81.7402 20.1442 82.159 20.4739C82.583 20.7985 83.096 20.9608 83.698 20.9608C84.3261 20.9608 84.8522 20.7933 85.2762 20.4582C85.7002 20.118 86.0195 19.6547 86.2341 19.0684C86.454 18.4769 86.5639 17.8043 86.5639 17.0505C86.5639 16.3019 86.4566 15.6371 86.242 15.0561C86.0274 14.4751 85.7081 14.0196 85.284 13.6899C84.86 13.3601 84.3313 13.1952 83.698 13.1952C83.0907 13.1952 82.5751 13.3548 82.1511 13.6742C81.7271 13.9935 81.4052 14.441 81.1853 15.0168C80.9707 15.5926 80.8634 16.2705 80.8634 17.0505Z" fill="white"/>
+            <path d="M72.5535 18.0084V11.0202H75.3959V23.0808H72.6399V20.9372H72.5143C72.2421 21.6125 71.7945 22.1647 71.1716 22.594C70.5539 23.0232 69.7922 23.2378 68.8867 23.2378C68.0962 23.2378 67.3974 23.0625 66.7902 22.7117C66.1882 22.3558 65.7171 21.8402 65.3768 21.1649C65.0366 20.4844 64.8665 19.6626 64.8665 18.6994V11.0202H67.7089V18.2597C67.7089 19.0239 67.9182 19.6312 68.337 20.0813C68.7558 20.5315 69.3054 20.7566 69.9859 20.7566C70.4047 20.7566 70.8104 20.6545 71.203 20.4504C71.5956 20.2462 71.9175 19.9426 72.1688 19.5396C72.4253 19.1313 72.5535 18.6209 72.5535 18.0084Z" fill="white"/>
+            <path d="M62.3121 7V23.0808H59.4697V7H62.3121Z" fill="white"/>
+            <path d="M45 23.0808V7H47.9131V14.3887H48.1094L54.3831 7H57.94L51.7213 14.2159L57.995 23.0808H54.493L49.6955 16.1868L47.9131 18.2911V23.0808H45Z" fill="white"/>
+          </svg>
         </div>
       </div>
 
@@ -1313,12 +1738,12 @@ function Sidebar({ active, setActive, theme, setTheme, profile }) {
 
 // ─── TOP BAR ──────────────────────────────────────────────────────────────────
 
-function TopBar({ active, setActive, cart, onCartClick }) {
+function TopBar({ active, setActive, cart, onCartClick, onNotifClick }) {
   const label = NAV_SECTIONS.flatMap(s => s.items).find(i => i.id === active)?.label || "";
   const cartCount = cart ? cart.reduce((s, i) => s + i.qty, 0) : 0;
   return (
     <header className="topbar">
-      <span className="topbar__title">{label}</span>
+      <span className="topbar__title"></span>
       <div className="topbar__actions">
         <button className="topbar__icon-btn" onClick={() => setActive("profile")} title="Profil">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -1326,7 +1751,7 @@ function TopBar({ active, setActive, cart, onCartClick }) {
             <path d="M24.6668 26V24.6667C24.6668 23.9594 24.3859 23.2811 23.8858 22.781C23.3857 22.281 22.7074 22 22.0002 22H18.0002C17.2929 22 16.6146 22.281 16.1145 22.781C15.6144 23.2811 15.3335 23.9594 15.3335 24.6667V26M22.6668 16.6667C22.6668 18.1394 21.4729 19.3333 20.0002 19.3333C18.5274 19.3333 17.3335 18.1394 17.3335 16.6667C17.3335 15.1939 18.5274 14 20.0002 14C21.4729 14 22.6668 15.1939 22.6668 16.6667Z" stroke="var(--color-fg)" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
-        <button className="topbar__icon-btn" title="Powiadomienia">
+        <button className="topbar__icon-btn" title="Powiadomienia" onClick={onNotifClick}>
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
             <rect width="40" height="40" rx="20" fill="var(--color-secondary)"/>
             <path d="M18.8667 26.0002C18.9783 26.2031 19.1423 26.3724 19.3417 26.4903C19.5411 26.6082 19.7684 26.6704 20 26.6704C20.2316 26.6704 20.459 26.6082 20.6584 26.4903C20.8577 26.3724 21.0218 26.2031 21.1334 26.0002M16 17.3335C16 16.2726 16.4214 15.2552 17.1716 14.5051C17.9217 13.7549 18.9391 13.3335 20 13.3335C21.0609 13.3335 22.0783 13.7549 22.8284 14.5051C23.5786 15.2552 24 16.2726 24 17.3335C24 22.0002 26 23.3335 26 23.3335H14C14 23.3335 16 22.0002 16 17.3335Z" stroke="var(--color-fg)" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1619,6 +2044,29 @@ function ProductDetail({ product: p, cat, defaultSelections, onBack, addToCart }
   const [activeImg, setActiveImg] = useState(0);
   const [priceMode, setPriceMode] = useState("business"); // "business" | "consumer"
   const [openFaq, setOpenFaq] = useState(null);
+  const [priceReady, setPriceReady] = useState(false);
+  const [contractMonths, setContractMonths] = useState(p.pricing?.[0]?.numberOfMonths || 12);
+  const [selectedServices, setSelectedServices] = useState(
+    () => (p.additionalServices || []).filter(s => s.included).map(s => s.id)
+  );
+  const [stickyVisible, setStickyVisible] = useState(false);
+  const priceBlockRef = useRef(null);
+
+  useEffect(() => {
+    setPriceReady(false);
+    setContractMonths(p.pricing?.[0]?.numberOfMonths || 12);
+    setSelectedServices((p.additionalServices || []).filter(s => s.included).map(s => s.id));
+    const t = setTimeout(() => setPriceReady(true), 1800);
+    return () => clearTimeout(t);
+  }, [p.id]);
+
+  useEffect(() => {
+    const el = priceBlockRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([entry]) => setStickyVisible(!entry.isIntersecting), { threshold: 0, rootMargin: '0px 0px 100px 0px' });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const selectVariant = (group, label) => {
     setVariantSel(prev => ({ ...prev, [group]: label }));
@@ -1628,7 +2076,7 @@ function ProductDetail({ product: p, cat, defaultSelections, onBack, addToCart }
   const fmtMonthly = (n) => n.toFixed(2).replace(".", ",") + " zł";
   const fmtDiff = (n) => n > 0 ? ("+" + fmtMonthly(n)) : n < 0 ? ("−" + fmtMonthly(Math.abs(n))) : null;
 
-  // ─── Computed monthly price from variants ───
+  // ─── Computed monthly price from variants + pricing ───
   let totalDiff = 0;
   if (p.variants) {
     p.variants.forEach(v => {
@@ -1637,9 +2085,32 @@ function ProductDetail({ product: p, cat, defaultSelections, onBack, addToCart }
       if (opt) totalDiff += (opt.diff || 0);
     });
   }
-  const computedNet = (p.monthlyNet || 0) + totalDiff;
-  const computedGross = (p.monthlyGross || 0) + Math.round(totalDiff * 1.23 * 100) / 100;
-  const contractMonths = p.contractMonths || 12;
+  // Base price from pricing[] (RentUp) or fallback to monthlyNet
+  const pricingEntry = p.pricing?.find(pr => pr.numberOfMonths === contractMonths);
+  const baseNet = pricingEntry ? pricingEntry.monthPrice : (p.monthlyNet || 0);
+  const vatRate = p.vat || 23;
+  const computedNet = baseNet + totalDiff;
+  const computedGross = Math.round(computedNet * (1 + vatRate / 100) * 100) / 100;
+
+  // ─── Additional services cost ───
+  const servicesNet = (p.additionalServices || [])
+    .filter(s => selectedServices.includes(s.id))
+    .reduce((sum, s) => sum + s.b2bAmount, 0);
+  const servicesGross = (p.additionalServices || [])
+    .filter(s => selectedServices.includes(s.id))
+    .reduce((sum, s) => sum + s.b2cAmount, 0);
+  const totalNet = computedNet + servicesNet;
+  const totalGross = computedGross + Math.round(servicesGross * 100) / 100;
+
+  // ─── clientProductId from selected variant ───
+  let clientProductId = p.id;
+  if (p.variants) {
+    for (const v of p.variants) {
+      const sel = variantSel[v.group];
+      const opt = v.options.find(o => o.label === sel);
+      if (opt?.clientProductId) { clientProductId = opt.clientProductId; break; }
+    }
+  }
 
   // ─── Color from variant ───
   let imageBg = cat.color;
@@ -1677,7 +2148,7 @@ function ProductDetail({ product: p, cat, defaultSelections, onBack, addToCart }
             const current = imgs[activeImg] || imgs[0];
             return (
               <>
-                <div className="pdp__image-main" style={{ background: current.url ? "var(--color-secondary)" : imageBg, transition: "background 0.3s ease" }}>
+                <div className="pdp__image-main" style={{ background: current.url ? "#fff" : imageBg, transition: "background 0.3s ease" }}>
                   {current.url
                     ? <img src={current.url} alt={current.label} className="pdp__image-photo" />
                     : <span>{current.emoji}</span>
@@ -1729,86 +2200,186 @@ function ProductDetail({ product: p, cat, defaultSelections, onBack, addToCart }
           <div className="pdp__meta-row">
             <span className="pdp__availability"><span className="pdp__availability-dot" /> Dostępny w magazynie</span>
             <span className="pdp__tag pdp__tag--lime">Subskrypcja {contractMonths} mies.</span>
+            {/* {p.sellPrice && <span className="pdp__tag">{p.sellPrice.toLocaleString("pl-PL")} zł kat.</span>} */}
           </div>
           <p className="pdp__desc-short">{subtitle}</p>
 
-          {/* Variant configurator */}
-          {p.variants && p.variants.length > 0 && (
-            <div className="pdp__configurator">
-              <div className="pdp__configurator-title">Skonfiguruj:</div>
-              {p.variants.map(v => (
-                <div key={v.group} className="pdp__variant-group">
-                  <div className="pdp__variant-label">{v.group}:</div>
-                  <div className="pdp__variant-options">
-                    {v.options.map(opt => {
-                      const diffLabel = fmtDiff(opt.diff || 0);
-                      return (
-                        <button key={opt.label}
-                          className={`pdp__variant-btn${variantSel[v.group] === opt.label ? " pdp__variant-btn--active" : ""}`}
-                          onClick={() => selectVariant(v.group, opt.label)}>
-                          {v.isColor && opt.colorHex && (
-                            <span className="pdp__variant-color-dot" style={{ background: opt.colorHex }} />
-                          )}
-                          <span className="pdp__variant-btn-label">{opt.label}</span>
-                          {diffLabel && <span className="pdp__variant-btn-diff">{diffLabel}</span>}
-                        </button>
-                      );
-                    })}
+          {/* Price block — subscription (moved above configurator) */}
+          <div className="pdp__price-block" ref={priceBlockRef}>
+            {priceReady && (
+              <motion.div className="pdp__price-header" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+                <PeriodTooltip text={"Cena wynegocjowana z partnerem RentUp\nspecjalnie dla pracowników ochrony zdrowia\nw ramach programu Klub Medyka."}>
+                  <div className="pdp__club-badge">
+                    <svg className="pdp__club-badge-icon" width="18" height="18" viewBox="0 0 23 23" fill="none">
+                      <path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/>
+                      <path className="pdp__sygnet-draw" d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" stroke="#CEFF3E" strokeWidth="0.5"/>
+                    </svg>
+                    <span>Cena dla klubowiczów</span>
                   </div>
+                </PeriodTooltip>
+                <div className="pdp__price-mode-toggle">
+                  <button className={`pdp__price-mode-btn${priceMode === "business" ? " pdp__price-mode-btn--active" : ""}`} onClick={() => setPriceMode("business")}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                    Na firmę
+                  </button>
+                  <button className={`pdp__price-mode-btn${priceMode === "consumer" ? " pdp__price-mode-btn--active" : ""}`} onClick={() => setPriceMode("consumer")}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    Dla Ciebie
+                  </button>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Price block — subscription */}
-          <div className="pdp__price-block">
-            <div className="pdp__price-header">
-              <div className="pdp__club-badge">
-                <svg className="pdp__club-badge-icon" width="18" height="18" viewBox="0 0 23 23" fill="none">
+              </motion.div>
+            )}
+            {!priceReady ? (
+              <div className="pdp__price-loader">
+                <svg width="20" height="20" viewBox="0 0 23 23" fill="none" style={{ flexShrink: 0 }}>
                   <path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/>
                   <path className="pdp__sygnet-draw" d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" stroke="#CEFF3E" strokeWidth="0.5"/>
                 </svg>
-                <span>Cena dla klubowiczów</span>
-              </div>
-              <div className="pdp__price-mode-toggle">
-                <button className={`pdp__price-mode-btn${priceMode === "business" ? " pdp__price-mode-btn--active" : ""}`} onClick={() => setPriceMode("business")}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-                  Na firmę
-                </button>
-                <button className={`pdp__price-mode-btn${priceMode === "consumer" ? " pdp__price-mode-btn--active" : ""}`} onClick={() => setPriceMode("consumer")}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  Dla Ciebie
-                </button>
-              </div>
-            </div>
-            {priceMode === "business" ? (
-              <div className="pdp__price-row" style={{ flexDirection: "column", gap: 2 }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                  <span className="pdp__price">{fmtMonthly(computedNet)}</span>
-                  <span className="text-sm text-muted">netto / miesiąc</span>
-                </div>
-                <span className="text-sm text-muted">{fmtMonthly(computedGross)} brutto z VAT</span>
+                <TextShimmerWave className="pdp__price-shimmer" duration={1.2} spread={1.5}>Ładuję zniżkę</TextShimmerWave>
               </div>
             ) : (
-              <div className="pdp__price-row" style={{ flexDirection: "column", gap: 2 }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                  <span className="pdp__price">{fmtMonthly(computedGross)}</span>
-                  <span className="text-sm text-muted">brutto / miesiąc</span>
-                </div>
-                <span className="text-sm text-muted">w tym {fmtMonthly(computedNet)} netto + VAT</span>
-              </div>
+              <>
+                {priceMode === "business" ? (
+                  <div className="pdp__price-row" style={{ flexDirection: "column", gap: 2 }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                      <span className="pdp__price"><SlidingNumber value={totalNet} suffix=" zł" /></span>
+                      <motion.span className="text-sm text-muted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.4 }}>netto / miesiąc</motion.span>
+                    </div>
+                    <motion.span className="text-sm text-muted" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.4 }}><SlidingNumber value={totalGross} suffix=" zł" /> brutto z VAT</motion.span>
+                  </div>
+                ) : (
+                  <div className="pdp__price-row" style={{ flexDirection: "column", gap: 2 }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                      <span className="pdp__price"><SlidingNumber value={totalGross} suffix=" zł" /></span>
+                      <motion.span className="text-sm text-muted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.4 }}>brutto / miesiąc</motion.span>
+                    </div>
+                    <motion.span className="text-sm text-muted" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.4 }}>w tym <SlidingNumber value={totalNet} suffix=" zł" /> netto + VAT</motion.span>
+                  </div>
+                )}
+              </>
             )}
-            <div className="pdp__safe-up-badge">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Ochrona Safe Up w cenie
-            </div>
           </div>
+
+          {/* Additional services (always visible — affects price) */}
+          {p.additionalServices && p.additionalServices.length > 0 && (
+            <div className="pdp__services">
+              <div className="pdp__services-label">Usługi dodatkowe:</div>
+              {p.additionalServices.map(svc => {
+                const isChecked = selectedServices.includes(svc.id);
+                const tooltipText = svc.tooltip || SERVICE_TOOLTIPS[svc.serviceType] || svc.description;
+                return (
+                  <label key={svc.id} className={`pdp__service-row${svc.included ? " pdp__service-row--included" : ""}${isChecked ? " pdp__service-row--checked" : ""}`}>
+                    {!svc.included && <BorderTrail size={80} transition={{ repeat: Infinity, duration: isChecked ? 4 : 6, ease: 'linear' }} style={{ background: isChecked ? 'rgb(206, 255, 62)' : 'rgba(206, 255, 62, 0.3)' }} />}
+                    {svc.included ? (
+                      <span className="pdp__service-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#18181B" stroke="#18181B" strokeWidth="1.5"/>
+                          <path d="M9 12l2 2 4-4" stroke="#CEFF3E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                    ) : (
+                      <input type="checkbox" checked={isChecked}
+                        onChange={() => {
+                          setSelectedServices(prev =>
+                            prev.includes(svc.id) ? prev.filter(id => id !== svc.id) : [...prev, svc.id]
+                          );
+                        }}
+                      />
+                    )}
+                    <div className="pdp__service-info">
+                      <span className="pdp__service-name">
+                        {svc.name}
+                        <ServiceTooltip text={tooltipText} />
+                      </span>
+                      <span className="pdp__service-desc">
+                        {!svc.included ? (() => {
+                          const lines = tooltipText.split('\n').map(l => l.replace(/^[•]\s*/, '').trim()).filter(Boolean);
+                          return lines.length > 1
+                            ? <TextLoop interval={2.5} transition={{ duration: 0.25 }}>{lines.map((l, i) => <span key={i}>{l}</span>)}</TextLoop>
+                            : svc.description;
+                        })() : svc.description}
+                      </span>
+                    </div>
+                    <span className="pdp__service-price">
+                      {svc.included ? "w cenie" : `+${svc.b2bAmount.toFixed(2).replace(".", ",")} zł/mies.`}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Collapsible configurator (variants + period) */}
+          {(p.variants?.length > 0 || (p.pricing?.length > 1)) && (
+            <details className="pdp__config-details">
+              <summary className="pdp__config-summary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <span>Skonfiguruj: <span className="pdp__config-summary-sel">{subtitle} · {contractMonths} mies.</span></span>
+                <svg className="pdp__config-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </summary>
+              <div className="pdp__config-body">
+                {/* Variant configurator */}
+                {p.variants && p.variants.length > 0 && (
+                  <div className="pdp__configurator">
+                    {p.variants.map(v => (
+                      <div key={v.group} className="pdp__variant-group">
+                        <div className="pdp__variant-label">{v.group}:</div>
+                        <div className="pdp__variant-options">
+                          {v.options.map(opt => {
+                            const diffLabel = fmtDiff(opt.diff || 0);
+                            return (
+                              <button key={opt.label}
+                                className={`pdp__variant-btn${variantSel[v.group] === opt.label ? " pdp__variant-btn--active" : ""}`}
+                                onClick={() => selectVariant(v.group, opt.label)}>
+                                {v.isColor && opt.colorHex && (
+                                  <span className="pdp__variant-color-dot" style={{ background: opt.colorHex }} />
+                                )}
+                                <span className="pdp__variant-btn-label">{opt.label}</span>
+                                {diffLabel && <span className="pdp__variant-btn-diff">{diffLabel}</span>}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Contract period selector */}
+                {p.pricing && p.pricing.length > 1 && (
+                  <div className="pdp__period-selector">
+                    <div className="pdp__period-label">Okres umowy:</div>
+                    <div className="pdp__period-options">
+                      {p.pricing.map(pr => {
+                        const totalCost = (pr.monthPrice * pr.numberOfMonths).toFixed(0);
+                        const hints = {
+                          12: `Rata: ${pr.monthPrice.toFixed(2).replace(".",",")} zł netto/mies.\nŁączny koszt: ${totalCost} zł netto\nNajwiększa elastyczność\nWymiana sprzętu po 6 mies.`,
+                          24: `Rata: ${pr.monthPrice.toFixed(2).replace(".",",")} zł netto/mies.\nŁączny koszt: ${totalCost} zł netto\nNajlepszy stosunek ceny do elastyczności\nWymiana sprzętu po 6 mies.`,
+                          36: `Rata: ${pr.monthPrice.toFixed(2).replace(".",",")} zł netto/mies.\nŁączny koszt: ${totalCost} zł netto\nNajniższa rata miesięczna\nWymiana sprzętu po 6 mies.`,
+                        };
+                        const tooltip = hints[pr.numberOfMonths] || `Rata: ${pr.monthPrice.toFixed(2).replace(".",",")} zł netto/mies.\nŁączny koszt: ${totalCost} zł netto`;
+                        return (
+                          <PeriodTooltip key={pr.numberOfMonths} text={tooltip}>
+                            <button
+                              className={`pdp__period-btn${contractMonths === pr.numberOfMonths ? " pdp__period-btn--active" : ""}`}
+                              onClick={() => setContractMonths(pr.numberOfMonths)}>
+                              {pr.numberOfMonths} mies.
+                            </button>
+                          </PeriodTooltip>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </details>
+          )}
 
           {/* CTA buttons */}
           <div className="pdp__actions">
-            <button className="btn btn--accent pdp__btn-primary" onClick={() => addToCart && addToCart(p, { computedNet, computedGross, selections: variantSel })}>
+            <button className="btn btn--accent pdp__btn-primary" onClick={() => addToCart && addToCart(p, { computedNet: totalNet, computedGross: totalGross, selections: variantSel, clientProductId, contractMonths, selectedServices })}>
               <svg width="20" height="20" viewBox="0 0 16 16" fill="none" style={{marginRight:8}}><path d="M1.36646 1.3667H2.69979L4.47312 9.6467C4.53817 9.94994 4.7069 10.221 4.95026 10.4133C5.19362 10.6055 5.49639 10.7069 5.80646 10.7H12.3265C12.6299 10.6995 12.9241 10.5956 13.1605 10.4053C13.3968 10.215 13.5612 9.94972 13.6265 9.65337L14.7265 4.70003H3.41312M5.99992 14C5.99992 14.3682 5.70144 14.6667 5.33325 14.6667C4.96506 14.6667 4.66659 14.3682 4.66659 14C4.66659 13.6318 4.96506 13.3333 5.33325 13.3333C5.70144 13.3333 5.99992 13.6318 5.99992 14ZM13.3333 14C13.3333 14.3682 13.0348 14.6667 12.6666 14.6667C12.2984 14.6667 11.9999 14.3682 11.9999 14C11.9999 13.6318 12.2984 13.3333 12.6666 13.3333C13.0348 13.3333 13.3333 13.6318 13.3333 14Z" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Dodaj do koszyka — {fmtMonthly(computedNet)}/mies.
+              Dodaj do koszyka — <SlidingNumber value={priceMode === "business" ? totalNet : totalGross} suffix=" zł/mies." />
             </button>
           </div>
 
@@ -1900,6 +2471,53 @@ function ProductDetail({ product: p, cat, defaultSelections, onBack, addToCart }
           </div>
         ))}
       </div>
+
+      {/* Sticky bottom price bar */}
+      {stickyVisible && (
+        <motion.div className="pdp__sticky-bar" initial={{ y: 100 }} animate={{ y: 0 }} transition={{ type: 'spring', stiffness: 300, damping: 28 }}>
+          <div className="pdp__sticky-bar-inner">
+            <div className="pdp__sticky-bar-left">
+              {!priceReady ? (
+                <div className="pdp__sticky-bar-loader">
+                  <svg width="18" height="18" viewBox="0 0 23 23" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/>
+                    <path className="pdp__sygnet-draw" d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" stroke="#CEFF3E" strokeWidth="0.5"/>
+                  </svg>
+                  <TextShimmerWave className="pdp__price-shimmer" duration={1.2} spread={1.5}>Ładuję zniżkę klubową</TextShimmerWave>
+                </div>
+              ) : (
+                <>
+                  <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }}>
+                    <PeriodTooltip text={"Cena wynegocjowana z partnerem RentUp\nspecjalnie dla pracowników ochrony zdrowia\nw ramach programu Klub Medyka."}>
+                      <div className="pdp__sticky-bar-badge">
+                        <svg width="16" height="16" viewBox="0 0 23 23" fill="none">
+                          <path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/>
+                          <path d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" fill="#CEFF3E"/>
+                        </svg>
+                        <span>Cena klubowa</span>
+                      </div>
+                    </PeriodTooltip>
+                  </motion.div>
+                  <div className="pdp__sticky-bar-price">
+                    <TextEffect className="pdp__sticky-bar-price-text" per="char" preset="fade-in-blur" key={`sticky-${totalNet}-${totalGross}-${priceMode}`}>
+                      {fmtMonthly(priceMode === "business" ? totalNet : totalGross)}
+                    </TextEffect>
+                    <motion.span className="pdp__sticky-bar-period" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.3 }}>/{priceMode === "business" ? "netto" : "brutto"} mies.</motion.span>
+                  </div>
+                </>
+              )}
+            </div>
+            {priceReady && (
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6, duration: 0.3 }}>
+                <button className="btn btn--accent pdp__sticky-bar-cta" onClick={() => addToCart && addToCart(p, { computedNet: totalNet, computedGross: totalGross, selections: variantSel, clientProductId, contractMonths, selectedServices })}>
+                  <svg width="18" height="18" viewBox="0 0 16 16" fill="none" style={{marginRight:6}}><path d="M1.36646 1.3667H2.69979L4.47312 9.6467C4.53817 9.94994 4.7069 10.221 4.95026 10.4133C5.19362 10.6055 5.49639 10.7069 5.80646 10.7H12.3265C12.6299 10.6995 12.9241 10.5956 13.1605 10.4053C13.3968 10.215 13.5612 9.94972 13.6265 9.65337L14.7265 4.70003H3.41312M5.99992 14C5.99992 14.3682 5.70144 14.6667 5.33325 14.6667C4.96506 14.6667 4.66659 14.3682 4.66659 14C4.66659 13.6318 4.96506 13.3333 5.33325 13.3333C5.70144 13.3333 5.99992 13.6318 5.99992 14ZM13.3333 14C13.3333 14.3682 13.0348 14.6667 12.6666 14.6667C12.2984 14.6667 11.9999 14.3682 11.9999 14C11.9999 13.6318 12.2984 13.3333 12.6666 13.3333C13.0348 13.3333 13.3333 13.6318 13.3333 14Z" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Dodaj do koszyka
+                </button>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -4598,10 +5216,89 @@ function AdvisorsView() {
   );
 }
 
+// ─── NOTIFICATIONS DRAWER ─────────────────────────────────────────────────────
+
+function NotifIcon() {
+  const [showBell, setShowBell] = useState(false);
+  useEffect(() => {
+    const timer = setInterval(() => setShowBell(v => !v), 1800);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div style={{ width: 64, height: 64, position: 'relative', marginBottom: 20 }}>
+      <svg width="64" height="64" viewBox="0 0 23 23" fill="none" style={{ display: 'block' }}>
+        <path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/>
+      </svg>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <AnimatePresence mode="wait">
+          {showBell ? (
+            <motion.svg key="bell" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              initial={{ opacity: 0, scale: 0.4, rotate: -30 }}
+              animate={{ opacity: 1, scale: 1, rotate: [0, -15, 15, -8, 0] }}
+              exit={{ opacity: 0, scale: 0.4, rotate: 30 }}
+              transition={{ duration: 0.25, rotate: { delay: 0.2, duration: 0.5 } }}>
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#CEFF3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M13.73 21a2 2 0 01-3.46 0" stroke="#CEFF3E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </motion.svg>
+          ) : (
+            <motion.svg key="sygnet" width="44" height="44" viewBox="0 0 23 23" fill="none"
+              initial={{ opacity: 0, scale: 0.4, rotate: 30 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.4, rotate: -30 }}
+              transition={{ duration: 0.25 }}>
+              <path d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" fill="#CEFF3E"/>
+            </motion.svg>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function NotificationsDrawer({ onClose, profile }) {
+  const [closing, setClosing] = useState(false);
+  const handleClose = () => { setClosing(true); setTimeout(onClose, 250); };
+  const firstName = profile?.firstName || "Użytkowniku";
+
+  return (
+    <React.Fragment>
+      <div className={`drawer-overlay${closing ? " drawer-overlay--closing" : ""}`} onClick={handleClose}></div>
+      <div className={`drawer notif-drawer${closing ? " drawer--closing" : ""}`}>
+        <div className="drawer__header">
+          <div className="drawer__header-left">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span className="drawer__title">Powiadomienia</span>
+          </div>
+          <button className="drawer__close" onClick={handleClose}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div className="drawer__body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 24px', flex: 1 }}>
+          <NotifIcon />
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-fg)', marginBottom: 8 }}>
+            Cześć{firstName ? `, ${firstName}` : ""}!
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+            style={{ fontSize: 14, color: 'var(--color-muted)', lineHeight: 1.6, maxWidth: 280 }}>
+            Wkrótce będziemy informować Cię tutaj o nowych zniżkach, statusie zamówień i ofertach dopasowanych do Twojego profilu.
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+            style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 10, border: '1px solid var(--color-border)', fontSize: 13, color: 'var(--color-muted)' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Bądź na bieżąco — zostaw powiadomienia włączone
+          </motion.div>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+}
+
 // ─── CART DRAWER ──────────────────────────────────────────────────────────────
 
-function CartDrawer({ cart, onClose, removeFromCart, updateQty }) {
+function CartDrawer({ cart, onClose, removeFromCart, updateQty, profile, priceMode, onProductClick, onGoToShop }) {
   const [closing, setClosing] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const fmtMonthly = (n) => n.toFixed(2).replace(".", ",") + " zł";
   const fmtPrice = (n) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " zł";
   const subItems = cart.filter(i => !i.isOneTime);
@@ -4635,11 +5332,61 @@ function CartDrawer({ cart, onClose, removeFromCart, updateQty }) {
         <div className="drawer__content">
           {cart.length === 0 ? (
             <div className="cart-empty">
-              <div className="cart-empty__icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#E4E4E7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-              </div>
-              <div className="cart-empty__title">Koszyk jest pusty</div>
-              <div className="cart-empty__desc">Dodaj produkty z zakładki Zakupy</div>
+              <motion.div className="cart-empty__sygnet"
+                animate={{ y: [0, -10, 0], rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+                <svg width="56" height="56" viewBox="0 0 23 23" fill="none">
+                  <path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/>
+                  <path d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" fill="#CEFF3E"/>
+                </svg>
+              </motion.div>
+              <motion.div className="cart-empty__title"
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                Koszyk jest pusty
+              </motion.div>
+              <motion.div className="cart-empty__desc"
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+                Dodaj produkty z zakładki Zakupy
+              </motion.div>
+              {(() => {
+                const roleRecs = {
+                  intern:     ["iphone15", "ipad", "macbook"],
+                  resident:   ["macbook-air-m4", "iphone17pro", "garmin-fenix8"],
+                  specialist: ["macbook-pro-m4", "iphone17promax", "ipad-air-m3"],
+                  senior:     ["macbook-pro-16-m4pro", "iphone17promax", "dell-u2723qe"],
+                };
+                const recIds = roleRecs[profile?.role] || ["iphone15", "macbook-air-m4", "garmin-fenix8"];
+                const allItems = PURCHASE_CATALOG.flatMap(cat => (cat.items || []).map(item => ({ item, cat })));
+                const recs = recIds.map(id => allItems.find(x => x.item.id === id)).filter(Boolean);
+                if (recs.length === 0) return null;
+                return (
+                  <motion.div className="cart-empty__recs"
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+                    <div className="cart-empty__recs-title">Polecane dla Ciebie</div>
+                    <div className="cart-empty__recs-list">
+                      {recs.map(({ item, cat }, i) => (
+                        <motion.button key={item.id} className="cart-empty__rec-card"
+                          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.7 + i * 0.1 }}
+                          onClick={() => onProductClick && onProductClick(item, cat)}>
+                          <div className="cart-empty__rec-emoji">{item.emoji}</div>
+                          <div className="cart-empty__rec-info">
+                            <div className="cart-empty__rec-name">{item.brand} {item.model}</div>
+                            <div className="cart-empty__rec-price">od {item.monthlyNet.toFixed(2).replace(".", ",")} zł/mies.</div>
+                          </div>
+                          <svg className="cart-empty__rec-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })()}
+              <motion.button className="cart-empty__shop-btn"
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
+                onClick={() => onGoToShop && onGoToShop()}>
+                Przeglądaj cały sklep
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </motion.button>
             </div>
           ) : (
             <React.Fragment>
@@ -4658,6 +5405,17 @@ function CartDrawer({ cart, onClose, removeFromCart, updateQty }) {
                       {item.variant && item.variant.selections && (
                         <div className="cart-item__variant">
                           {Object.values(item.variant.selections).join(" · ")}
+                        </div>
+                      )}
+                      {item.variant?.contractMonths && (
+                        <div className="cart-item__variant">{item.variant.contractMonths} mies.</div>
+                      )}
+                      {item.variant?.selectedServices?.length > 0 && (
+                        <div className="cart-item__services">
+                          {(item.product.additionalServices || [])
+                            .filter(s => item.variant.selectedServices.includes(s.id))
+                            .map(s => <span key={s.id} className="cart-item__service-tag">{s.name}</span>)
+                          }
                         </div>
                       )}
                       <div className="cart-item__price-line">
@@ -4718,11 +5476,15 @@ function CartDrawer({ cart, onClose, removeFromCart, updateQty }) {
                 )}
                 {subItems.length > 0 && (
                   <div className="cart-savings">
-                    <svg width="18" height="18" viewBox="0 0 23 23" fill="none"><path d="M19.9652 0H2.85217C1.27696 0 0 1.27696 0 2.85217V19.9652C0 21.5404 1.27696 22.8173 2.85217 22.8173H19.9652C21.5404 22.8173 22.8173 21.5404 22.8173 19.9652V2.85217C22.8173 1.27696 21.5404 0 19.9652 0Z" fill="#18181B"/><path d="M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z" fill="#CEFF3E"/></svg>
-                    <span>Ochrona Safe Up w cenie</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#18181B" stroke="#18181B" strokeWidth="1.5"/>
+                      <path d="M9 12l2 2 4-4" stroke="#CEFF3E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span>Safe Up</span>
+                    <span className="cart-savings__price">w cenie</span>
                   </div>
                 )}
-                <button className="cart-checkout-btn">
+                <button className="cart-checkout-btn" onClick={() => setShowCheckout(true)}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                   Przejdź do płatności
                 </button>
@@ -4732,7 +5494,7 @@ function CartDrawer({ cart, onClose, removeFromCart, updateQty }) {
 
                 {subItems.length > 0 && (
                   <div className="cart-financing">
-                    <div className="cart-financing__note">Umowa na 12 mies. · Comiesięczna faktura VAT · Wymiana sprzętu po 6 mies.</div>
+                    <div className="cart-financing__note">Comiesięczna faktura VAT · Wymiana sprzętu po 6 mies. · Ochrona Safe Up w cenie</div>
                   </div>
                 )}
               </div>
@@ -4740,7 +5502,108 @@ function CartDrawer({ cart, onClose, removeFromCart, updateQty }) {
           )}
         </div>
       </div>
+
+      {/* Checkout summary modal */}
+      {showCheckout && <CheckoutModal cart={cart} totalNet={totalNet} totalGross={totalGross} profile={profile} priceMode={priceMode} onClose={() => setShowCheckout(false)} />}
     </React.Fragment>
+  );
+}
+
+function CheckoutModal({ cart, totalNet, totalGross, profile, priceMode, onClose }) {
+  const fmtMonthly = (n) => n.toFixed(2).replace(".", ",") + " zł";
+
+  // Build RentUp ClientOrder payload
+  const orderPayload = {
+    quantity: cart.reduce((s, i) => s + i.qty, 0),
+    sumOfOrder: Math.round(totalGross * 100) / 100,
+    returnUrl: window.location.href,
+    b2c: priceMode === "consumer",
+    clientOrderId: "KM-" + Date.now(),
+    client: {
+      email: profile?.email || "lekarz@example.com",
+      nip: profile?.nip || null,
+    },
+    productOrders: cart.filter(i => !i.isOneTime).map(item => ({
+      clientProductId: item.variant?.clientProductId || item.product.id,
+      quantity: item.qty,
+      sellPrice: item.product.sellPrice || 0,
+    })),
+    additionalServices: cart.filter(i => !i.isOneTime).flatMap(item =>
+      (item.variant?.selectedServices || []).map(svcId => {
+        const svc = (item.product.additionalServices || []).find(s => s.id === svcId);
+        return svc ? { id: svc.id, name: svc.name, serviceType: svc.serviceType } : null;
+      }).filter(Boolean)
+    ),
+  };
+
+  const handleRedirect = () => {
+    console.log("RentUp Order Payload:", JSON.stringify(orderPayload, null, 2));
+    alert("Docelowo: POST /api/v2/order → redirect do RentUp.\n\nPayload został wypisany w konsoli.");
+  };
+
+  return (
+    <div className="checkout-overlay" onClick={onClose}>
+      <div className="checkout-modal" onClick={e => e.stopPropagation()}>
+        <div className="checkout-modal__header">
+          <h2 className="checkout-modal__title">Podsumowanie zamówienia</h2>
+          <button className="drawer__close" onClick={onClose}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div className="checkout-modal__body">
+          <div className="checkout-modal__section">
+            <h3 className="checkout-modal__section-title">Produkty</h3>
+            {cart.filter(i => !i.isOneTime).map(item => (
+              <div key={item.key} className="checkout-modal__item">
+                <div className="checkout-modal__item-name">
+                  {item.product.brand} {item.product.model} {item.variant?.selections ? "· " + Object.values(item.variant.selections).join(" · ") : ""}
+                  {item.qty > 1 && <span> ×{item.qty}</span>}
+                </div>
+                <div className="checkout-modal__item-price">{fmtMonthly(item.priceNet)}/mies.</div>
+                {item.variant?.contractMonths && (
+                  <div className="checkout-modal__item-detail">Okres: {item.variant.contractMonths} mies.</div>
+                )}
+                {item.variant?.selectedServices?.length > 0 && (
+                  <div className="checkout-modal__item-services">
+                    {(item.product.additionalServices || [])
+                      .filter(s => item.variant.selectedServices.includes(s.id))
+                      .map(s => (
+                        <div key={s.id} className="checkout-modal__item-detail">+ {s.name} ({fmtMonthly(s.b2bAmount)})</div>
+                      ))
+                    }
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="checkout-modal__totals">
+            <div className="checkout-modal__total-row">
+              <span>Razem netto/mies.</span>
+              <span className="font-semibold">{fmtMonthly(totalNet)}</span>
+            </div>
+            <div className="checkout-modal__total-row checkout-modal__total-row--main">
+              <span>Razem brutto/mies.</span>
+              <span className="font-semibold">{fmtMonthly(totalGross)}</span>
+            </div>
+          </div>
+
+          <details className="checkout-modal__api-debug">
+            <summary>Dane do RentUp API (debug)</summary>
+            <pre className="checkout-modal__api-json">{JSON.stringify(orderPayload, null, 2)}</pre>
+          </details>
+        </div>
+
+        <div className="checkout-modal__footer">
+          <button className="btn btn--accent checkout-modal__submit" onClick={handleRedirect}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Przekieruj do finansowania
+          </button>
+          <div className="checkout-modal__note">Docelowo: redirect do RentUp na stronę finansowania</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -4789,15 +5652,21 @@ function App() {
   const [navKey,    setNavKey]    = useState(0);
   const [cart,      setCart]      = useState([]);
   const [cartOpen,  setCartOpen]  = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const setActive = (id) => { setActive_(id); setNavKey(k => k + 1); };
 
   const addToCart = (product, variant) => {
     setCart(prev => {
-      const key = product.id + (variant ? JSON.stringify(variant) : "");
+      // Key includes contractMonths and services so same product with different config = separate item
+      const keyParts = [product.id];
+      if (variant?.selections) keyParts.push(JSON.stringify(variant.selections));
+      if (variant?.contractMonths) keyParts.push("m" + variant.contractMonths);
+      if (variant?.selectedServices?.length) keyParts.push("s" + variant.selectedServices.sort().join(","));
+      const key = keyParts.join("|");
       const existing = prev.find(i => i.key === key);
       if (existing) return prev;
-      const isOneTime = !product.monthlyNet;
+      const isOneTime = !product.monthlyNet && !product.pricing;
       const priceNet = variant && variant.computedNet ? variant.computedNet : (product.monthlyNet || 0);
       const priceGross = variant && variant.computedGross ? variant.computedGross : (product.monthlyGross || 0);
       const oneTimePrice = isOneTime ? parseFloat((product.price || "0").replace(/[^\d]/g, "")) : 0;
@@ -4813,6 +5682,27 @@ function App() {
     return newQty > 0 ? { ...i, qty: newQty } : i;
   }).filter(i => i.qty > 0));
 
+  /* ── Hide topbar on scroll down, show on scroll up ── */
+  const [topbarHidden, setTopbarHidden] = useState(false);
+  const scrollRef = useRef(null);
+  const lastScrollY = useRef(0);
+  const scrollAccum = useRef(0);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const THRESHOLD = 30;
+    const onScroll = () => {
+      const y = el.scrollTop;
+      const delta = y - lastScrollY.current;
+      if (y <= 48) { setTopbarHidden(false); scrollAccum.current = 0; }
+      else if (delta > 0) { scrollAccum.current = 0; setTopbarHidden(true); }
+      else { scrollAccum.current += Math.abs(delta); if (scrollAccum.current > THRESHOLD) setTopbarHidden(false); }
+      lastScrollY.current = y;
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [loading, onboarded]);
+
   if (loading) return <Preloader onDone={() => setLoading(false)} />;
   if (!onboarded) return <Onboarding onComplete={() => setOnboarded(true)} setProfile={setProfile} />;
 
@@ -4821,13 +5711,14 @@ function App() {
   return (
     <div className="app-layout">
       <Sidebar active={active} setActive={setActive} theme={theme} setTheme={setTheme} profile={profile} />
-      <div className="main">
-        <TopBar active={active} setActive={setActive} cart={cart} onCartClick={() => setCartOpen(true)} />
-        <main className="main__content">
+      <div className={`main${topbarHidden ? " main--topbar-hidden" : ""}`}>
+        <TopBar active={active} setActive={setActive} cart={cart} onCartClick={() => setCartOpen(true)} onNotifClick={() => setNotifOpen(true)} />
+        <main className="main__content" ref={scrollRef}>
           <View key={navKey} setActive={setActive} addToCart={addToCart} cart={cart} removeFromCart={removeFromCart} profile={profile} setProfile={setProfile} />
         </main>
       </div>
-      {cartOpen && <CartDrawer cart={cart} onClose={() => setCartOpen(false)} removeFromCart={removeFromCart} updateQty={updateQty} />}
+      {notifOpen && <NotificationsDrawer onClose={() => setNotifOpen(false)} profile={profile} />}
+      {cartOpen && <CartDrawer cart={cart} onClose={() => setCartOpen(false)} removeFromCart={removeFromCart} updateQty={updateQty} profile={profile} priceMode="business" onProductClick={(item, cat) => { setCartOpen(false); openProduct(item, cat); }} onGoToShop={() => { setCartOpen(false); setActive("shop"); }} />}
     </div>
   );
 }
