@@ -986,10 +986,10 @@ function interCalc(d) {
 }
 
 const INS_PARTNERS = [
-  { name: "PZU",                 logo: "../ubezpieczenia/loga/PZU_logo.png",   h: 36 },
-  { name: "Ergo Hestia",        logo: "../ubezpieczenia/loga/ergohestia.png",  h: 34 },
-  { name: "INTER Ubezpieczenia", logo: "../ubezpieczenia/loga/inter logo.webp", h: 26 },
-  { name: "Lloyd's",            logo: "../ubezpieczenia/loga/lloyds.png",      h: 18 },
+  { name: "PZU",                 logo: "ubezpieczenia/loga/PZU_logo.png",   h: 36 },
+  { name: "Ergo Hestia",        logo: "ubezpieczenia/loga/ergohestia.png",  h: 34 },
+  { name: "INTER Ubezpieczenia", logo: "ubezpieczenia/loga/inter logo.webp", h: 26 },
+  { name: "Lloyd's",            logo: "ubezpieczenia/loga/lloyds.png",      h: 18 },
 ];
 
 const OB_ROLES = [
@@ -1082,7 +1082,7 @@ function Onboarding({ onComplete, setProfile }) {
 
         {/* Logo */}
         <div className="onboarding__logo">
-          <img src="../brand assets/Logo.png" alt="Klub Medyka" />
+          <img src="Logo.png" alt="Klub Medyka" />
         </div>
 
         {/* Progress bar — visible in steps 1–2 */}
@@ -1261,7 +1261,7 @@ function Sidebar({ active, setActive, theme, setTheme, profile }) {
       {/* Logo */}
       <div className="sidebar__header">
         <div className="sidebar__logo" onClick={() => setActive("overview")} style={{ cursor: "pointer" }}>
-          <img src="../brand assets/Logo.png" alt="Klub Medyka" />
+          <img src="Logo.png" alt="Klub Medyka" />
         </div>
       </div>
 
@@ -2749,10 +2749,10 @@ function OcForm() {
   };
 
   const offers = [
-    { id: "ergo", name: "Ergo Hestia", logo: "../ubezpieczenia/loga/ergohestia.png", price: ergoTotal, available: true, excludes: [] },
-    { id: "inter", name: "INTER Ubezpieczenia", logo: "../ubezpieczenia/loga/inter logo.webp", price: interTotal, available: true, excludes: ["aesthetic"] },
-    { id: "pzu", name: "PZU", logo: "../ubezpieczenia/loga/PZU_logo.png", price: null, available: false, excludes: [] },
-    { id: "lloyds", name: "Lloyd's", logo: "../ubezpieczenia/loga/lloyds.png", price: null, available: false, excludes: [] },
+    { id: "ergo", name: "Ergo Hestia", logo: "ubezpieczenia/loga/ergohestia.png", price: ergoTotal, available: true, excludes: [] },
+    { id: "inter", name: "INTER Ubezpieczenia", logo: "ubezpieczenia/loga/inter logo.webp", price: interTotal, available: true, excludes: ["aesthetic"] },
+    { id: "pzu", name: "PZU", logo: "ubezpieczenia/loga/PZU_logo.png", price: null, available: false, excludes: [] },
+    { id: "lloyds", name: "Lloyd's", logo: "ubezpieczenia/loga/lloyds.png", price: null, available: false, excludes: [] },
   ];
 
   // ── Loading / offers screen ──
@@ -3377,8 +3377,8 @@ function OcForm() {
 
 function InsurerBadge({ insurer }) {
   const src = insurer === "inter"
-    ? "../ubezpieczenia/loga/inter logo.webp"
-    : "../ubezpieczenia/loga/ergohestia.png";
+    ? "ubezpieczenia/loga/inter logo.webp"
+    : "ubezpieczenia/loga/ergohestia.png";
   return (
     <span className="oc-insurer-badge">
       <img src={src} alt={insurer} style={{ height: 12, maxHeight: 12, width: "auto", maxWidth: 56, objectFit: "contain", display: "block" }} />

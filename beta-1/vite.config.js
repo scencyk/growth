@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 8080,
-    open: '/beta-1/',
+    open: '/klub-medyka-beta/',
   },
   base: '/klub-medyka-beta/',
   build: {
