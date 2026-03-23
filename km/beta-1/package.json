@@ -1,0 +1,25 @@
+{
+  "name": "beta-1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "motion": "^12.35.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-use-measure": "^2.1.7",
+    "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "react-grab": "^0.1.23"
+  }
+}
