@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remedium — Aktywne kampanie | Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --bg-card: #1a1d27;
+            --bg-card-hover: #222632;
+            --border: #2a2e3b;
+            --text: #e4e6eb;
+            --text-dim: #8b8fa3;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #22c55e;
+            --green-dim: rgba(34,197,94,0.15);
+            --yellow: #eab308;
+            --yellow-dim: rgba(234,179,8,0.15);
+            --orange: #f97316;
+            --orange-dim: rgba(249,115,22,0.15);
+            --red: #ef4444;
+            --red-dim: rgba(239,68,68,0.15);
+            --blue: #3b82f6;
+            --gap: 14px;
+            --radius: 10px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+        .container { max-width:1440px; margin:0 auto; padding:20px; }
+
+        /* Header */
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .header h1 { font-size:22px; font-weight:700; }
+        .header h1 span { color:var(--accent-light); }
+        .header .meta-info { font-size:12px; color:var(--text-dim); }
+        .filters { display:flex; gap:8px; flex-wrap:wrap; }
+        .filters select { padding:6px 10px; border:1px solid var(--border); border-radius:6px; background:var(--bg-card); color:var(--text); font-size:12px; cursor:pointer; }
+        .filters select:hover { border-color:var(--accent); }
+
+        /* KPI row */
+        .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:var(--gap); margin-bottom:var(--gap); }
+        .kpi { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; }
+        .kpi-label { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px; }
+        .kpi-value { font-size:26px; font-weight:700; }
+        .kpi-sub { font-size:11px; color:var(--text-dim); margin-top:2px; }
+
+        /* Charts */
+        .charts-row { display:grid; grid-template-columns:2fr 1fr; gap:var(--gap); margin-bottom:var(--gap); }
+        .chart-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; }
+        .chart-card h3 { font-size:13px; font-weight:600; margin-bottom:12px; color:var(--text-dim); }
+        .chart-card canvas { max-height:280px; }
+
+        /* Content KPI table */
+        .section-title { font-size:14px; font-weight:600; margin:20px 0 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
+        .table-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow-x:auto; margin-bottom:var(--gap); }
+        table { width:100%; border-collapse:collapse; font-size:12px; }
+        thead th { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text-dim); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.3px; white-space:nowrap; cursor:pointer; user-select:none; }
+        thead th:hover { color:var(--text); }
+        tbody td { padding:10px 12px; border-bottom:1px solid rgba(42,46,59,0.5); white-space:nowrap; }
+        tbody tr:hover { background:var(--bg-card-hover); }
+        tbody tr:last-child td { border-bottom:none; }
+
+        /* Status badges */
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+        .badge-green { background:var(--green-dim); color:var(--green); }
+        .badge-yellow { background:var(--yellow-dim); color:var(--yellow); }
+        .badge-orange { background:var(--orange-dim); color:var(--orange); }
+        .badge-red { background:var(--red-dim); color:var(--red); }
+
+        /* Progress bar */
+        .progress-bar { width:100px; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; display:inline-block; vertical-align:middle; margin-right:6px; }
+        .progress-fill { height:100%; border-radius:3px; transition:width 0.3s; }
+
+        /* Responsive */
+        @media (max-width:900px) {
+            .charts-row { grid-template-columns:1fr; }
+            .kpi-row { grid-template-columns:repeat(2,1fr); }
+        }
+        @media print {
+            body { background:white; color:#222; }
+            .chart-card, .kpi, .table-card { border-color:#ddd; background:white; }
+            .filters { display:none; }
+        }
+
+        .footer { text-align:center; padding:20px; font-size:11px; color:var(--text-dim); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>Remedium <span>Aktywne kampanie</span></h1>
+            <div class="meta-info">Meta Ads + PostHog + Notion | Stan na 18.03.2026</div>
+        </div>
+        <div class="filters">
+            <select id="filterSource">
+                <option value="all">Wszystkie źródła</option>
+                <option value="meta">Tylko Meta</option>
+                <option value="posthog">Tylko PostHog KPI</option>
+            </select>
+            <select id="filterCampaign">
+                <option value="all">Wszystkie kampanie Meta</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3>Spend vs wyniki — aktywne kampanie Meta</h3>
+            <canvas id="chartSpend"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Podział budżetu (aktywne)</h3>
+            <canvas id="chartPie"></canvas>
+        </div>
+    </div>
+
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3>CPR (koszt za wynik) — ranking formatów</h3>
+            <canvas id="chartCPR"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Audience — kto konsumuje treści klienckie (Q1 2026)</h3>
+            <canvas id="chartAudience"></canvas>
+        </div>
+    </div>
+
+    <!-- Content KPI table (PostHog) -->
+    <div class="section-title">Realizacja KPI materiałów — PostHog 18.03.2026</div>
+    <div class="table-card">
+        <table id="contentTable">
+            <thead>
+                <tr>
+                    <th onclick="sortContentTable('name')">Materiał</th>
+                    <th onclick="sortContentTable('format')">Format</th>
+                    <th onclick="sortContentTable('uu')">UU login</th>
+                    <th onclick="sortContentTable('kpi')">KPI</th>
+                    <th onclick="sortContentTable('pct')">Realizacja</th>
+                    <th onclick="sortContentTable('deadline')">Deadline</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="contentBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Meta active adsets table -->
+    <div class="section-title">Aktywne zestawy reklam Meta — szczegóły</div>
+    <div class="table-card">
+        <table id="metaTable">
+            <thead>
+                <tr>
+                    <th onclick="sortMetaTable('campaign')">Kampania</th>
+                    <th onclick="sortMetaTable('adset')">Zestaw reklam</th>
+                    <th onclick="sortMetaTable('spend')">Spend (PLN)</th>
+                    <th onclick="sortMetaTable('results')">Wyniki</th>
+                    <th onclick="sortMetaTable('cpr')">CPR</th>
+                    <th onclick="sortMetaTable('reach')">Zasięg</th>
+                    <th onclick="sortMetaTable('frequency')">Częstotl.</th>
+                </tr>
+            </thead>
+            <tbody id="metaBody"></tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Źródła: Meta Ads Manager (sty 2025 – mar 2026, tylko active) · PostHog (18.03.2026) · Notion (Projekty komercyjne)<br>
+        Dashboard wygenerowany automatycznie — dane statyczne, odśwież przez ponowną analizę
+    </div>
+</div>
+
+<script>
+// === DATA ===
+const META_CAMPAIGNS = [
+    {campaign:"Nagrania konferencji własnych", spend:10582.40, results:6051, cpr:1.75, reach:258811, impressions:658975, type:"Video_Play", adsets:26},
+    {campaign:"[KL] Treści klienckie (LPV)", spend:10241.41, results:13733, cpr:0.75, reach:351942, impressions:1283177, type:"LPV", adsets:17},
+    {campaign:"Rejestracje (wewnętrzny)", spend:5231.31, results:532, cpr:9.83, reach:72766, impressions:280396, type:"Rejestracje", adsets:1},
+    {campaign:"[KL] Wideo/podcasty klienckie", spend:2067.57, results:770, cpr:2.69, reach:68127, impressions:164437, type:"Video_Play", adsets:7},
+    {campaign:"[KL] Konferencje (zapisy)", spend:2043.41, results:778, cpr:2.63, reach:34514, impressions:137474, type:"Zapisy", adsets:2},
+    {campaign:"[KL] Webinary (zapisy)", spend:651.19, results:205, cpr:3.18, reach:11960, impressions:39459, type:"Zapisy", adsets:1},
+    {campaign:"[KL] Kursy (odtworzenie)", spend:574.86, results:267, cpr:2.15, reach:8636, impressions:24655, type:"Video_Play", adsets:2},
+    {campaign:"[KL] Konferencje (Facebook)", spend:521.61, results:273, cpr:1.91, reach:34514, impressions:137474, type:"Reakcje FB", adsets:2},
+    {campaign:"[KL] Webinary (Facebook)", spend:164.71, results:148, cpr:1.11, reach:6018, impressions:15073, type:"Reakcje FB", adsets:1},
+];
+
+const META_ADSETS = [
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Obniżenie nastroju | Angelini Trittico",spend:3235.91,results:6693,cpr:0.48,reach:81095,frequency:4.75},
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Stłuszczeniowa choroba wątroby | BauschHealth",spend:1832.92,results:2825,cpr:0.65,reach:48958,frequency:4.16},
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Alergiczny nieżyt nosa | Glenmark",spend:823.80,results:532,cpr:1.55,reach:21142,frequency:4.77},
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Migotanie przedsionków | Glenmark",spend:804.49,results:663,cpr:1.21,reach:22824,frequency:4.24},
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Katar, nieżyt nosa i zatok | Glenmark",spend:803.88,results:645,cpr:1.25,reach:21378,frequency:4.93},
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Migrena | Teva",spend:731.29,results:570,cpr:1.28,reach:23475,frequency:4.49},
+    {campaign:"[KL] Treści klienckie",adset:"DIL | Cukrzyca t.2 + niedoczynność tarczycy | Merck",spend:534.47,results:319,cpr:1.68,reach:15826,frequency:3.21},
+    {campaign:"[KL] Treści klienckie",adset:"Kalkulatory psychiatryczne | Egis (×6 adsetów)",spend:1237.69,results:1332,cpr:0.93,reach:42000,frequency:3.80},
+    {campaign:"[KL] Treści klienckie",adset:"ICS | Pacjentka po NSTEMI | Merck",spend:135.59,results:91,cpr:1.49,reach:6200,frequency:2.80},
+    {campaign:"[KL] Treści klienckie",adset:"ICS | Astma nawracająca | OrionPharma Bufomix",spend:82.89,results:42,cpr:1.97,reach:3500,frequency:2.50},
+    {campaign:"[KL] Treści klienckie",adset:"DiL | Astma | OrionPharma Bufomix",spend:9.65,results:8,cpr:1.21,reach:450,frequency:1.80},
+    {campaign:"[KL] Treści klienckie",adset:"Poradnik | Kolonoskopia | Swixx",spend:8.83,results:13,cpr:0.68,reach:520,frequency:1.50},
+    {campaign:"[KL] Wideo/podcasty",adset:"VOD TD | Modyfikacja leczenia | Egis",spend:537.89,results:117,cpr:4.60,reach:17200,frequency:3.50},
+    {campaign:"[KL] Wideo/podcasty",adset:"ME | GLP-1 | Adamed Cholestil",spend:379.67,results:191,cpr:1.99,reach:12400,frequency:3.20},
+    {campaign:"[KL] Wideo/podcasty",adset:"VOD | Nieżyt nosa | Glenmark",spend:344.02,results:112,cpr:3.07,reach:9800,frequency:2.90},
+    {campaign:"[KL] Wideo/podcasty",adset:"5min | Escitalopram | Egis",spend:300.48,results:162,cpr:1.85,reach:8700,frequency:2.70},
+    {campaign:"[KL] Wideo/podcasty",adset:"5min | Mometazon+olopatadyna | Glenmark Ryaltris",spend:202.56,results:83,cpr:2.44,reach:5600,frequency:2.40},
+    {campaign:"[KL] Wideo/podcasty",adset:"5min | Benzydamina | Klosterfrau Neoangin",spend:198.84,results:66,cpr:3.01,reach:4900,frequency:2.30},
+    {campaign:"[KL] Wideo/podcasty",adset:"5min | Rivaroxaban | Egis Xiltess",spend:104.11,results:39,cpr:2.67,reach:3500,frequency:2.10},
+    {campaign:"Rejestracje",adset:"Prospecting – Lekarze",spend:5231.31,results:532,cpr:9.83,reach:72766,frequency:3.85},
+    {campaign:"[KL] Konferencje",adset:"PKwPOZ Diabetologia 2026",spend:1094.15,results:512,cpr:2.14,reach:17168,frequency:3.70},
+    {campaign:"[KL] Konferencje",adset:"MKK 2026",spend:949.26,results:266,cpr:3.57,reach:17346,frequency:4.26},
+    {campaign:"[KL] Webinary",adset:"Jak dobrać antydepresant | Egis",spend:651.19,results:205,cpr:3.18,reach:11960,frequency:3.30},
+];
+
+const CONTENT_KPI = [
+    {name:"Rivaroxaban (Xiltess)",format:"5 min o leku",uu:545,kpi:300,deadline:"—",client:"Egis"},
+    {name:"Obrzęk stawu skokowego",format:"Przypadek kliniczny",uu:505,kpi:400,deadline:"—",client:"MagnaPharm"},
+    {name:"Profilaktyka RSV – Abrysvo",format:"Medyczne espresso",uu:488,kpi:500,deadline:"28.02",client:"Pfizer"},
+    {name:"D&L: Zwyrodnienie kolana",format:"Diagnozuj i lecz",uu:438,kpi:500,deadline:"—",client:"HascoLek"},
+    {name:"D&L: Intensyfikacja POChP",format:"Diagnozuj i lecz",uu:328,kpi:400,deadline:"08.03",client:"Chiesi"},
+    {name:"D&L: Cukrzyca t.2 + tarczyca",format:"Diagnozuj i lecz",uu:314,kpi:400,deadline:"—",client:"Merck"},
+    {name:"Escitalopram (Escitil)",format:"5 min o leku",uu:304,kpi:400,deadline:"31.03",client:"Egis"},
+    {name:"Case: 28-latka ciąża – Bonjesta",format:"Przypadek kliniczny",uu:296,kpi:400,deadline:"16.03",client:"Exeltis"},
+    {name:"Mometazon+olopatadyna (Ryaltris)",format:"5 min o leku",uu:282,kpi:500,deadline:"31.03",client:"Glenmark"},
+    {name:"Neoangin (benzydamina)",format:"5 min o leku",uu:257,kpi:500,deadline:"31.03",client:"Klosterfrau"},
+    {name:"Marimer – nieżyt nosa",format:"VOD",uu:228,kpi:400,deadline:"31.03",client:"Glenmark"},
+    {name:"Modyfikacja leczenia (TD)",format:"VOD",uu:222,kpi:400,deadline:"—",client:"Egis"},
+    {name:"GLP-1 / Cholestil",format:"Medyczne espresso",uu:177,kpi:500,deadline:"31.03",client:"Adamed"},
+    {name:"Case: 60-latka – kolano",format:"Przypadek kliniczny",uu:177,kpi:400,deadline:"—",client:"HascoLek"},
+    {name:"Case: 45-latka astma – Bufomix",format:"Przypadek kliniczny",uu:73,kpi:400,deadline:"20.01 ⚠️",client:"OrionPharma"},
+];
+
+const AUDIENCE = [
+    {segment:"Lek. bez specjalizacji",uu:10556,color:"#6366f1"},
+    {segment:"Studenci",uu:10137,color:"#8b5cf6"},
+    {segment:"Rezydenci",uu:4878,color:"#3b82f6"},
+    {segment:"Specjaliści",uu:3626,color:"#22c55e"},
+    {segment:"Stażyści",uu:2766,color:"#eab308"},
+    {segment:"Pielęgniarki + inni",uu:1537,color:"#64748b"},
+];
+
+const COLORS = ['#6366f1','#3b82f6','#22c55e','#eab308','#f97316','#ef4444','#8b5cf6','#ec4899','#14b8a6'];
+
+// === HELPERS ===
+function fmt(n) { return n.toLocaleString('pl-PL'); }
+function fmtPLN(n) { return n.toLocaleString('pl-PL', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' PLN'; }
+
+function kpiBadge(pct) {
+    if (pct >= 100) return '<span class="badge badge-green">✅ '+pct+'%</span>';
+    if (pct >= 75) return '<span class="badge badge-yellow">🟡 '+pct+'%</span>';
+    if (pct >= 50) return '<span class="badge badge-orange">🟠 '+pct+'%</span>';
+    return '<span class="badge badge-red">🔴 '+pct+'%</span>';
+}
+
+function progressBar(pct, color) {
+    const c = pct>=100?'var(--green)':pct>=75?'var(--yellow)':pct>=50?'var(--orange)':'var(--red)';
+    const w = Math.min(pct, 100);
+    return `<div class="progress-bar"><div class="progress-fill" style="width:${w}%;background:${c}"></div></div>${pct}%`;
+}
+
+// === RENDER KPIs ===
+function renderKPIs() {
+    const totalSpend = META_CAMPAIGNS.reduce((s,c)=>s+c.spend,0);
+    const totalResults = META_CAMPAIGNS.reduce((s,c)=>s+c.results,0);
+    const klSpend = META_CAMPAIGNS.filter(c=>c.campaign.startsWith('[KL]')).reduce((s,c)=>s+c.spend,0);
+    const klResults = META_CAMPAIGNS.filter(c=>c.campaign.startsWith('[KL]')).reduce((s,c)=>s+c.results,0);
+    const avgCPR = klSpend / klResults;
+    const contentUU = CONTENT_KPI.reduce((s,c)=>s+c.uu,0);
+    const contentKPI = CONTENT_KPI.reduce((s,c)=>s+c.kpi,0);
+    const contentPct = Math.round(contentUU/contentKPI*100);
+    const deadline31 = CONTENT_KPI.filter(c=>c.deadline==='31.03');
+    const atRisk = deadline31.filter(c=>(c.uu/c.kpi*100)<75).length;
+
+    document.getElementById('kpiRow').innerHTML = `
+        <div class="kpi"><div class="kpi-label">Active Meta Spend</div><div class="kpi-value">${fmtPLN(totalSpend)}</div><div class="kpi-sub">${META_CAMPAIGNS.length} kampanii · 59 adsetów</div></div>
+        <div class="kpi"><div class="kpi-label">Wyniki (łącznie)</div><div class="kpi-value">${fmt(totalResults)}</div><div class="kpi-sub">CPR kliencki: ${avgCPR.toFixed(2)} PLN</div></div>
+        <div class="kpi"><div class="kpi-label">Content UU / KPI</div><div class="kpi-value">${fmt(contentUU)} / ${fmt(contentKPI)}</div><div class="kpi-sub">Realizacja: ${contentPct}% (15 materiałów)</div></div>
+        <div class="kpi" style="border-left:3px solid var(--red)"><div class="kpi-label">⚠ Deadline 31.03</div><div class="kpi-value" style="color:var(--red)">${atRisk} zagrożone</div><div class="kpi-sub">${deadline31.length} materiałów z deadline 31.03</div></div>
+        <div class="kpi"><div class="kpi-label">Rejestracje</div><div class="kpi-value">532</div><div class="kpi-sub">CPR: 9,83 PLN / rejestracja</div></div>
+    `;
+}
+
+// === CHARTS ===
+function renderCharts() {
+    // Spend vs Results bar
+    const labels = META_CAMPAIGNS.map(c=>c.campaign.replace('[KL] ','').replace('(wewnętrzny)','').substring(0,25));
+    new Chart(document.getElementById('chartSpend'), {
+        type:'bar',
+        data:{
+            labels,
+            datasets:[
+                {label:'Spend (PLN)',data:META_CAMPAIGNS.map(c=>c.spend),backgroundColor:COLORS.map(c=>c+'CC'),borderRadius:4,yAxisID:'y'},
+                {label:'Wyniki',data:META_CAMPAIGNS.map(c=>c.results),type:'line',borderColor:'#22c55e',backgroundColor:'transparent',borderWidth:2,pointRadius:4,yAxisID:'y1',tension:0.3}
+            ]
+        },
+        options:{
+            responsive:true,maintainAspectRatio:false,
+            interaction:{mode:'index',intersect:false},
+            plugins:{legend:{labels:{color:'#8b8fa3',usePointStyle:true,padding:12,font:{size:11}}}},
+            scales:{
+                x:{grid:{display:false},ticks:{color:'#8b8fa3',font:{size:10},maxRotation:45}},
+                y:{position:'left',grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#8b8fa3',callback:v=>fmtPLN(v)},title:{display:true,text:'Spend',color:'#8b8fa3'}},
+                y1:{position:'right',grid:{display:false},ticks:{color:'#22c55e'},title:{display:true,text:'Wyniki',color:'#22c55e'}}
+            }
+        }
+    });
+
+    // Pie
+    new Chart(document.getElementById('chartPie'), {
+        type:'doughnut',
+        data:{
+            labels:META_CAMPAIGNS.map(c=>c.campaign.replace('[KL] ','').substring(0,22)),
+            datasets:[{data:META_CAMPAIGNS.map(c=>c.spend),backgroundColor:COLORS.map(c=>c+'CC'),borderColor:'var(--bg-card)',borderWidth:2}]
+        },
+        options:{
+            responsive:true,maintainAspectRatio:false,cutout:'55%',
+            plugins:{legend:{position:'right',labels:{color:'#8b8fa3',usePointStyle:true,padding:8,font:{size:10}}},
+            tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return `${ctx.label}: ${fmtPLN(ctx.parsed)} (${(ctx.parsed/t*100).toFixed(1)}%)`}}}}
+        }
+    });
+
+    // CPR horizontal bar
+    const cprData = META_CAMPAIGNS.filter(c=>c.cpr>0).sort((a,b)=>a.cpr-b.cpr);
+    new Chart(document.getElementById('chartCPR'), {
+        type:'bar',
+        data:{
+            labels:cprData.map(c=>c.campaign.replace('[KL] ','').substring(0,28)),
+            datasets:[{data:cprData.map(c=>c.cpr),backgroundColor:cprData.map((c,i)=>c.cpr<2?'#22c55eCC':c.cpr<4?'#eab308CC':c.cpr<6?'#f97316CC':'#ef4444CC'),borderRadius:4}]
+        },
+        options:{
+            responsive:true,maintainAspectRatio:false,indexAxis:'y',
+            plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.parsed.x.toFixed(2)+' PLN/wynik'}}},
+            scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#8b8fa3',callback:v=>v+' PLN'}},y:{grid:{display:false},ticks:{color:'#8b8fa3',font:{size:10}}}}
+        }
+    });
+
+    // Audience doughnut
+    new Chart(document.getElementById('chartAudience'), {
+        type:'doughnut',
+        data:{
+            labels:AUDIENCE.map(a=>a.segment),
+            datasets:[{data:AUDIENCE.map(a=>a.uu),backgroundColor:AUDIENCE.map(a=>a.color+'CC'),borderColor:'var(--bg-card)',borderWidth:2}]
+        },
+        options:{
+            responsive:true,maintainAspectRatio:false,cutout:'55%',
+            plugins:{legend:{position:'right',labels:{color:'#8b8fa3',usePointStyle:true,padding:8,font:{size:10}}},
+            tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return `${ctx.label}: ${fmt(ctx.parsed)} UU (${(ctx.parsed/t*100).toFixed(1)}%)`}}}}
+        }
+    });
+}
+
+// === CONTENT TABLE ===
+let contentSort = {col:'pct',dir:'desc'};
+function sortContentTable(col) {
+    if (contentSort.col===col) contentSort.dir = contentSort.dir==='asc'?'desc':'asc';
+    else { contentSort.col=col; contentSort.dir='desc'; }
+    renderContentTable();
+}
+function renderContentTable() {
+    const sorted = [...CONTENT_KPI].sort((a,b)=>{
+        let va,vb;
+        switch(contentSort.col) {
+            case 'name': va=a.name;vb=b.name;break;
+            case 'format': va=a.format;vb=b.format;break;
+            case 'uu': va=a.uu;vb=b.uu;break;
+            case 'kpi': va=a.kpi;vb=b.kpi;break;
+            case 'pct': va=a.uu/a.kpi;vb=b.uu/b.kpi;break;
+            case 'deadline': va=a.deadline;vb=b.deadline;break;
+            default: va=a.uu/a.kpi;vb=b.uu/b.kpi;
+        }
+        const cmp = va<vb?-1:va>vb?1:0;
+        return contentSort.dir==='asc'?cmp:-cmp;
+    });
+    document.getElementById('contentBody').innerHTML = sorted.map(c=>{
+        const pct = Math.round(c.uu/c.kpi*100);
+        const isUrgent = c.deadline==='31.03' && pct<75;
+        return `<tr style="${isUrgent?'background:rgba(239,68,68,0.06)':''}">
+            <td><strong>${c.name}</strong><br><span style="color:var(--text-dim);font-size:10px">${c.client}</span></td>
+            <td>${c.format}</td>
+            <td>${fmt(c.uu)}</td>
+            <td>${fmt(c.kpi)}</td>
+            <td>${progressBar(pct)}</td>
+            <td>${c.deadline}</td>
+            <td>${kpiBadge(pct)}</td>
+        </tr>`;
+    }).join('');
+}
+
+// === META TABLE ===
+let metaSort = {col:'spend',dir:'desc'};
+function sortMetaTable(col) {
+    if (metaSort.col===col) metaSort.dir = metaSort.dir==='asc'?'desc':'asc';
+    else { metaSort.col=col; metaSort.dir='desc'; }
+    renderMetaTable();
+}
+function renderMetaTable() {
+    const filterVal = document.getElementById('filterCampaign').value;
+    let data = [...META_ADSETS];
+    if (filterVal !== 'all') data = data.filter(a=>a.campaign===filterVal);
+
+    data.sort((a,b)=>{
+        const va=a[metaSort.col], vb=b[metaSort.col];
+        const cmp = typeof va==='string'?va.localeCompare(vb):va-vb;
+        return metaSort.dir==='asc'?cmp:-cmp;
+    });
+
+    document.getElementById('metaBody').innerHTML = data.map(a=>`
+        <tr>
+            <td style="color:var(--accent-light)">${a.campaign}</td>
+            <td>${a.adset}</td>
+            <td>${fmtPLN(a.spend)}</td>
+            <td>${fmt(a.results)}</td>
+            <td style="color:${a.cpr<2?'var(--green)':a.cpr<4?'var(--yellow)':'var(--red)'}">${a.cpr.toFixed(2)} PLN</td>
+            <td>${fmt(a.reach)}</td>
+            <td>${a.frequency.toFixed(2)}</td>
+        </tr>
+    `).join('');
+}
+
+// === FILTERS ===
+function setupFilters() {
+    const campaigns = [...new Set(META_ADSETS.map(a=>a.campaign))];
+    const sel = document.getElementById('filterCampaign');
+    campaigns.forEach(c=>{
+        const opt = document.createElement('option');
+        opt.value=c; opt.textContent=c;
+        sel.appendChild(opt);
+    });
+    sel.addEventListener('change', renderMetaTable);
+}
+
+// === INIT ===
+renderKPIs();
+renderCharts();
+renderContentTable();
+renderMetaTable();
+setupFilters();
+</script>
+</body>
+</html>

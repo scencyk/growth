@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remedium – Ranking Opłacalności Działań</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#0f1117; color:#e0e0e0; line-height:1.6; }
+.container { max-width:1240px; margin:0 auto; padding:24px; }
+h1 { font-size:26px; font-weight:700; color:#fff; }
+.sub { color:#888; font-size:13px; margin-bottom:28px; }
+h2 { font-size:18px; font-weight:600; color:#fff; margin:32px 0 6px; }
+h2 .badge { font-size:11px; background:#2a2d35; color:#888; padding:2px 10px; border-radius:10px; margin-left:8px; vertical-align:middle; font-weight:400; }
+p.desc { color:#888; font-size:13px; margin-bottom:16px; }
+.card { background:#1a1d27; border-radius:12px; border:1px solid #2a2d35; overflow:hidden; margin-bottom:20px; }
+.card-header { padding:16px 20px 0; }
+.card-header h3 { font-size:15px; font-weight:600; color:#ddd; }
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:10px 14px; background:#14161e; color:#777; font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.4px; position:sticky; top:0; }
+td { padding:10px 14px; border-top:1px solid #1e2130; }
+tr:hover td { background:#1e2130; }
+.n { text-align:right; font-variant-numeric:tabular-nums; }
+.rank { width:32px; text-align:center; font-weight:700; font-size:15px; }
+.r1 { color:#fbbf24; }
+.r2 { color:#d1d5db; }
+.r3 { color:#c2884a; }
+
+.bar-w { width:130px; }
+.bar { height:7px; border-radius:4px; min-width:2px; }
+.bg { background:#3b82f6; }
+.bb { background:#60a5fa; }
+.bgreen { background:#4ade80; }
+.borange { background:#fb923c; }
+.bred { background:#f87171; }
+.bpurple { background:#c084fc; }
+.bteal { background:#2dd4bf; }
+
+.tier { display:inline-block; font-size:11px; font-weight:600; padding:2px 10px; border-radius:4px; }
+.tier-s { background:#4ade8022; color:#4ade80; }
+.tier-a { background:#60a5fa22; color:#60a5fa; }
+.tier-b { background:#fb923c22; color:#fb923c; }
+.tier-c { background:#f8717122; color:#f87171; }
+.tier-f { background:#ef444422; color:#ef4444; }
+
+.note { font-size:12px; color:#666; padding:12px 20px; border-top:1px solid #1e2130; }
+.insight { background:#1e293b; border-left:3px solid #3b82f6; padding:14px 18px; border-radius:0 8px 8px 0; margin:12px 0; font-size:13px; }
+.insight strong { color:#fff; }
+.insight.green { border-color:#4ade80; background:#0f2318; }
+.insight.orange { border-color:#fb923c; background:#231a0f; }
+
+.two { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:768px) { .two { grid-template-columns:1fr; } }
+
+.legend { display:flex; gap:20px; flex-wrap:wrap; margin:12px 0 20px; font-size:12px; color:#888; }
+.legend span { display:flex; align-items:center; gap:5px; }
+.legend .dot { width:10px; height:10px; border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Ranking opłacalności działań Remedium</h1>
+<p class="sub">Na podstawie 12 062 shortlinków (sty 2025 – mar 2026) + Meta Ads (467 ad setów) &middot; Wygenerowano 20.03.2026</p>
+
+<div class="legend">
+<span><div class="dot" style="background:#4ade80"></div> S-tier – najlepsza opłacalność</span>
+<span><div class="dot" style="background:#60a5fa"></div> A-tier – dobra</span>
+<span><div class="dot" style="background:#fb923c"></div> B-tier – średnia</span>
+<span><div class="dot" style="background:#f87171"></div> C/F-tier – słaba / do wyłączenia</span>
+</div>
+
+<!-- =================== RANKING 1: ORGANIC =================== -->
+<h2>1. Organiczne źródła ruchu <span class="badge">shortlinki</span></h2>
+<p class="desc">Ranking formatów dystrybucji wg średniej liczby kliknięć na link. Uwzględniono tylko kombinacje z &ge;5 linkami.</p>
+
+<div class="card">
+<table>
+<tr><th class="rank">#</th><th>Źródło × Format</th><th class="n">Linki</th><th class="n">Śr. klik.</th><th class="n">Mediana</th><th class="bar-w">Siła</th><th>Tier</th></tr>
+
+<tr><td class="rank r1">1</td><td><strong>Facebook × Reklama Meta</strong></td><td class="n">107</td><td class="n">410</td><td class="n">436</td><td><div class="bar bgreen" style="width:130px"></div></td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank r2">2</td><td><strong>Facebook × Reel</strong></td><td class="n">32</td><td class="n">291</td><td class="n">48</td><td><div class="bar bgreen" style="width:92px"></div></td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank r3">3</td><td><strong>Facebook × Grupa lekarzy</strong></td><td class="n">20</td><td class="n">295</td><td class="n">227</td><td><div class="bar bgreen" style="width:94px"></div></td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank">4</td><td>Facebook × Post + ebook</td><td class="n">6</td><td class="n">207</td><td class="n">99</td><td><div class="bar bb" style="width:66px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">5</td><td>Facebook × Grupa rezydentury</td><td class="n">11</td><td class="n">185</td><td class="n">56</td><td><div class="bar bb" style="width:59px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">6</td><td><strong>Facebook × Post</strong></td><td class="n">3 143</td><td class="n">171</td><td class="n">84</td><td><div class="bar bb" style="width:54px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">7</td><td>Remedium × Post FB</td><td class="n">6</td><td class="n">169</td><td class="n">173</td><td><div class="bar bb" style="width:54px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">8</td><td>Instagram × Bio</td><td class="n">8</td><td class="n">156</td><td class="n">130</td><td><div class="bar bb" style="width:50px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">9</td><td>Facebook × Grupa staż</td><td class="n">102</td><td class="n">141</td><td class="n">80</td><td><div class="bar bb" style="width:45px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">10</td><td>Facebook × Grupa stażyści</td><td class="n">99</td><td class="n">140</td><td class="n">71</td><td><div class="bar bb" style="width:44px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">11</td><td>Facebook × Grupa studenci</td><td class="n">94</td><td class="n">135</td><td class="n">92</td><td><div class="bar bb" style="width:43px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">12</td><td>Facebook × Grupa rezydenci</td><td class="n">205</td><td class="n">134</td><td class="n">72</td><td><div class="bar bb" style="width:43px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">13</td><td><strong>SMS</strong></td><td class="n">18</td><td class="n">122</td><td class="n">53</td><td><div class="bar bb" style="width:39px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">14</td><td>Mailing</td><td class="n">10</td><td class="n">109</td><td class="n">61</td><td><div class="bar bb" style="width:35px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">15</td><td>Facebook × Lekarski Przegląd</td><td class="n">145</td><td class="n">99</td><td class="n">61</td><td><div class="bar borange" style="width:32px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">16</td><td>Instagram × Reel</td><td class="n">132</td><td class="n">86</td><td class="n">2</td><td><div class="bar borange" style="width:28px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">17</td><td>Wydarzenie × Post</td><td class="n">29</td><td class="n">81</td><td class="n">28</td><td><div class="bar borange" style="width:26px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">18</td><td>TikTok × Video</td><td class="n">32</td><td class="n">70</td><td class="n">12</td><td><div class="bar borange" style="width:22px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">19</td><td>Facebook × Wydarzenie</td><td class="n">1 630</td><td class="n">59</td><td class="n">22</td><td><div class="bar borange" style="width:19px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">20</td><td>Twitter × Cytat</td><td class="n">8</td><td class="n">58</td><td class="n">49</td><td><div class="bar borange" style="width:18px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">21</td><td>Instagram × Stories</td><td class="n">639</td><td class="n">55</td><td class="n">35</td><td><div class="bar borange" style="width:18px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">22</td><td>Instagram × Kanał nadawczy</td><td class="n">30</td><td class="n">55</td><td class="n">35</td><td><div class="bar borange" style="width:18px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+</table>
+<div class="note">Uwaga: „Reklama Meta" to linki z kampanii paid (utm_medium=reklama) – nie organiczne, ale dystrybuowane przez shortlinki.</div>
+</div>
+
+<div class="insight green"><strong>Główny wniosek:</strong> Facebook Post to koń roboczy (3 143 linki, mediana 84 klik.) – wysoka i stabilna skuteczność. Reel daje 2× wyższą średnią, ale duży rozrzut (mediana 48). Grupy tematyczne (lekarze, rezydenci, staż) to stabilne 130–145 klik./link. SMS i mailing to niewykorzystane kanały z potencjałem A-tier.</div>
+
+<!-- =================== RANKING 2: CONTENT TYPE =================== -->
+<h2>2. Typ treści <span class="badge">co publikować</span></h2>
+<p class="desc">Ranking wg średniej kliknięć na link – jaki typ treści przyciąga najwięcej uwagi.</p>
+
+<div class="card">
+<table>
+<tr><th class="rank">#</th><th>Typ treści</th><th class="n">Linki</th><th class="n">Łącznie klik.</th><th class="n">Śr. klik.</th><th class="n">Med.</th><th class="bar-w">Siła</th><th>Tier</th></tr>
+<tr><td class="rank r1">1</td><td><strong>Medyczne Espresso</strong></td><td class="n">15</td><td class="n">4 680</td><td class="n">312</td><td class="n">237</td><td><div class="bar bgreen" style="width:130px"></div></td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank r2">2</td><td><strong>DiL / 5-minut-o-leku</strong></td><td class="n">73</td><td class="n">15 823</td><td class="n">217</td><td class="n">37</td><td><div class="bar bgreen" style="width:91px"></div></td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank r3">3</td><td><strong>Vademecum</strong></td><td class="n">443</td><td class="n">83 961</td><td class="n">190</td><td class="n">106</td><td><div class="bar bgreen" style="width:79px"></div></td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank">4</td><td><strong>Kalkulatory</strong></td><td class="n">99</td><td class="n">17 326</td><td class="n">175</td><td class="n">122</td><td><div class="bar bb" style="width:73px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">5</td><td>Wiadomości</td><td class="n">2 922</td><td class="n">323 727</td><td class="n">111</td><td class="n">50</td><td><div class="bar bb" style="width:46px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">6</td><td>Poradniki</td><td class="n">207</td><td class="n">19 836</td><td class="n">96</td><td class="n">46</td><td><div class="bar bb" style="width:40px"></div></td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">7</td><td>Wideo (inne)</td><td class="n">1 101</td><td class="n">90 500</td><td class="n">82</td><td class="n">24</td><td><div class="bar borange" style="width:34px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">8</td><td>Case studies</td><td class="n">1 244</td><td class="n">84 948</td><td class="n">68</td><td class="n">42</td><td><div class="bar borange" style="width:28px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">9</td><td>Webinary</td><td class="n">770</td><td class="n">51 074</td><td class="n">66</td><td class="n">20</td><td><div class="bar borange" style="width:28px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">10</td><td>Kursy</td><td class="n">265</td><td class="n">16 960</td><td class="n">64</td><td class="n">23</td><td><div class="bar borange" style="width:27px"></div></td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">11</td><td>Konferencje</td><td class="n">1 552</td><td class="n">73 593</td><td class="n">47</td><td class="n">24</td><td><div class="bar bred" style="width:20px"></div></td><td><span class="tier tier-c">C</span></td></tr>
+</table>
+</div>
+
+<div class="insight green"><strong>Medyczne Espresso i DiL/5-min-o-leku to absolutni liderzy</strong> – krótkie, farmakologiczne formaty generują 3–5× więcej kliknięć niż reszta. Vademecum to ciche S-tier: mediana 106 (najwyższa ze wszystkich!) oznacza stabilne, przewidywalne zaangażowanie. Kalkulatory mają medianę 122 – narzędzia praktyczne mają lojalną publiczność.</div>
+
+<div class="insight orange"><strong>Konferencje to największy „pożeracz" linków</strong> – 1 552 linki (13% wszystkich), ale tylko 47 śr. klik. Każda konferencja generuje dziesiątki shortlinków do promocji. Stosunek wysiłku do efektu jest najniższy ze wszystkich typów treści.</div>
+
+<!-- =================== RANKING 3: CONTENT × BEST FORMAT =================== -->
+<h2>3. Najlepszy format dla każdego typu treści <span class="badge">jak publikować</span></h2>
+<p class="desc">Dla każdego typu treści – jaki format dystrybucji daje najlepsze kliknięcia.</p>
+
+<div class="two">
+<div class="card" style="padding:16px">
+<h3 style="font-size:14px; color:#4ade80; margin-bottom:8px">DiL / 5-min-o-leku</h3>
+<table><tr><th>Format</th><th class="n">Śr.</th></tr>
+<tr><td><strong>Reel</strong></td><td class="n"><strong>618</strong></td></tr>
+<tr><td>Reklama Meta</td><td class="n">533</td></tr>
+<tr><td>Post</td><td class="n">180</td></tr>
+</table>
+</div>
+<div class="card" style="padding:16px">
+<h3 style="font-size:14px; color:#4ade80; margin-bottom:8px">Vademecum</h3>
+<table><tr><th>Format</th><th class="n">Śr.</th></tr>
+<tr><td><strong>Grupa lekarzy</strong></td><td class="n"><strong>317</strong></td></tr>
+<tr><td>Lekarski Przegląd</td><td class="n">286</td></tr>
+<tr><td>Post</td><td class="n">~200</td></tr>
+</table>
+</div>
+<div class="card" style="padding:16px">
+<h3 style="font-size:14px; color:#60a5fa; margin-bottom:8px">Kalkulatory</h3>
+<table><tr><th>Format</th><th class="n">Śr.</th></tr>
+<tr><td><strong>Grupa stażyści</strong></td><td class="n"><strong>319</strong></td></tr>
+<tr><td>Wydarzenie</td><td class="n">211</td></tr>
+<tr><td>Post</td><td class="n">200</td></tr>
+</table>
+</div>
+<div class="card" style="padding:16px">
+<h3 style="font-size:14px; color:#60a5fa; margin-bottom:8px">Wiadomości</h3>
+<table><tr><th>Format</th><th class="n">Śr.</th></tr>
+<tr><td><strong>Grupa rezyd.</strong></td><td class="n"><strong>453</strong></td></tr>
+<tr><td>Grupa lekarzy</td><td class="n">375</td></tr>
+<tr><td>Grupa staż</td><td class="n">289</td></tr>
+</table>
+</div>
+<div class="card" style="padding:16px">
+<h3 style="font-size:14px; color:#fb923c; margin-bottom:8px">Konferencje</h3>
+<table><tr><th>Format</th><th class="n">Śr.</th></tr>
+<tr><td><strong>Reklama Meta</strong></td><td class="n"><strong>153</strong></td></tr>
+<tr><td>SMS</td><td class="n">148</td></tr>
+<tr><td>Bio IG</td><td class="n">103</td></tr>
+</table>
+</div>
+<div class="card" style="padding:16px">
+<h3 style="font-size:14px; color:#fb923c; margin-bottom:8px">Wideo (inne)</h3>
+<table><tr><th>Format</th><th class="n">Śr.</th></tr>
+<tr><td><strong>Reklama Meta</strong></td><td class="n"><strong>342</strong></td></tr>
+<tr><td>Post</td><td class="n">162</td></tr>
+<tr><td>Lekarski Przeg.</td><td class="n">87</td></tr>
+</table>
+</div>
+</div>
+
+<!-- =================== RANKING 4: META ADS =================== -->
+<h2>4. Meta Ads – opłacalność kampanii <span class="badge">paid</span></h2>
+<p class="desc">Ranking kampanii wg kosztu za wynik (CPR). Im niższy CPR, tym lepsza opłacalność. Dane za pełny okres sty 2025 – mar 2026.</p>
+
+<div class="card">
+<table>
+<tr><th class="rank">#</th><th>Kampania</th><th class="n">Wydatki</th><th class="n">Wyniki</th><th class="n">CPR</th><th class="n">Wyników/1000 zł</th><th>Tier</th></tr>
+
+<tr><td class="rank r1">1</td><td><strong>Aktywacja – Najlepsze posty (3 LPV)</strong></td><td class="n">7 934 zł</td><td class="n">288 181</td><td class="n"><strong>0.03 zł</strong></td><td class="n">36 323</td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank r2">2</td><td><strong>Treści klienckie (LPV)</strong></td><td class="n">104 888 zł</td><td class="n">182 343</td><td class="n"><strong>0.58 zł</strong></td><td class="n">1 738</td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank r3">3</td><td><strong>Narzędzia Remedium (LPV)</strong></td><td class="n">2 141 zł</td><td class="n">2 153</td><td class="n"><strong>0.99 zł</strong></td><td class="n">1 006</td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank">4</td><td>Konferencje własne (FB event)</td><td class="n">2 109 zł</td><td class="n">1 963</td><td class="n">1.07 zł</td><td class="n">931</td><td><span class="tier tier-s">S</span></td></tr>
+<tr><td class="rank">5</td><td>Konferencje własne (nagrania)</td><td class="n">2 570 zł</td><td class="n">2 168</td><td class="n">1.19 zł</td><td class="n">844</td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">6</td><td>Treści własne (LPV)</td><td class="n">5 235 zł</td><td class="n">4 175</td><td class="n">1.25 zł</td><td class="n">797</td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">7</td><td>Webinary klienckie (FB event)</td><td class="n">3 546 zł</td><td class="n">2 800</td><td class="n">1.27 zł</td><td class="n">790</td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">8</td><td>Kursy sponsorowane (odtworzenie)</td><td class="n">19 207 zł</td><td class="n">11 968</td><td class="n">1.60 zł</td><td class="n">623</td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">9</td><td>Nagrania konferencji własnych</td><td class="n">33 730 zł</td><td class="n">19 390</td><td class="n">1.74 zł</td><td class="n">575</td><td><span class="tier tier-a">A</span></td></tr>
+<tr><td class="rank">10</td><td>Wideo na stronie (budżet wewn.)</td><td class="n">5 498 zł</td><td class="n">3 075</td><td class="n">1.79 zł</td><td class="n">559</td><td><span class="tier tier-a">A</span></td></tr>
+<tr style="border-top:2px solid #2a2d35"><td class="rank">11</td><td>Konferencje klienckie (FB event)</td><td class="n">1 383 zł</td><td class="n">712</td><td class="n">1.94 zł</td><td class="n">515</td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">12</td><td>Konferencje własne (zapisy)</td><td class="n">19 706 zł</td><td class="n">8 447</td><td class="n">2.33 zł</td><td class="n">429</td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">13</td><td>Wideo/podcasty klienckie</td><td class="n">37 089 zł</td><td class="n">13 545</td><td class="n">2.74 zł</td><td class="n">365</td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">14</td><td>Webinary klienckie (zapisy)</td><td class="n">19 150 zł</td><td class="n">4 509</td><td class="n">4.25 zł</td><td class="n">235</td><td><span class="tier tier-b">B</span></td></tr>
+<tr><td class="rank">15</td><td>Konferencje klienckie (zapisy)</td><td class="n">11 285 zł</td><td class="n">2 384</td><td class="n">4.73 zł</td><td class="n">211</td><td><span class="tier tier-b">B</span></td></tr>
+<tr style="border-top:2px solid #2a2d35"><td class="rank">16</td><td>Rejestracje (konwersje)</td><td class="n">8 356 zł</td><td class="n">635</td><td class="n">13.16 zł</td><td class="n">76</td><td><span class="tier tier-c">C</span></td></tr>
+<tr><td class="rank">17</td><td>Kursy – odblokowanie dostępu</td><td class="n">5 342 zł</td><td class="n">272</td><td class="n">19.64 zł</td><td class="n">51</td><td><span class="tier tier-c">C</span></td></tr>
+<tr><td class="rank">18</td><td>Kursy Remedium (koszyk/zakup)</td><td class="n">9 840 zł</td><td class="n">200</td><td class="n">49.20 zł</td><td class="n">20</td><td><span class="tier tier-f">F</span></td></tr>
+<tr><td class="rank">19</td><td>Katalog (budżet wewnętrzny)</td><td class="n">3 022 zł</td><td class="n">22</td><td class="n">137.34 zł</td><td class="n">7</td><td><span class="tier tier-f">F</span></td></tr>
+</table>
+</div>
+
+<div class="insight green"><strong>Najlepsza inwestycja w Meta:</strong> „Aktywacja – Najlepsze posty" (0.03 zł/wynik) i „Treści klienckie LPV" (0.58 zł) to dwie kampanie, które warto skalować bez ograniczeń. Za 1000 zł dają odpowiednio 36 000 i 1 700 wyników.</div>
+
+<div class="insight orange"><strong>Kampanie F-tier spalają 12 862 zł na 222 wyników (58 zł/wynik).</strong> Przenosząc ten budżet do kampanii S-tier, można uzyskać ~22 000 dodatkowych wyników. To 100× więcej za te same pieniądze.</div>
+
+<!-- =================== PODSUMOWANIE =================== -->
+<h2>5. Podsumowanie – co robić więcej, co mniej</h2>
+
+<div class="two">
+<div class="card" style="padding:20px; border-color:#4ade8044">
+<h3 style="color:#4ade80; font-size:15px; margin-bottom:12px">SKALUJ (S-tier i A-tier)</h3>
+<table style="font-size:13px">
+<tr><td style="color:#4ade80; width:20px">&#9650;</td><td><strong>FB Reele</strong> z farmakologią (DiL, 5-min)</td><td class="n" style="color:#4ade80">618 klik./link</td></tr>
+<tr><td style="color:#4ade80">&#9650;</td><td><strong>Meta LPV</strong> – Treści klienckie + Aktywacja</td><td class="n" style="color:#4ade80">0.03–0.58 zł/wynik</td></tr>
+<tr><td style="color:#4ade80">&#9650;</td><td><strong>Grupy FB</strong> (lekarze, rezydenci, staż)</td><td class="n" style="color:#4ade80">134–295 klik./link</td></tr>
+<tr><td style="color:#4ade80">&#9650;</td><td><strong>Vademecum</strong> – stabilne 190 klik., mediana 106</td><td class="n" style="color:#4ade80">mediana #1</td></tr>
+<tr><td style="color:#4ade80">&#9650;</td><td><strong>Kalkulatory</strong> – lojalna publiczność</td><td class="n" style="color:#4ade80">175 klik., med. 122</td></tr>
+<tr><td style="color:#4ade80">&#9650;</td><td><strong>SMS + mailing</strong> – niedoinwestowane</td><td class="n" style="color:#4ade80">109–122 klik./link</td></tr>
+</table>
+</div>
+<div class="card" style="padding:20px; border-color:#f8717144">
+<h3 style="color:#f87171; font-size:15px; margin-bottom:12px">OGRANICZ / WYŁĄCZ</h3>
+<table style="font-size:13px">
+<tr><td style="color:#f87171; width:20px">&#9660;</td><td><strong>Meta Katalog</strong> – 137 zł/wynik</td><td class="n" style="color:#f87171">wyłącz</td></tr>
+<tr><td style="color:#f87171">&#9660;</td><td><strong>Meta Kursy-zakup</strong> – 49 zł/wynik</td><td class="n" style="color:#f87171">wyłącz</td></tr>
+<tr><td style="color:#fb923c">&#9660;</td><td><strong>IG posty i reele</strong> – 3–7 klik./link</td><td class="n" style="color:#fb923c">zrewiduj strategię</td></tr>
+<tr><td style="color:#fb923c">&#9660;</td><td><strong>FB Stories</strong> – 14 klik. (10× mniej niż post)</td><td class="n" style="color:#fb923c">ogranicz</td></tr>
+<tr><td style="color:#fb923c">&#9660;</td><td><strong>Bannery na Remedium</strong> – 3 klik./link</td><td class="n" style="color:#fb923c">zmień format</td></tr>
+<tr><td style="color:#fb923c">&#9660;</td><td><strong>Konferencyjne linki</strong> – dużo linków, mało klik.</td><td class="n" style="color:#fb923c">priorytetyzuj</td></tr>
+</table>
+</div>
+</div>
+
+</div>
+</body>
+</html>

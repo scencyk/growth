@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit — Remedium.md</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --text: #e4e4ef;
+    --text-muted: #8888a0;
+    --accent: #6c63ff;
+    --accent-light: #8b83ff;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --red: #ef4444;
+    --orange: #f97316;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 2rem; margin-bottom: 0.25rem; color: #fff; }
+  h2 { font-size: 1.35rem; margin: 2.5rem 0 1rem; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.75rem; color: var(--accent-light); }
+  p { margin-bottom: 0.75rem; color: var(--text); }
+  .subtitle { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; }
+  .date { color: var(--text-muted); font-size: 0.85rem; }
+
+  /* Score cards */
+  .scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .score-card .label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .score-card .value { font-size: 2rem; font-weight: 700; }
+  .score-card .note { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .good { color: var(--green); }
+  .warning { color: var(--yellow); }
+  .bad { color: var(--red); }
+  .medium { color: var(--orange); }
+
+  /* Summary box */
+  .summary-box {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .summary-box p { color: var(--text); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.88rem; }
+  th {
+    background: var(--surface2);
+    color: var(--accent-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:hover td { background: var(--surface); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge.critical { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge.high { background: rgba(249,115,22,0.15); color: var(--orange); }
+  .badge.medium { background: rgba(234,179,8,0.15); color: var(--yellow); }
+  .badge.low { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge.pass { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge.fail { background: rgba(239,68,68,0.15); color: var(--red); }
+  .badge.warn { background: rgba(234,179,8,0.15); color: var(--yellow); }
+  .badge.info { background: rgba(108,99,255,0.15); color: var(--accent-light); }
+
+  /* Priority list */
+  .action-list { list-style: none; padding: 0; }
+  .action-list li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .action-list li strong { color: #fff; }
+  .action-list li .meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem; }
+
+  /* Section divider */
+  .section-num {
+    display: inline-block;
+    width: 28px; height: 28px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>SEO Audit — Remedium.md</h1>
+<p class="subtitle">Portal medyczny dla lekarzy i studentów medycyny</p>
+<p class="date">Data audytu: 17 marca 2026</p>
+
+<!-- EXECUTIVE SUMMARY -->
+<h2><span class="section-num">0</span> Podsumowanie wykonawcze</h2>
+
+<div class="summary-box">
+  <p><strong>Remedium.md to dynamicznie rozwijający się polski portal medyczny</strong> z silnym zapleczem treściowym i rosnącą społecznością 60 000+ zweryfikowanych medyków. Strona ma dobrą strukturę URL i szeroką ofertę sekcji (kursy, poradniki, wyszukiwarka leków, webinary, e-booki, egzaminy). Jednak w porównaniu z dominującym mp.pl (73% lekarzy-internautów) i Konsylium24 (~98 000 lekarzy), Remedium potrzebuje strategicznego wzmocnienia SEO, by zwiększyć organiczny zasięg.</p>
+  <p style="margin-top:0.75rem;"><strong>Top 3 priorytety:</strong></p>
+  <p>1. <strong>Optymalizacja meta tagów i nagłówków</strong> — title tagi w wynikach wyszukiwania nie zawsze precyzyjnie komunikują wartość stron.</p>
+  <p>2. <strong>Budowa topic clusters</strong> — brak pillar pages wokół kluczowych tematów (np. "leki", "egzaminy LEK", "poradniki POZ").</p>
+  <p>3. <strong>Structured data (schema.org)</strong> — dodanie schema typu MedicalWebPage, Course, FAQPage dla lepszej widoczności w SERP.</p>
+  <p style="margin-top:0.75rem;"><strong>Ogólna ocena:</strong> Solidne fundamenty, wymaga strategicznej optymalizacji SEO.</p>
+</div>
+
+<div class="scores">
+  <div class="score-card">
+    <div class="label">Struktura treści</div>
+    <div class="value good">B+</div>
+    <div class="note">Bogata oferta, dobra organizacja</div>
+  </div>
+  <div class="score-card">
+    <div class="label">On-Page SEO</div>
+    <div class="value warning">C+</div>
+    <div class="note">Meta tagi wymagają optymalizacji</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Technical SEO</div>
+    <div class="value warning">B-</div>
+    <div class="note">Wymaga weryfikacji CWV</div>
+  </div>
+  <div class="score-card">
+    <div class="label">Widoczność vs. konkurencja</div>
+    <div class="value medium">C</div>
+    <div class="note">Duży potencjał wzrostu</div>
+  </div>
+</div>
+
+<!-- 1. KEYWORD OPPORTUNITIES -->
+<h2><span class="section-num">1</span> Słowa kluczowe — okazje</h2>
+
+<p>Poniżej prezentujemy 20 głównych fraz kluczowych z oceną potencjału dla Remedium.md. Frazy dobrano na podstawie analizy profilu serwisu, jego sekcji i krajobrazu konkurencyjnego.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Słowo kluczowe</th>
+      <th>Trudność</th>
+      <th>Potencjał</th>
+      <th>Intent</th>
+      <th>Rekomendowany format</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>portal medyczny dla lekarzy</td><td><span class="badge high">Wysoka</span></td><td><span class="badge high">Wysoki</span></td><td>Nawigacyjny</td><td>Landing page + SEO copy</td></tr>
+    <tr><td>wyszukiwarka leków online</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Transakcyjny</td><td>Narzędzie + landing page</td></tr>
+    <tr><td>kalkulator medyczny online</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Transakcyjny</td><td>Narzędzie + SEO copy</td></tr>
+    <tr><td>kursy medyczne online dla lekarzy</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Komercyjny</td><td>Pillar page + kategorie kursów</td></tr>
+    <tr><td>pytania LEK egzamin</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Informacyjny</td><td>Hub egzaminacyjny + quizy</td></tr>
+    <tr><td>pytania LDEK baza</td><td><span class="badge low">Niska</span></td><td><span class="badge high">Wysoki</span></td><td>Informacyjny</td><td>Strona bazy pytań</td></tr>
+    <tr><td>kody ICD-10 wyszukiwarka</td><td><span class="badge low">Niska</span></td><td><span class="badge high">Wysoki</span></td><td>Transakcyjny</td><td>Narzędzie interaktywne</td></tr>
+    <tr><td>poradnik dla lekarza POZ</td><td><span class="badge low">Niska</span></td><td><span class="badge high">Wysoki</span></td><td>Informacyjny</td><td>Pillar page z poradnikami</td></tr>
+    <tr><td>zarobki lekarzy w Polsce 2026</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Informacyjny</td><td>Raport + interaktywna mapa</td></tr>
+    <tr><td>webinary medyczne online</td><td><span class="badge low">Niska</span></td><td><span class="badge medium">Średni</span></td><td>Komercyjny</td><td>Katalog webinarów</td></tr>
+    <tr><td>zamienniki leków refundowanych</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Transakcyjny</td><td>Narzędzie wyszukiwania</td></tr>
+    <tr><td>interakcje leków sprawdzenie</td><td><span class="badge medium">Średnia</span></td><td><span class="badge high">Wysoki</span></td><td>Transakcyjny</td><td>Checker interakcji</td></tr>
+    <tr><td>e-booki medyczne pdf</td><td><span class="badge low">Niska</span></td><td><span class="badge medium">Średni</span></td><td>Komercyjny</td><td>Katalog e-booków</td></tr>
+    <tr><td>szkolenia online dla lekarzy</td><td><span class="badge high">Wysoka</span></td><td><span class="badge medium">Średni</span></td><td>Komercyjny</td><td>Landing page kursów</td></tr>
+    <tr><td>jak napisać e-receptę</td><td><span class="badge low">Niska</span></td><td><span class="badge medium">Średni</span></td><td>Informacyjny</td><td>Poradnik krok po kroku</td></tr>
+    <tr><td>specjalizacja lekarska jak wybrać</td><td><span class="badge low">Niska</span></td><td><span class="badge medium">Średni</span></td><td>Informacyjny</td><td>Artykuł z porównaniem</td></tr>
+    <tr><td>praca dla lekarza oferty</td><td><span class="badge high">Wysoka</span></td><td><span class="badge medium">Średni</span></td><td>Transakcyjny</td><td>Board ofert pracy</td></tr>
+    <tr><td>wypalenie zawodowe lekarzy</td><td><span class="badge low">Niska</span></td><td><span class="badge medium">Średni</span></td><td>Informacyjny</td><td>Artykuł + zasoby</td></tr>
+    <tr><td>kalendarz szczepień 2026</td><td><span class="badge medium">Średnia</span></td><td><span class="badge medium">Średni</span></td><td>Informacyjny</td><td>Narzędzie interaktywne</td></tr>
+    <tr><td>aplikacja medyczna dla lekarzy</td><td><span class="badge medium">Średnia</span></td><td><span class="badge medium">Średni</span></td><td>Komercyjny</td><td>Landing page aplikacji</td></tr>
+  </tbody>
+</table>
+
+<!-- 2. ON-PAGE SEO -->
+<h2><span class="section-num">2</span> On-Page SEO — analiza</h2>
+
+<p>Analiza oparta na danych z indeksu Google (title tagi i meta opisy widoczne w SERP).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Strona</th>
+      <th>Problem</th>
+      <th>Ważność</th>
+      <th>Rekomendacja</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Strona główna</td>
+      <td>Title tag "Remedium | Portal medyczny" — zbyt ogólny, brak USP</td>
+      <td><span class="badge high">Wysoka</span></td>
+      <td>Zmień na: "Remedium — Portal medyczny dla lekarzy | Narzędzia, kursy, leki"</td>
+    </tr>
+    <tr>
+      <td>Strona główna</td>
+      <td>Meta description brak precyzji (lub brak) w wynikach Google</td>
+      <td><span class="badge high">Wysoka</span></td>
+      <td>Dodaj: "Dołącz do 60 000 lekarzy. Wyszukiwarka leków, kalkulatory, kursy CME, poradniki POZ. Portal tworzony przez lekarzy."</td>
+    </tr>
+    <tr>
+      <td>/kursy</td>
+      <td>Title "Kursy medyczne | Edukacja medyczna Remedium" — OK, ale brak "online"</td>
+      <td><span class="badge medium">Średnia</span></td>
+      <td>"Kursy medyczne online dla lekarzy | Edukacja CME — Remedium"</td>
+    </tr>
+    <tr>
+      <td>/wyszukiwarka-lekow</td>
+      <td>Title dobry: "Wyszukiwarka leków dla lekarzy | Baza leków od A do Z"</td>
+      <td><span class="badge low">Niska</span></td>
+      <td>Rozważ dodanie "dawkowanie, interakcje, zamienniki" do meta description</td>
+    </tr>
+    <tr>
+      <td>/poradniki</td>
+      <td>Title "Poradniki medyczne | Portal medyczny" — brakuje kontekstu POZ</td>
+      <td><span class="badge medium">Średnia</span></td>
+      <td>"Poradniki medyczne POZ i NPL | Diagnostyka i leczenie — Remedium"</td>
+    </tr>
+    <tr>
+      <td>/publikacje</td>
+      <td>Title "Publikacje medyczne | Portal medyczny Remedium" — generyczny</td>
+      <td><span class="badge medium">Średnia</span></td>
+      <td>"Publikacje medyczne — wiadomości, wywiady, opinie | Remedium"</td>
+    </tr>
+    <tr>
+      <td>/egzaminy-medyczne</td>
+      <td>Title "Egzaminy medyczne | LEK, LDEK i PES" — dobry</td>
+      <td><span class="badge low">Niska</span></td>
+      <td>Dodaj do meta: "Darmowa baza pytań egzaminacyjnych LEK, LDEK, PES"</td>
+    </tr>
+    <tr>
+      <td>/rejestracja</td>
+      <td>Title "Remedium" — brakuje kontekstu</td>
+      <td><span class="badge critical">Krytyczna</span></td>
+      <td>"Dołącz do Remedium — Rejestracja dla lekarzy i studentów medycyny"</td>
+    </tr>
+    <tr>
+      <td>/e-booki</td>
+      <td>Title "E-booki medyczne | Edukacja medyczna on-line w Remedium" — OK</td>
+      <td><span class="badge low">Niska</span></td>
+      <td>Skróć do: "E-booki medyczne — darmowa wiedza online | Remedium"</td>
+    </tr>
+    <tr>
+      <td>Strony zamienników leków</td>
+      <td>Dynamiczne strony zamienników (np. /zamienniki/23092556) — potencjał SEO</td>
+      <td><span class="badge high">Wysoka</span></td>
+      <td>Generuj unikalne title+meta z nazwą leku, np. "Zamienniki Otrivin Menthol — porównanie cen"</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 3. CONTENT GAP ANALYSIS -->
+<h2><span class="section-num">3</span> Analiza luk w treściach</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Temat / słowo kluczowe</th>
+      <th>Dlaczego ważne</th>
+      <th>Format</th>
+      <th>Priorytet</th>
+      <th>Pracochłonność</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pillar page: "Egzaminy LEK — kompletny przewodnik"</td>
+      <td>Ogromny ruch organiczny od studentów. Konkurencja (mp.pl) ma rozbudowane sekcje.</td>
+      <td>Pillar page + hub linkujący</td>
+      <td><span class="badge critical">Wysoki</span></td>
+      <td>1-2 dni</td>
+    </tr>
+    <tr>
+      <td>Interaktywny checker interakcji leków</td>
+      <td>Wysoki intent transakcyjny, codzienne narzędzie lekarza. Brak widocznego narzędzia na stronie.</td>
+      <td>Narzędzie webowe</td>
+      <td><span class="badge critical">Wysoki</span></td>
+      <td>Znaczna (rozwój produktu)</td>
+    </tr>
+    <tr>
+      <td>Blog z wytycznymi klinicznymi (guidelines)</td>
+      <td>mp.pl dominuje w tej kategorii. Remedium może zająć niszę "szybkich podsumowań guidelines".</td>
+      <td>Seria artykułów</td>
+      <td><span class="badge high">Wysoki</span></td>
+      <td>Ciągła</td>
+    </tr>
+    <tr>
+      <td>"Jak założyć gabinet lekarski" — poradnik</td>
+      <td>Evergreen content, wysoki potencjał long-tail. Brak widocznej treści w indeksie.</td>
+      <td>Poradnik krok po kroku</td>
+      <td><span class="badge medium">Średni</span></td>
+      <td>Pół dnia</td>
+    </tr>
+    <tr>
+      <td>Porównania leków (head-to-head)</td>
+      <td>Np. "Ibuprofen vs Paracetamol" — ogromny potencjał SEO i wartość dla lekarzy.</td>
+      <td>Strony porównawcze</td>
+      <td><span class="badge high">Wysoki</span></td>
+      <td>2-4 godziny / porównanie</td>
+    </tr>
+    <tr>
+      <td>Sekcja FAQ / "Pytania pacjentów"</td>
+      <td>Szansa na featured snippets w Google. Schema FAQPage wspiera widoczność.</td>
+      <td>FAQ z schema markup</td>
+      <td><span class="badge high">Wysoki</span></td>
+      <td>2-4 godziny</td>
+    </tr>
+    <tr>
+      <td>Kalkulatory medyczne — dedykowane landing pages</td>
+      <td>Każdy kalkulator powinien mieć własną, zoptymalizowaną stronę (np. "Kalkulator GFR online").</td>
+      <td>Landing pages per kalkulator</td>
+      <td><span class="badge high">Wysoki</span></td>
+      <td>1-2 godziny / strona</td>
+    </tr>
+    <tr>
+      <td>Glossary / Słownik medyczny</td>
+      <td>Potencjał na setki zaindeksowanych stron, budowa autorytetu.</td>
+      <td>Słownik A-Z</td>
+      <td><span class="badge medium">Średni</span></td>
+      <td>Znaczna (jednorazowo)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 4. TECHNICAL SEO -->
+<h2><span class="section-num">4</span> Kontrola techniczna SEO</h2>
+
+<p><strong>Uwaga:</strong> Bezpośredni dostęp do kodu strony remedium.md był zablokowany podczas audytu. Poniższe oceny oparte są na danych z indeksu Google oraz analizie struktury URL. <em>Zalecam ręczne sprawdzenie za pomocą <a href="https://pagespeed.web.dev/" style="color:var(--accent-light)">PageSpeed Insights</a> i <a href="https://search.google.com/search-console" style="color:var(--accent-light)">Google Search Console</a>.</em></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Element</th>
+      <th>Status</th>
+      <th>Szczegóły</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>HTTPS</td><td><span class="badge pass">Pass</span></td><td>Strona serwowana po HTTPS ✓</td></tr>
+    <tr><td>Struktura URL</td><td><span class="badge pass">Pass</span></td><td>Czyste, czytelne URL-e: /kursy, /poradniki, /wyszukiwarka-lekow ✓</td></tr>
+    <tr><td>Domena .md</td><td><span class="badge warn">Uwaga</span></td><td>TLD .md (Mołdawia) — Google może mieć problem z geotargetingiem na Polskę. Ustaw hreflang="pl" i skonfiguruj geotargeting w GSC.</td></tr>
+    <tr><td>Aplikacja mobilna</td><td><span class="badge pass">Pass</span></td><td>Dostępna na iOS i Android — dobry sygnał mobile-first ✓</td></tr>
+    <tr><td>Sitemap XML</td><td><span class="badge warn">Sprawdź</span></td><td>Brak możliwości weryfikacji. Upewnij się, że istnieje /sitemap.xml z aktualnymi URL-ami.</td></tr>
+    <tr><td>Robots.txt</td><td><span class="badge warn">Sprawdź</span></td><td>Brak możliwości weryfikacji. Sprawdź, czy nie blokuje ważnych sekcji.</td></tr>
+    <tr><td>Core Web Vitals</td><td><span class="badge warn">Sprawdź</span></td><td>Wymagana weryfikacja w PageSpeed Insights. Cel: LCP < 2.5s, CLS < 0.1, INP < 200ms.</td></tr>
+    <tr><td>Structured Data / Schema</td><td><span class="badge fail">Prawdop. brak</span></td><td>Brak widocznych rich snippets w SERP. Dodaj schema: Organization, Course, MedicalWebPage, FAQPage.</td></tr>
+    <tr><td>Canonical Tags</td><td><span class="badge warn">Sprawdź</span></td><td>Kluczowe dla stron zamienników leków (mogą generować duplikaty).</td></tr>
+    <tr><td>Open Graph / Twitter Cards</td><td><span class="badge warn">Sprawdź</span></td><td>Wpływa na CTR w social media. Upewnij się, że og:image, og:title, og:description są ustawione.</td></tr>
+    <tr><td>Hreflang</td><td><span class="badge fail">Prawdop. brak</span></td><td>Przy domenie .md kluczowe: dodaj &lt;link rel="alternate" hreflang="pl" /&gt;</td></tr>
+    <tr><td>Responsywność (Mobile)</td><td><span class="badge pass">Prawdop. OK</span></td><td>Obecność aplikacji mobilnej sugeruje mobile-first approach.</td></tr>
+  </tbody>
+</table>
+
+<!-- 5. COMPETITOR COMPARISON -->
+<h2><span class="section-num">5</span> Porównanie z konkurencją</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Wymiar</th>
+      <th>Remedium.md</th>
+      <th>mp.pl</th>
+      <th>Konsylium24</th>
+      <th>Medico PZWL</th>
+      <th>Lider</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Społeczność</td><td>~60 000 medyków</td><td>73% lekarzy-internautów</td><td>~98 000 lekarzy</td><td>Brak danych</td><td><strong>mp.pl</strong></td></tr>
+    <tr><td>Narzędzia kliniczne</td><td>ICD-10, kalkulatory, leki, kalendarz szczepień</td><td>Rozbudowane narzędzia + bazy wiedzy</td><td>Problemy kliniczne, konsultacje</td><td>AI search medyczny</td><td><strong>mp.pl</strong></td></tr>
+    <tr><td>Edukacja (kursy)</td><td>Kursy, webinary, e-booki</td><td>Program edukacyjny, CME</td><td>Forum dyskusyjne</td><td>Publikacje PZWL</td><td><strong>Remedium / mp.pl</strong></td></tr>
+    <tr><td>Wyszukiwarka leków</td><td>Tak + zamienniki</td><td>Tak</td><td>Kompendium24</td><td>Nie</td><td><strong>Remis</strong></td></tr>
+    <tr><td>Egzaminy (LEK/LDEK/PES)</td><td>Baza pytań</td><td>Premium quiz bank</td><td>Brak</td><td>Brak</td><td><strong>mp.pl</strong></td></tr>
+    <tr><td>Oferty pracy</td><td>Mapa wynagrodzeń</td><td>Ograniczone</td><td>1624 ofert pracy</td><td>Brak</td><td><strong>Konsylium24</strong></td></tr>
+    <tr><td>Weryfikacja lekarzy</td><td>NIL + uczelnie</td><td>Rejestracja ogólna</td><td>Rejestr Centralny</td><td>Brak danych</td><td><strong>Konsylium24</strong></td></tr>
+    <tr><td>Nowoczesność UI/UX</td><td>Nowoczesny design</td><td>Tradycyjny</td><td>Funkcjonalny</td><td>AI-first</td><td><strong>Remedium</strong></td></tr>
+    <tr><td>Widoczność SEO (estymacja)</td><td>Średnia</td><td>Dominująca</td><td>Średnia</td><td>Niska</td><td><strong>mp.pl</strong></td></tr>
+  </tbody>
+</table>
+
+<h3>Przewaga konkurencyjna Remedium</h3>
+<p>Remedium wyróżnia się <strong>nowoczesnym designem</strong>, <strong>unikalną mapą wynagrodzeń</strong> i <strong>zweryfikowaną społecznością młodych lekarzy</strong>. To nisze, które konkurencja nie obsługuje równie dobrze — warto je wzmocnić w komunikacji SEO.</p>
+
+<!-- 6. PRIORITIZED ACTION PLAN -->
+<h2><span class="section-num">6</span> Plan działań — priorytety</h2>
+
+<h3>⚡ Quick Wins (ten tydzień)</h3>
+<ul class="action-list">
+  <li>
+    <strong>Popraw title tag strony głównej i /rejestracja</strong>
+    <div class="meta"><span class="badge critical">Wysoki wpływ</span> · 30 min · Brak zależności</div>
+  </li>
+  <li>
+    <strong>Dodaj unikalne meta descriptions do wszystkich kluczowych stron</strong>
+    <div class="meta"><span class="badge high">Wysoki wpływ</span> · 2-3 godziny · Brak zależności</div>
+  </li>
+  <li>
+    <strong>Dodaj hreflang="pl" do &lt;head&gt; na wszystkich stronach</strong>
+    <div class="meta"><span class="badge high">Wysoki wpływ</span> · 30 min · Deweloper</div>
+  </li>
+  <li>
+    <strong>Sprawdź i zgłoś sitemap.xml w Google Search Console</strong>
+    <div class="meta"><span class="badge medium">Średni wpływ</span> · 1 godzina · Dostęp GSC</div>
+  </li>
+  <li>
+    <strong>Uruchom PageSpeed Insights — zmierz Core Web Vitals</strong>
+    <div class="meta"><span class="badge medium">Średni wpływ</span> · 30 min · Brak zależności</div>
+  </li>
+  <li>
+    <strong>Skonfiguruj geotargeting na Polskę w Google Search Console</strong>
+    <div class="meta"><span class="badge high">Wysoki wpływ</span> · 15 min · Dostęp GSC</div>
+  </li>
+</ul>
+
+<h3>🎯 Inwestycje strategiczne (ten kwartał)</h3>
+<ul class="action-list">
+  <li>
+    <strong>Zbuduj 3-5 pillar pages</strong> — "Egzaminy LEK", "Wyszukiwarka leków", "Poradniki POZ", "Mapa wynagrodzeń", "Kursy medyczne"
+    <div class="meta"><span class="badge critical">Wysoki wpływ</span> · 2-3 dni · Content team</div>
+  </li>
+  <li>
+    <strong>Wdroż Structured Data (schema.org)</strong> — Organization, Course, MedicalWebPage, FAQPage, BreadcrumbList
+    <div class="meta"><span class="badge high">Wysoki wpływ</span> · 1-2 dni · Deweloper</div>
+  </li>
+  <li>
+    <strong>Stwórz dedykowane landing pages dla kalkulatorów medycznych</strong> — osobna strona per kalkulator z SEO copy
+    <div class="meta"><span class="badge high">Wysoki wpływ</span> · 3-5 dni · Content + Dev</div>
+  </li>
+  <li>
+    <strong>Uruchom sekcję porównań leków</strong> — head-to-head (np. "Ramipril vs Perindopril") z dynamicznym generowaniem
+    <div class="meta"><span class="badge high">Wysoki wpływ</span> · 1-2 tygodnie · Product + Dev + Content</div>
+  </li>
+  <li>
+    <strong>Content calendar: 2-4 artykuły SEO-driven / miesiąc</strong> — targetujące frazy z tabeli keywordów
+    <div class="meta"><span class="badge medium">Średni wpływ</span> · Ciągłe · Content team</div>
+  </li>
+  <li>
+    <strong>Link building: współpraca z uczelniami medycznymi i towarzystwami</strong> — artykuły gościnne, cytowania
+    <div class="meta"><span class="badge medium">Średni wpływ</span> · Ciągłe · Marketing</div>
+  </li>
+  <li>
+    <strong>Rozbuduj sekcję FAQ z schema markup</strong> — szansa na featured snippets
+    <div class="meta"><span class="badge medium">Średni wpływ</span> · 2-3 dni · Content + Dev</div>
+  </li>
+</ul>
+
+<div class="footer">
+  Audyt SEO — Remedium.md · Wygenerowano 17.03.2026 · Na podstawie danych z indeksu Google i analizy konkurencji
+</div>
+
+</body>
+</html>

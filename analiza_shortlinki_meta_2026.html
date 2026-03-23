@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remedium - Analiza Shortlinków i Meta Ads | Marzec 2026</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f1117; color: #e0e0e0; line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; color: #fff; }
+  .subtitle { color: #888; font-size: 14px; margin-bottom: 32px; }
+  h2 { font-size: 20px; font-weight: 600; color: #fff; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #2a2d35; }
+  h3 { font-size: 16px; font-weight: 600; color: #ccc; margin: 20px 0 10px; }
+  
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .kpi { background: #1a1d27; border-radius: 12px; padding: 20px; border: 1px solid #2a2d35; }
+  .kpi-label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-value { font-size: 28px; font-weight: 700; color: #fff; margin: 4px 0; }
+  .kpi-sub { font-size: 12px; color: #666; }
+  .kpi-value.green { color: #4ade80; }
+  .kpi-value.red { color: #f87171; }
+  .kpi-value.blue { color: #60a5fa; }
+  .kpi-value.orange { color: #fb923c; }
+  .kpi-value.purple { color: #c084fc; }
+  
+  .card { background: #1a1d27; border-radius: 12px; padding: 24px; border: 1px solid #2a2d35; margin-bottom: 16px; }
+  
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; background: #22252f; color: #aaa; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 10px 12px; border-top: 1px solid #22252f; }
+  tr:hover td { background: #1e2130; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  
+  .bar-container { display: flex; align-items: center; gap: 8px; }
+  .bar { height: 8px; border-radius: 4px; background: #3b82f6; min-width: 2px; }
+  .bar.green { background: #4ade80; }
+  .bar.orange { background: #fb923c; }
+  .bar.red { background: #f87171; }
+  .bar.purple { background: #c084fc; }
+  
+  .insight { background: #1e293b; border-left: 3px solid #3b82f6; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 14px; }
+  .insight.positive { border-color: #4ade80; background: #0f2318; }
+  .insight.negative { border-color: #f87171; background: #231313; }
+  .insight.action { border-color: #fb923c; background: #231a0f; }
+  .insight strong { color: #fff; }
+  
+  .rec { background: #1a1d27; border-radius: 12px; padding: 20px; border: 1px solid #2a2d35; margin: 12px 0; }
+  .rec-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .rec-priority { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .rec-priority.high { background: #f8717133; color: #f87171; }
+  .rec-priority.medium { background: #fb923c33; color: #fb923c; }
+  .rec-priority.low { background: #4ade8033; color: #4ade80; }
+  .rec-title { font-weight: 600; color: #fff; }
+  .rec-body { font-size: 14px; color: #bbb; }
+  
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+  
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #2a2d35; color: #aaa; margin: 2px; }
+  .section-intro { color: #999; font-size: 14px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Analiza Shortlinków i Meta Ads</h1>
+<p class="subtitle">Remedium &middot; Dane: styczeń 2025 – 20 marca 2026 &middot; 12 062 shortlinki + 467 ad setów Meta</p>
+
+<!-- KPI OVERVIEW -->
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Łącznie kliknięć (shortlinki)</div>
+    <div class="kpi-value">1 010 550</div>
+    <div class="kpi-sub">12 062 linków</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Kliknięcia z UTM</div>
+    <div class="kpi-value blue">43 679</div>
+    <div class="kpi-sub">689 linków (5.7% wszystkich)</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Wydatki Meta Q1 2026</div>
+    <div class="kpi-value orange">49 365 zł</div>
+    <div class="kpi-sub">14 kampanii aktywnych</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Wydatki Meta (cały okres)</div>
+    <div class="kpi-value">337 234 zł</div>
+    <div class="kpi-sub">467 ad setów, sty 2025 – mar 2026</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Najtańszy wynik Q1</div>
+    <div class="kpi-value green">0.94 zł</div>
+    <div class="kpi-sub">Treści klienckie (LPV)</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Najdroższy wynik Q1</div>
+    <div class="kpi-value red">12.55 zł</div>
+    <div class="kpi-sub">Rejestracje (konwersje)</div>
+  </div>
+</div>
+
+<!-- ===== SECTION 1: SHORTLINKS ===== -->
+<h2>1. Skuteczność kanałów (shortlinki z UTM)</h2>
+<p class="section-intro">Analiza 689 shortlinków z tagami UTM utworzonych w Q1 2026 (styczeń–marzec).</p>
+
+<div class="card">
+<h3>Kanały (utm_source) – porównanie skuteczności</h3>
+<table>
+<tr><th>Źródło</th><th class="num">Linki</th><th class="num">Łącznie kliknięć</th><th class="num">Śr. kliknięć</th><th class="num">Mediana</th><th style="width:200px">Rozkład</th></tr>
+<tr><td><strong>Facebook</strong></td><td class="num">291</td><td class="num">32 960</td><td class="num">113</td><td class="num">57</td><td><div class="bar" style="width:200px"></div></td></tr>
+<tr><td>Wydarzenia</td><td class="num">24</td><td class="num">2 201</td><td class="num">92</td><td class="num">26</td><td><div class="bar" style="width:13px"></div></td></tr>
+<tr><td>SMS</td><td class="num">16</td><td class="num">2 065</td><td class="num">129</td><td class="num">48</td><td><div class="bar green" style="width:13px"></div></td></tr>
+<tr><td>Instagram</td><td class="num">98</td><td class="num">1 831</td><td class="num">19</td><td class="num">11</td><td><div class="bar purple" style="width:11px"></div></td></tr>
+<tr><td>Twitter/X</td><td class="num">110</td><td class="num">1 630</td><td class="num">15</td><td class="num">14</td><td><div class="bar" style="width:10px"></div></td></tr>
+<tr><td>Grupy (łącznie)</td><td class="num">75</td><td class="num">2 674</td><td class="num">36</td><td class="num">28</td><td><div class="bar orange" style="width:16px"></div></td></tr>
+<tr><td>Remedium (banner)</td><td class="num">32</td><td class="num">111</td><td class="num">3</td><td class="num">2</td><td><div class="bar red" style="width:2px"></div></td></tr>
+</table>
+</div>
+
+<div class="insight positive"><strong>Facebook dominuje</strong> – 75% wszystkich kliknięć z UTM. Średnia 113 kliknięć/link, 5× więcej niż Instagram (19) i 8× więcej niż Twitter (15).</div>
+<div class="insight"><strong>SMS ma najwyższą medianę na link</strong> – 48 kliknięć (vs 57 FB, ale przy zaledwie 16 linkach). Wysoka skuteczność przy małej skali = potencjał do skalowania.</div>
+<div class="insight negative"><strong>Bannery na Remedium (utm_source=remedium)</strong> – zaledwie 3 kliknięcia średnio. 32 linki, 111 kliknięć łącznie. Praktycznie zerowa skuteczność.</div>
+
+<div class="two-col">
+<div class="card">
+<h3>Format treści (utm_medium)</h3>
+<table>
+<tr><th>Format</th><th class="num">Linki</th><th class="num">Śr. klik.</th><th class="num">Mediana</th></tr>
+<tr><td><strong style="color:#4ade80">Reel</strong></td><td class="num">28</td><td class="num"><strong>321</strong></td><td class="num">132</td></tr>
+<tr><td>Kanał nadawczy</td><td class="num">1</td><td class="num">160</td><td class="num">160</td></tr>
+<tr><td>SMS</td><td class="num">16</td><td class="num">129</td><td class="num">48</td></tr>
+<tr><td>Post</td><td class="num">480</td><td class="num">63</td><td class="num">38</td></tr>
+<tr><td>Newsletter</td><td class="num">2</td><td class="num">46</td><td class="num">46</td></tr>
+<tr><td>Zaproszenie</td><td class="num">2</td><td class="num">50</td><td class="num">50</td></tr>
+<tr><td>Stories</td><td class="num">91</td><td class="num">21</td><td class="num">16</td></tr>
+<tr><td>Banner</td><td class="num">32</td><td class="num">3</td><td class="num">2</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>Facebook: Reel vs Post vs Stories</h3>
+<table>
+<tr><th>Format</th><th class="num">Linki</th><th class="num">Śr. klik.</th><th class="num">Med.</th><th class="num">% > 100 klik.</th></tr>
+<tr><td><strong style="color:#4ade80">Reel</strong></td><td class="num">18</td><td class="num"><strong>496</strong></td><td class="num">582</td><td class="num">30%</td></tr>
+<tr><td>Post</td><td class="num">247</td><td class="num">96</td><td class="num">61</td><td class="num">22%</td></tr>
+<tr><td>Stories</td><td class="num">26</td><td class="num">14</td><td class="num">13</td><td class="num">0%</td></tr>
+</table>
+<div class="insight positive" style="margin-top:12px"><strong>Reele na FB generują 5× więcej kliknięć niż posty</strong> i 35× więcej niż stories. Mediana reela (582) jest wyższa niż średnia posta (96).</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Instagram: dramatyczna różnica formatów</h3>
+<table>
+<tr><th>Format</th><th class="num">Linki</th><th class="num">Śr. klik.</th><th class="num">Mediana</th><th>Obserwacja</th></tr>
+<tr><td>Kanał nadawczy</td><td class="num">1</td><td class="num">160</td><td class="num">160</td><td>Jedyny test, ale obiecujący</td></tr>
+<tr><td>Stories</td><td class="num">65</td><td class="num">23</td><td class="num">19</td><td>Najczęściej używany format na IG</td></tr>
+<tr><td>Reel</td><td class="num">10</td><td class="num">7</td><td class="num">0</td><td><span style="color:#f87171">Zaskakująco słaby</span></td></tr>
+<tr><td>Post</td><td class="num">22</td><td class="num">3</td><td class="num">2</td><td>Praktycznie nieefektywny</td></tr>
+</table>
+<div class="insight negative" style="margin-top:12px"><strong>Instagram jest 6× mniej skuteczny niż Facebook</strong> (mediana 11 vs 57). Reele na IG mają medianę 0 kliknięć – przeciwieństwo FB, gdzie reele dominują. To sugeruje, że publiczność IG Remedium jest znacząco mniejsza lub mniej zaangażowana.</div>
+</div>
+
+<!-- ===== SECTION 2: CONTENT TYPES ===== -->
+<h2>2. Jakie treści generują najwięcej ruchu?</h2>
+
+<div class="card">
+<h3>Kliknięcia wg typu treści (na podstawie URL docelowego)</h3>
+<table>
+<tr><th>Typ treści</th><th class="num">Linki</th><th class="num">Łącznie</th><th class="num">Śr. klik.</th><th class="num">Med.</th><th style="width:160px">Udział</th></tr>
+<tr><td><strong>Wiadomości</strong></td><td class="num">216</td><td class="num">18 814</td><td class="num">87</td><td class="num">57</td><td><div class="bar" style="width:160px"></div></td></tr>
+<tr><td><strong>Wideo</strong></td><td class="num">59</td><td class="num">7 465</td><td class="num">127</td><td class="num">31</td><td><div class="bar green" style="width:63px"></div></td></tr>
+<tr><td>Konferencje</td><td class="num">197</td><td class="num">7 259</td><td class="num">37</td><td class="num">24</td><td><div class="bar orange" style="width:62px"></div></td></tr>
+<tr><td>Case studies</td><td class="num">70</td><td class="num">4 279</td><td class="num">61</td><td class="num">37</td><td><div class="bar purple" style="width:36px"></div></td></tr>
+<tr><td>Poradniki</td><td class="num">20</td><td class="num">1 355</td><td class="num">68</td><td class="num">49</td><td><div class="bar" style="width:12px"></div></td></tr>
+</table>
+</div>
+
+<div class="insight"><strong>Wiadomości + Wideo = 60% ruchu</strong>. Wideo ma najwyższą średnią (127 kliknięć/link), a wiadomości najwyższy wolumen (18,8 tys. kliknięć). Konferencje generują dużo linków (197), ale niską średnią (37).</div>
+
+<div class="card">
+<h3>Top 10 tematów o najwyższym zaangażowaniu</h3>
+<table>
+<tr><th>Treść</th><th class="num">Kliknięcia</th><th>Format</th><th>Temat</th></tr>
+<tr><td>DiL – POChP</td><td class="num">987</td><td><span class="tag">reel</span></td><td><span class="tag">farmakologia</span></td></tr>
+<tr><td>Wyniki LEK 2026</td><td class="num">986</td><td><span class="tag">post</span></td><td><span class="tag">egzaminy</span></td></tr>
+<tr><td>Diklofenak</td><td class="num">933</td><td><span class="tag">reel</span></td><td><span class="tag">farmakologia</span></td></tr>
+<tr><td>Escitalopram</td><td class="num">839</td><td><span class="tag">reel</span></td><td><span class="tag">farmakologia</span></td></tr>
+<tr><td>Egzaminy z bazy pytań</td><td class="num">853</td><td><span class="tag">post</span></td><td><span class="tag">egzaminy</span></td></tr>
+<tr><td>Bezpieczne leczenie nieżytu nosa</td><td class="num">803</td><td><span class="tag">reel</span></td><td><span class="tag">farmakologia</span></td></tr>
+<tr><td>PKWPoZ Pediatria</td><td class="num">773</td><td><span class="tag">reel</span></td><td><span class="tag">konferencja</span></td></tr>
+<tr><td>Studenci medycyny</td><td class="num">762</td><td><span class="tag">post</span></td><td><span class="tag">kariera</span></td></tr>
+<tr><td>Mometazon z olopatadyną</td><td class="num">717</td><td><span class="tag">post+reel</span></td><td><span class="tag">farmakologia</span></td></tr>
+<tr><td>Rivaroxaban</td><td class="num">676</td><td><span class="tag">reel</span></td><td><span class="tag">farmakologia</span></td></tr>
+</table>
+<div class="insight positive" style="margin-top:12px"><strong>Farmakologia (5-min-o-leku, DiL) to #1 topic</strong>. 7 z 10 topowych treści to treści farmakologiczne w formacie reel. Drugie miejsce: tematy egzaminacyjne i karierowe.</div>
+</div>
+
+<!-- ===== SECTION 3: META ADS ===== -->
+<h2>3. Meta Ads – skuteczność kampanii</h2>
+
+<div class="card">
+<h3>Q1 2026 – ranking kampanii wg kosztu za wynik (od najtańszego)</h3>
+<table>
+<tr><th>Kampania</th><th>Typ wyniku</th><th class="num">Wyniki</th><th class="num">Wydatki</th><th class="num">Koszt/wynik</th><th style="width:120px">Efektywność</th></tr>
+<tr><td>Treści klienckie (LPV)</td><td>Wyśw. strony docelowej</td><td class="num">12 779</td><td class="num">12 020 zł</td><td class="num"><strong style="color:#4ade80">0.94 zł</strong></td><td><div class="bar green" style="width:120px"></div></td></tr>
+<tr><td>Webinary klient. (FB event)</td><td>Reakcje na wydarzenie</td><td class="num">152</td><td class="num">169 zł</td><td class="num"><strong style="color:#4ade80">1.11 zł</strong></td><td><div class="bar green" style="width:102px"></div></td></tr>
+<tr><td>Nagrania webinarów klient.</td><td>Video_Play</td><td class="num">1 283</td><td class="num">2 700 zł</td><td class="num">2.10 zł</td><td><div class="bar" style="width:54px"></div></td></tr>
+<tr><td>Konferencje klient. (FB event)</td><td>Reakcje na wydarzenie</td><td class="num">404</td><td class="num">899 zł</td><td class="num">2.23 zł</td><td><div class="bar" style="width:51px"></div></td></tr>
+<tr><td>Konferencje klient. (zapis)</td><td>Spotkania zaplanowane</td><td class="num">1 276</td><td class="num">3 562 zł</td><td class="num">2.79 zł</td><td><div class="bar" style="width:41px"></div></td></tr>
+<tr><td>Wideo/podcasty klient.</td><td>Video_Play</td><td class="num">2 648</td><td class="num">7 647 zł</td><td class="num">2.89 zł</td><td><div class="bar" style="width:39px"></div></td></tr>
+<tr><td>Webinary klient. (zapis)</td><td>Spotkania zaplanowane</td><td class="num">209</td><td class="num">670 zł</td><td class="num">3.20 zł</td><td><div class="bar" style="width:35px"></div></td></tr>
+<tr><td>Klub Medyka (LPV)</td><td>Wyśw. strony docelowej</td><td class="num">193</td><td class="num">1 000 zł</td><td class="num">5.18 zł</td><td><div class="bar orange" style="width:22px"></div></td></tr>
+<tr><td>Narzędzia Remedium</td><td>Rozpoczęcie testu</td><td class="num">33</td><td class="num">400 zł</td><td class="num"><strong style="color:#fb923c">12.12 zł</strong></td><td><div class="bar red" style="width:9px"></div></td></tr>
+<tr><td>Rejestracje (konwersje)</td><td>Rejestracje</td><td class="num">90</td><td class="num">1 129 zł</td><td class="num"><strong style="color:#f87171">12.55 zł</strong></td><td><div class="bar red" style="width:9px"></div></td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>Budżet Meta – pełny okres (sty 2025 – mar 2026) – top kategorie</h3>
+<table>
+<tr><th>Kategoria kampanii</th><th class="num">Wydatki</th><th class="num">Wyniki</th><th class="num">Śr. koszt/wynik</th><th>Ocena</th></tr>
+<tr><td>KL: Treści klienckie (LPV)</td><td class="num">104 888 zł</td><td class="num">182 343</td><td class="num">1.04 zł</td><td style="color:#4ade80">Najefektywniejsza</td></tr>
+<tr><td>KL: Wideo/podcasty</td><td class="num">37 089 zł</td><td class="num">13 545</td><td class="num">3.17 zł</td><td style="color:#4ade80">Dobra</td></tr>
+<tr><td>Własne: Nagrania konferencji</td><td class="num">33 730 zł</td><td class="num">19 390</td><td class="num">15.34 zł</td><td style="color:#f87171">Droga</td></tr>
+<tr><td>Konferencje własne (zapisy)</td><td class="num">19 706 zł</td><td class="num">8 447</td><td class="num">3.96 zł</td><td>Średnia</td></tr>
+<tr><td>KL: Kursy (odtworzenie)</td><td class="num">19 207 zł</td><td class="num">11 968</td><td class="num">4.44 zł</td><td>Średnia</td></tr>
+<tr><td>KL: Webinary (zapis)</td><td class="num">19 150 zł</td><td class="num">4 509</td><td class="num">5.36 zł</td><td style="color:#fb923c">Do optymalizacji</td></tr>
+<tr><td>Kursy Remedium (koszyk/zakup)</td><td class="num">9 840 zł</td><td class="num">200</td><td class="num">87.85 zł</td><td style="color:#f87171">Krytycznie droga</td></tr>
+<tr><td>Własne: Rejestracje</td><td class="num">8 356 zł</td><td class="num">635</td><td class="num">24.38 zł</td><td style="color:#f87171">Droga</td></tr>
+<tr><td>Katalog (budżet wewn.)</td><td class="num">3 022 zł</td><td class="num">22</td><td class="num">137.34 zł</td><td style="color:#f87171">Wyłączyć</td></tr>
+</table>
+</div>
+
+<div class="insight negative"><strong>Kampanie konwersyjne (rejestracje, kursy-zakup, katalog)</strong> mają koszt wyniku 25–137 zł. To 25–130× drożej niż kampanie LPV (1 zł). Kampania Katalogu: 3022 zł za 22 wyniki – do natychmiastowej pauzy.</div>
+
+<!-- ===== SECTION 4: DEPENDENCIES ===== -->
+<h2>4. Kluczowe zależności i wzorce</h2>
+
+<div class="two-col">
+<div class="card">
+<h3>Zależność: Format × Platforma</h3>
+<p style="font-size:14px; color:#bbb; margin-bottom:12px">Ten sam format (reel) daje diametralnie różne wyniki na różnych platformach:</p>
+<table>
+<tr><th></th><th class="num">Facebook</th><th class="num">Instagram</th></tr>
+<tr><td>Reel – śr. kliknięć</td><td class="num" style="color:#4ade80"><strong>496</strong></td><td class="num" style="color:#f87171"><strong>7</strong></td></tr>
+<tr><td>Post – śr. kliknięć</td><td class="num">96</td><td class="num">3</td></tr>
+<tr><td>Stories – śr. kliknięć</td><td class="num">14</td><td class="num">23</td></tr>
+</table>
+<p style="font-size:13px; color:#888; margin-top:12px">Stories to jedyny format, gdzie IG > FB. Sugeruje, że publiczność IG preferuje stories nad feed.</p>
+</div>
+
+<div class="card">
+<h3>Zależność: Temat × Engagement</h3>
+<p style="font-size:14px; color:#bbb; margin-bottom:12px">Tematy z najwyższym zaangażowaniem:</p>
+<table>
+<tr><th>Temat</th><th class="num">Śr. klik.</th></tr>
+<tr><td style="color:#4ade80"><strong>Farmakologia (DiL, 5-min-o-leku)</strong></td><td class="num">500+</td></tr>
+<tr><td>Egzaminy (LEK, LDEK, baza pytań)</td><td class="num">300–900</td></tr>
+<tr><td>Kariera/rezydentura</td><td class="num">200–750</td></tr>
+<tr><td>Prawo medyczne</td><td class="num">300–500</td></tr>
+<tr><td>Konferencje (promocja)</td><td class="num">25–50</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h3>Zależność: Grupy studenckie – porównanie</h3>
+<table>
+<tr><th>Grupa</th><th class="num">Linki</th><th class="num">Łącznie klik.</th><th class="num">Śr. klik.</th><th>Profil</th></tr>
+<tr><td>grupa_staz</td><td class="num">15</td><td class="num">746</td><td class="num"><strong>50</strong></td><td>Najaktywniejsza – studenci na stażu</td></tr>
+<tr><td>grupa_rezydentura</td><td class="num">15</td><td class="num">679</td><td class="num">45</td><td>Rezydenci – wysoka aktywność</td></tr>
+<tr><td>grupa_dyzur</td><td class="num">15</td><td class="num">457</td><td class="num">30</td><td>Średnia</td></tr>
+<tr><td>grupa_przesiebiorcy</td><td class="num">15</td><td class="num">430</td><td class="num">29</td><td>Średnia</td></tr>
+<tr><td>grupa_konferencje</td><td class="num">15</td><td class="num">362</td><td class="num">24</td><td>Najniższa – paradoksalnie konferencyjny content</td></tr>
+</table>
+<div class="insight" style="margin-top:12px">Grupy stażowe i rezydenturowe reagują najsilniej. Obie grupy najlepiej klikają w treści o <strong>WNZ</strong> (Wielki Niezbędnik Zdrowotny) i <strong>PKWPoZ</strong>. Sugeruje to, że młodzi lekarze szukają przede wszystkim wiedzy praktycznej i konferencji szkoleniowych.</div>
+</div>
+
+<!-- ===== SECTION 5: RECOMMENDATIONS ===== -->
+<h2>5. Rekomendacje</h2>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority high">PRIORYTET WYSOKI</span><span class="rec-title">Skaluj reele na Facebooku</span></div>
+<div class="rec-body">Reele na FB generują średnio 496 kliknięć (5× więcej niż posty). Obecnie to tylko 18 linków z 291 na FB (6%). Zwiększenie udziału reeli do 30–40% contentu na FB może potroić łączny ruch organiczny. Skupić się na farmakologii (DiL, 5-min-o-leku) – te tematy w formacie reel dają 700–987 kliknięć.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority high">PRIORYTET WYSOKI</span><span class="rec-title">Zrewiduj strategię Instagram</span></div>
+<div class="rec-body">Instagram generuje 6× mniej kliknięć niż Facebook przy porównywalnej liczbie postów. Reele na IG mają medianę 0 kliknięć (vs 582 na FB). Opcje: (1) przenieść budżet i energię z IG na FB, (2) zmienić strategię IG na budowanie społeczności (stories + kanał nadawczy) zamiast generowania ruchu, (3) przetestować kanał nadawczy na IG – jedyny test dał 160 kliknięć.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority high">PRIORYTET WYSOKI</span><span class="rec-title">Wyłącz/przebuduj kampanie z CPA > 50 zł</span></div>
+<div class="rec-body">Kampania Katalog (137 zł/wynik), Kursy-zakup (88 zł/wynik) i kampanie rejestracyjne studentów (25–38 zł/wynik) spalają budżet. Łącznie ~16 tys. zł przy minimalnych wynikach. Realokuj ten budżet do kampanii LPV (0.94 zł/wynik) lub konferencji klienckich (2.23 zł/wynik) – 10× więcej wyników za te same pieniądze.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority medium">PRIORYTET ŚREDNI</span><span class="rec-title">Skaluj SMS jako kanał dystrybucji</span></div>
+<div class="rec-body">SMS ma najwyższą średnią kliknięć po FB reelach (129/link) i sprawdza się dla konferencji i egzaminów. Obecnie tylko 16 shortlinków. Rozważ regularne SMSy (1–2/tydzień) do bazy użytkowników przy najważniejszych wydarzeniach – konferencje własne, nowe kursy, wyniki egzaminów.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority medium">PRIORYTET ŚREDNI</span><span class="rec-title">Ogranicz konferencyjny spam w grupach</span></div>
+<div class="rec-body">Grupy mają 15 linków każda do tych samych kampanii. „Grupa_konferencje" paradoksalnie reaguje najsłabiej na konferencje (24 klik. vs 50 w grupa_staz). Zamiast równomiernie rozsyłać te same linki do wszystkich grup, dobierz treści do profilu grupy: np. rezydentura → szkolenia specjalizacyjne, staż → egzaminy i praktyka kliniczna.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority medium">PRIORYTET ŚREDNI</span><span class="rec-title">Zwiększ budżet kampanii Treści klienckie (LPV)</span></div>
+<div class="rec-body">Najefektywniejsza kampania Meta: 0.94 zł za wyświetlenie strony docelowej. W Q1 2026 wydano 12 020 zł i uzyskano 12 779 wyników. Przy podwojeniu budżetu do 24 000 zł, przy utrzymaniu CPR, można uzyskać ~25 500 LPV. To najlepsza inwestycja w zasięg treści klienckich.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority low">PRIORYTET NISKI</span><span class="rec-title">Otaguj 94% shortlinków bez UTM</span></div>
+<div class="rec-body">11 373 z 12 062 shortlinków (94%) nie ma tagów UTM. To oznacza, że nie można przypisać ruchu do kanału. Wprowadź obowiązkowe UTM przy tworzeniu shortlinków – to prosty krok, który 10× poprawi jakość analityki.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority low">PRIORYTET NISKI</span><span class="rec-title">Usuń bannery remedium lub zmień format</span></div>
+<div class="rec-body">32 bannery z utm_source=remedium dały zaledwie 111 kliknięć (3/banner). Rozważ zastąpienie statycznych bannerów na portalu dynamicznymi widgetami lub pop-upami kontekstowymi.</div>
+</div>
+
+<div class="rec">
+<div class="rec-header"><span class="rec-priority low">PRIORYTET NISKI</span><span class="rec-title">Testuj Twitter/X z reel-like formatem</span></div>
+<div class="rec-body">Twitter/X generuje konsekwentne 15 kliknięć/post, ale tylko posty. Brak testów z wideo. Biorąc pod uwagę, że krótkie wideo dominuje na FB, warto przetestować krótkie klipy na X.</div>
+</div>
+
+</div>
+</body>
+</html>

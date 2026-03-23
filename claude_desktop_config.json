@@ -1,0 +1,23 @@
+{
+  "preferences": {
+    "quickEntryShortcut": "off",
+    "localAgentModeTrustedFolders": [
+      "/Users/sebastiancencyk/Downloads/_Posortowane/Faktury",
+      "/Users/sebastiancencyk/Documents/Brandmed/Growth"
+    ],
+    "coworkScheduledTasksEnabled": true,
+    "ccdScheduledTasksEnabled": true,
+    "sidebarMode": "task",
+    "coworkWebSearchEnabled": true
+  },
+  "mcpServers": {
+    "posthog": {
+      "command": "/usr/local/bin/node",
+      "args": ["/Users/sebastiancencyk/posthog-mcp/typescript/posthog-stdio-server.mjs"],
+      "env": {
+        "POSTHOG_API_KEY": "phx_11YETjToLePvDLbNeoHPwV3zcluuDBOjaGShl5eCaWx8gvYC",
+        "POSTHOG_BASE_URL": "https://posthog.remedium.md"
+      }
+    }
+  }
+}

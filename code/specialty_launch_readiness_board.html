@@ -1,0 +1,191 @@
+<style>
+*{margin:0;box-sizing:border-box}
+.hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.hdr h2{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.legend{display:flex;gap:12px;font-size:11px;color:var(--color-text-secondary)}
+.leg-dot{width:10px;height:10px;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:4px}
+.filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filters button{font-size:12px;padding:4px 12px;border-radius:var(--border-radius-md);cursor:pointer;transition:all 0.15s;background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.filters button.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.filters button:hover{background:var(--color-background-secondary)}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px}
+.sum-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;text-align:center}
+.sum-card .n{font-size:22px;font-weight:500}
+.sum-card .l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.board{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:minmax(0,1.8fr) repeat(6,minmax(0,1fr)) 80px;gap:4px;align-items:center;padding:8px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);transition:background 0.15s}
+.row:hover{background:var(--color-background-tertiary)}
+.row-hdr{background:transparent;padding:4px 10px;font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.row-hdr:hover{background:transparent}
+.spec-name{font-size:13px;font-weight:500;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spec-sub{font-size:10px;color:var(--color-text-secondary)}
+.block{height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;font-size:10px;font-weight:500;user-select:none;border:0.5px solid transparent}
+.block.empty{background:var(--color-background-tertiary);color:var(--color-text-tertiary);border-color:var(--color-border-tertiary)}
+.block.partial{background:#FAEEDA;color:#854F0B;border-color:#EF9F27}
+.block.done{background:#E1F5EE;color:#0F6E56;border-color:#5DCAA5}
+.block:hover{transform:scale(1.05)}
+.score{font-size:13px;font-weight:500;text-align:center}
+.score.ready{color:#0F6E56}
+.score.partial{color:#BA7517}
+.score.low{color:#A32D2D}
+@media(prefers-color-scheme:dark){
+.block.partial{background:#412402;color:#FAC775;border-color:#BA7517}
+.block.done{background:#04342C;color:#5DCAA5;border-color:#0F6E56}
+}
+.launch-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.launch-badge.go{background:#E1F5EE;color:#0F6E56}
+.launch-badge.wait{background:#FAEEDA;color:#854F0B}
+@media(prefers-color-scheme:dark){
+.launch-badge.go{background:#04342C;color:#5DCAA5}
+.launch-badge.wait{background:#412402;color:#FAC775}
+}
+</style>
+<div class="hdr">
+<h2>Specialty launch readiness</h2>
+<div class="legend">
+<span><span class="leg-dot" style="background:#E1F5EE;border:1px solid #5DCAA5"></span>Gotowe</span>
+<span><span class="leg-dot" style="background:#FAEEDA;border:1px solid #EF9F27"></span>W trakcie</span>
+<span><span class="leg-dot" style="background:var(--color-background-tertiary);border:1px solid var(--color-border-tertiary)"></span>Brak</span>
+</div>
+</div>
+<div class="filters" id="filters"></div>
+<div class="summary" id="summary"></div>
+<div class="board">
+<div class="row row-hdr">
+<span>Specjalizacja</span>
+<span style="text-align:center">Content</span>
+<span style="text-align:center">Narzedzia</span>
+<span style="text-align:center">Dane SCR</span>
+<span style="text-align:center">Opt-in</span>
+<span style="text-align:center">Onboarding</span>
+<span style="text-align:center">Kampania</span>
+<span style="text-align:center">Readiness</span>
+</div>
+<div id="rows"></div>
+</div>
+<div style="font-size:11px;color:var(--color-text-secondary);margin-top:12px;font-style:italic">Kliknij klocek, zeby zmienic status (brak / w trakcie / gotowe). Dane SCR i opt-in z realnych danych Remedium. Stan klockow to hipoteza do zweryfikowania.</div>
+<script>
+const DIMS=['content','tools','scr_data','optin','onboarding','campaign'];
+const DIM_LABELS=['Content','Narzedzia','Dane SCR','Opt-in','Onboarding','Kampania'];
+const SPECS=[
+{name:"Choroby wewnetrzne",rem:4871,gus:18200,opt:863,scr:26.8},
+{name:"Medycyna rodzinna",rem:4389,gus:10800,opt:703,scr:40.6},
+{name:"Pediatria",rem:3288,gus:7400,opt:579,scr:44.4},
+{name:"Anestezjologia i int. terapia",rem:1550,gus:5600,opt:195,scr:27.7},
+{name:"Kardiologia",rem:1324,gus:5100,opt:188,scr:26.0},
+{name:"Psychiatria",rem:1310,gus:3800,opt:119,scr:34.5},
+{name:"Poloznictwo i ginekologia",rem:1277,gus:6200,opt:180,scr:20.6},
+{name:"Chirurgia ogolna",rem:1201,gus:5800,opt:147,scr:20.7},
+{name:"Radiologia i diag. obrazowa",rem:997,gus:3700,opt:75,scr:26.9},
+{name:"Neurologia",rem:977,gus:3500,opt:130,scr:27.9},
+{name:"Ortopedia i traumatologia",rem:775,gus:3900,opt:71,scr:19.9},
+{name:"Okulistyka",rem:648,gus:3600,opt:45,scr:18.0},
+{name:"Otorynolaryngologia",rem:477,gus:2100,opt:57,scr:22.7},
+{name:"Dermatologia i wenerologia",rem:425,gus:1900,opt:51,scr:22.4},
+{name:"Choroby pluc",rem:390,gus:2300,opt:76,scr:17.0},
+{name:"Diabetologia",rem:359,gus:1500,opt:66,scr:23.9},
+{name:"Neonatologia",rem:354,gus:1500,opt:67,scr:23.6},
+{name:"Endokrynologia",rem:339,gus:1700,opt:41,scr:19.9},
+{name:"Urologia",rem:315,gus:1300,opt:22,scr:24.2},
+{name:"Reumatologia",rem:296,gus:1600,opt:44,scr:18.5},
+{name:"Nefrologia",rem:275,gus:1300,opt:47,scr:21.2},
+{name:"Medycyna pracy",rem:268,gus:1500,opt:63,scr:17.9},
+{name:"Alergologia",rem:247,gus:1400,opt:48,scr:17.6},
+{name:"Rehabilitacja medyczna",rem:247,gus:1700,opt:45,scr:14.5},
+];
+
+const STATE_CYCLE=['empty','partial','done'];
+
+let state={};
+SPECS.forEach((s,i)=>{
+  state[i]={};
+  DIMS.forEach(d=>{
+    if(d==='scr_data') state[i][d]=s.scr>25?'done':s.scr>15?'partial':'empty';
+    else if(d==='optin') state[i][d]=s.opt>100?'done':s.opt>40?'partial':'empty';
+    else state[i][d]='empty';
+  });
+});
+
+let filter='all';
+
+function getScore(i){
+  let s=0;
+  DIMS.forEach(d=>{if(state[i][d]==='done')s+=2;else if(state[i][d]==='partial')s+=1;});
+  return Math.round(s/(DIMS.length*2)*100);
+}
+
+function toggle(i,d){
+  const cur=STATE_CYCLE.indexOf(state[i][d]);
+  state[i][d]=STATE_CYCLE[(cur+1)%3];
+  render();
+}
+
+function render(){
+  const rowsEl=document.getElementById('rows');
+  rowsEl.innerHTML='';
+  let readyCount=0,inProgress=0,notReady=0;
+  
+  let sorted=[...SPECS.map((_,i)=>i)];
+  sorted.sort((a,b)=>getScore(b)-getScore(a));
+  
+  sorted.forEach(i=>{
+    const s=SPECS[i];
+    const score=getScore(i);
+    if(score>=80)readyCount++;
+    else if(score>=40)inProgress++;
+    else notReady++;
+    
+    if(filter==='ready'&&score<80)return;
+    if(filter==='progress'&&(score<40||score>=80))return;
+    if(filter==='blocked'&&score>=40)return;
+    
+    const row=document.createElement('div');
+    row.className='row';
+    
+    const nameCell=document.createElement('div');
+    nameCell.innerHTML=`<div class="spec-name">${s.name}</div><div class="spec-sub">SCR ${s.scr}% · ${s.rem.toLocaleString('pl-PL')} / ${s.gus?s.gus.toLocaleString('pl-PL'):'?'} · opt-in ${s.opt}</div>`;
+    row.appendChild(nameCell);
+    
+    DIMS.forEach(d=>{
+      const block=document.createElement('div');
+      block.className='block '+state[i][d];
+      const labels={empty:'—',partial:'~',done:'OK'};
+      block.textContent=labels[state[i][d]];
+      block.onclick=()=>toggle(i,d);
+      row.appendChild(block);
+    });
+    
+    const scoreCell=document.createElement('div');
+    scoreCell.className='score '+(score>=80?'ready':score>=40?'partial':'low');
+    if(score>=80) scoreCell.innerHTML=score+'%<br><span class="launch-badge go">GO</span>';
+    else scoreCell.innerHTML=score+'%<br><span class="launch-badge wait">WAIT</span>';
+    row.appendChild(scoreCell);
+    
+    rowsEl.appendChild(row);
+  });
+  
+  document.getElementById('summary').innerHTML=`
+    <div class="sum-card"><div class="n" style="color:#0F6E56">${readyCount}</div><div class="l">Gotowe do launchu</div></div>
+    <div class="sum-card"><div class="n" style="color:#BA7517">${inProgress}</div><div class="l">W przygotowaniu</div></div>
+    <div class="sum-card"><div class="n" style="color:#A32D2D">${notReady}</div><div class="l">Brak gotowosci</div></div>
+    <div class="sum-card"><div class="n">${SPECS.length}</div><div class="l">Specjalizacji</div></div>
+  `;
+}
+
+function setFilter(f){
+  filter=f;
+  document.querySelectorAll('.filters button').forEach(b=>b.classList.toggle('active',b.dataset.f===f));
+  render();
+}
+
+const filtersEl=document.getElementById('filters');
+[['all','Wszystkie'],['ready','Gotowe (GO)'],['progress','W trakcie'],['blocked','Brak gotowosci']].forEach(([f,l])=>{
+  const btn=document.createElement('button');
+  btn.textContent=l;btn.dataset.f=f;
+  if(f==='all')btn.classList.add('active');
+  btn.onclick=()=>setFilter(f);
+  filtersEl.appendChild(btn);
+});
+
+render();
+</script>

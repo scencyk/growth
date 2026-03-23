@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remedium — Kampanie unified | Dashboard v2</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --bg-card: #1a1d27;
+            --bg-card-hover: #222632;
+            --border: #2a2e3b;
+            --text: #e4e6eb;
+            --text-dim: #8b8fa3;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #22c55e;
+            --green-dim: rgba(34,197,94,0.12);
+            --yellow: #eab308;
+            --yellow-dim: rgba(234,179,8,0.12);
+            --orange: #f97316;
+            --orange-dim: rgba(249,115,22,0.12);
+            --red: #ef4444;
+            --red-dim: rgba(239,68,68,0.10);
+            --blue: #3b82f6;
+            --gap: 14px;
+            --radius: 10px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+        .container { max-width:1440px; margin:0 auto; padding:20px; }
+
+        /* Header */
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .header h1 { font-size:22px; font-weight:700; }
+        .header h1 span { color:var(--accent-light); }
+        .header .meta-info { font-size:12px; color:var(--text-dim); }
+        .controls { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+        .controls select, .controls input { padding:6px 10px; border:1px solid var(--border); border-radius:6px; background:var(--bg-card); color:var(--text); font-size:12px; cursor:pointer; }
+        .controls select:hover, .controls input:hover { border-color:var(--accent); }
+        .controls input { width:200px; }
+
+        /* KPI row */
+        .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:var(--gap); margin-bottom:20px; }
+        .kpi { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+        .kpi-label { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px; }
+        .kpi-value { font-size:24px; font-weight:700; }
+        .kpi-sub { font-size:10px; color:var(--text-dim); margin-top:2px; }
+
+        /* Charts row */
+        .charts-row { display:grid; grid-template-columns:1fr 1fr; gap:var(--gap); margin-bottom:20px; }
+        .chart-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; }
+        .chart-card h3 { font-size:12px; font-weight:600; margin-bottom:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.3px; }
+        .chart-card canvas { max-height:260px; }
+
+        /* Section title */
+        .section-title { font-size:14px; font-weight:700; margin:24px 0 12px; color:var(--text); display:flex; align-items:center; gap:8px; }
+        .section-title .count { font-size:11px; background:var(--accent); color:white; padding:1px 8px; border-radius:10px; font-weight:600; }
+
+        /* Campaign cards */
+        .campaign-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; transition:border-color 0.2s; }
+        .campaign-card:hover { border-color:var(--accent); }
+        .campaign-card.urgent { border-left:3px solid var(--red); }
+        .campaign-card.warning { border-left:3px solid var(--yellow); }
+        .campaign-card.good { border-left:3px solid var(--green); }
+
+        .card-header { display:flex; justify-content:space-between; align-items:flex-start; padding:14px 16px 10px; cursor:pointer; }
+        .card-header:hover { background:var(--bg-card-hover); }
+        .card-title { font-size:14px; font-weight:600; }
+        .card-client { font-size:11px; color:var(--accent-light); margin-top:1px; }
+        .card-format { font-size:10px; color:var(--text-dim); margin-top:2px; }
+        .card-header-right { text-align:right; }
+
+        /* Badge */
+        .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+        .badge-green { background:var(--green-dim); color:var(--green); }
+        .badge-yellow { background:var(--yellow-dim); color:var(--yellow); }
+        .badge-orange { background:var(--orange-dim); color:var(--orange); }
+        .badge-red { background:var(--red-dim); color:var(--red); }
+        .badge-blue { background:rgba(59,130,246,0.12); color:var(--blue); }
+        .badge-neutral { background:rgba(139,143,163,0.12); color:var(--text-dim); }
+
+        /* Metrics grid inside card */
+        .card-body { display:none; padding:0 16px 14px; }
+        .card-body.open { display:block; }
+        .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+        .metric-box { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px 12px; }
+        .metric-box h4 { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+        .metric-box h4 .dot { width:6px; height:6px; border-radius:50%; }
+        .dot-posthog { background:var(--green); }
+        .dot-meta { background:var(--blue); }
+        .metric-row { display:flex; justify-content:space-between; align-items:center; padding:3px 0; font-size:12px; }
+        .metric-row .label { color:var(--text-dim); }
+        .metric-row .value { font-weight:600; }
+
+        /* Progress bar */
+        .progress-bar { width:100%; height:6px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; margin-top:6px; }
+        .progress-fill { height:100%; border-radius:3px; }
+
+        /* Action note */
+        .action-note { background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:6px; padding:8px 12px; font-size:11px; line-height:1.5; color:var(--text); margin-top:8px; }
+        .action-note strong { color:var(--accent-light); }
+
+        /* Deadline tag */
+        .deadline-tag { font-size:10px; padding:1px 6px; border-radius:3px; font-weight:600; }
+        .deadline-overdue { background:var(--red-dim); color:var(--red); }
+        .deadline-soon { background:var(--orange-dim); color:var(--orange); }
+        .deadline-ok { background:rgba(255,255,255,0.06); color:var(--text-dim); }
+
+        /* Meta-only campaigns section */
+        .meta-only-table { width:100%; border-collapse:collapse; font-size:12px; }
+        .meta-only-table thead th { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text-dim); font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:0.3px; }
+        .meta-only-table tbody td { padding:10px 12px; border-bottom:1px solid rgba(42,46,59,0.5); }
+        .meta-only-table tbody tr:hover { background:var(--bg-card-hover); }
+        .meta-only-table tbody tr:last-child td { border-bottom:none; }
+        .table-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow-x:auto; }
+
+        /* Responsive */
+        @media (max-width:900px) {
+            .charts-row { grid-template-columns:1fr; }
+            .kpi-row { grid-template-columns:repeat(2,1fr); }
+            .metrics-grid { grid-template-columns:1fr; }
+        }
+        @media print {
+            body { background:white; color:#222; }
+            .chart-card, .kpi, .campaign-card, .table-card { border-color:#ddd; background:white; }
+            .card-body { display:block !important; }
+        }
+        .footer { text-align:center; padding:20px; font-size:11px; color:var(--text-dim); }
+        .expand-all { background:none; border:1px solid var(--border); color:var(--text-dim); padding:4px 10px; border-radius:5px; font-size:11px; cursor:pointer; }
+        .expand-all:hover { border-color:var(--accent); color:var(--text); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>Remedium <span>Kampanie — widok unified</span></h1>
+            <div class="meta-info">Każda kampania = PostHog KPI + Meta Ads w jednym miejscu | 18.03.2026</div>
+        </div>
+        <div class="controls">
+            <input type="text" id="searchBox" placeholder="Szukaj materiał / klient...">
+            <select id="filterStatus">
+                <option value="all">Wszystkie statusy</option>
+                <option value="urgent">Zagrożone (< 50%)</option>
+                <option value="warning">Uwaga (50–75%)</option>
+                <option value="ok">Na dobrej drodze (75%+)</option>
+            </select>
+            <select id="sortBy">
+                <option value="pct-asc">% realizacji ↑</option>
+                <option value="pct-desc">% realizacji ↓</option>
+                <option value="spend-desc">Meta spend ↓</option>
+                <option value="deadline">Deadline</option>
+            </select>
+            <button class="expand-all" id="expandAll">Rozwiń wszystkie</button>
+        </div>
+    </div>
+
+    <!-- KPI cards -->
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <!-- Charts -->
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3>PostHog UU vs KPI — realizacja na materiał</h3>
+            <canvas id="chartKPI"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Meta spend vs PostHog UU — korelacja</h3>
+            <canvas id="chartCorrelation"></canvas>
+        </div>
+    </div>
+
+    <!-- Unified campaign cards -->
+    <div class="section-title">Materiały klienckie — PostHog + Meta <span class="count" id="cardCount">15</span></div>
+    <div id="campaignCards"></div>
+
+    <!-- Meta-only (no PostHog match) -->
+    <div class="section-title">Kampanie tylko Meta (bez KPI PostHog) <span class="count" id="metaOnlyCount">0</span></div>
+    <div class="table-card">
+        <table class="meta-only-table">
+            <thead><tr>
+                <th>Kampania / zestaw reklam</th>
+                <th>Spend (PLN)</th>
+                <th>Wyniki</th>
+                <th>CPR</th>
+                <th>Notatka</th>
+            </tr></thead>
+            <tbody id="metaOnlyBody"></tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Źródła: Meta Ads Manager (active, sty 2025 – mar 2026) · PostHog (18.03.2026) · Notion (Projekty komercyjne)<br>
+        Dashboard v2 — widok kampanio-centryczny · dane statyczne
+    </div>
+</div>
+
+<script>
+// =====================================================
+// UNIFIED DATA — each item = one campaign/material
+// with both PostHog KPI and linked Meta adsets
+// =====================================================
+
+const CAMPAIGNS = [
+    {
+        name: "Escitalopram (Escitil)",
+        client: "Egis",
+        format: "5 min o leku",
+        // PostHog
+        uu: 304, kpi: 400, deadline: "31.03",
+        // Meta adsets linked
+        meta: [
+            {adset:"5min | Escitalopram | Egis", spend:300.48, results:162, cpr:1.85, reach:8700, frequency:2.70}
+        ],
+        action: "Realizacja 76% — szansa na domknięcie KPI do 31.03. Utrzymaj Meta spend, dodaj newsletter psychiatria + push in-app. Najbliższy deadline do dowiezienia."
+    },
+    {
+        name: "Mometazon+olopatadyna (Ryaltris)",
+        client: "Glenmark",
+        format: "5 min o leku",
+        uu: 282, kpi: 500, deadline: "31.03",
+        meta: [
+            {adset:"5min | Mometazon+olopatadyna | Glenmark Ryaltris", spend:202.56, results:83, cpr:2.44, reach:5600, frequency:2.40}
+        ],
+        action: "Realizacja 56%, brakuje ~218 UU. Zwiększ budżet Meta 2× na 2 tygodnie + uruchom newsletter alergologia/laryngologia. Materiał sezonowy — teraz szczyt sezonu alergii."
+    },
+    {
+        name: "Neoangin (benzydamina)",
+        client: "Klosterfrau",
+        format: "5 min o leku",
+        uu: 257, kpi: 500, deadline: "31.03",
+        meta: [
+            {adset:"5min | Benzydamina | Klosterfrau Neoangin", spend:198.84, results:66, cpr:3.01, reach:4900, frequency:2.30}
+        ],
+        action: "Realizacja 51%, brakuje ~243 UU. CPR 3,01 PLN — droższy format. Potrzebny agresywny boost: podwój Meta + newsletter laryngologia + promuj w push-ach. Sezon przeziębień się kończy — czas ucieka."
+    },
+    {
+        name: "GLP-1 / Cholestil",
+        client: "Adamed",
+        format: "Medyczne espresso",
+        uu: 177, kpi: 500, deadline: "31.03",
+        meta: [
+            {adset:"ME | GLP-1 | Adamed Cholestil", spend:379.67, results:191, cpr:1.99, reach:12400, frequency:3.20}
+        ],
+        action: "Realizacja 35% — najtrudniejszy do domknięcia. Brakuje ~325 UU. Potrzeba: max budżet Meta + newsletter diabetologia + kardiologia + dedykowany push notification. Rozważ kontakt z klientem — deadline może wymagać przesunięcia."
+    },
+    {
+        name: "Marimer – nieżyt nosa",
+        client: "Glenmark",
+        format: "VOD",
+        uu: 228, kpi: 400, deadline: "31.03",
+        meta: [
+            {adset:"VOD | Nieżyt nosa | Glenmark", spend:344.02, results:112, cpr:3.07, reach:9800, frequency:2.90}
+        ],
+        action: "Realizacja 57%, brakuje ~172 UU. Newsletter pediatria + alergologia + push in-app. CPR 3,07 PLN jest OK dla VOD. Sezonowość działa na korzyść."
+    },
+    {
+        name: "Rivaroxaban (Xiltess)",
+        client: "Egis",
+        format: "5 min o leku",
+        uu: 545, kpi: 300, deadline: "—",
+        meta: [
+            {adset:"5min | Rivaroxaban | Egis Xiltess", spend:104.11, results:39, cpr:2.67, reach:3500, frequency:2.10}
+        ],
+        action: "KPI przekroczone (182%)! Można zmniejszyć Meta spend i przesunąć budżet na materiały zagrożone. Doskonały case do raportu dla klienta."
+    },
+    {
+        name: "Obniżenie nastroju (Trittico)",
+        client: "Angelini",
+        format: "Poradnik",
+        uu: null, kpi: null, deadline: "—",
+        meta: [
+            {adset:"Poradnik | Obniżenie nastroju | Angelini Trittico", spend:3235.91, results:6693, cpr:0.48, reach:81095, frequency:4.75}
+        ],
+        action: "Gwiazda portfela: CPR 0,48 PLN — najniższy koszt. 6 693 LPV za 3 236 PLN. Brak osobnego KPI w PostHog, ale generuje masowy ruch. Sprawdź z Notion, czy klient potrzebuje raport UU."
+    },
+    {
+        name: "Stłuszczeniowa choroba wątroby",
+        client: "BauschHealth",
+        format: "Poradnik",
+        uu: null, kpi: null, deadline: "—",
+        meta: [
+            {adset:"Poradnik | Stłuszczeniowa choroba wątroby | BauschHealth", spend:1832.92, results:2825, cpr:0.65, reach:48958, frequency:4.16}
+        ],
+        action: "Bardzo dobry CPR (0,65 PLN). 2 825 LPV — solidny wynik. Sprawdź w PostHog UU login dla tego poradnika i skonfiguruj KPI tracking w Notion."
+    },
+    {
+        name: "Kalkulatory psychiatryczne",
+        client: "Egis",
+        format: "Kalkulatory",
+        uu: null, kpi: null, deadline: "—",
+        meta: [
+            {adset:"Kalkulatory psychiatryczne | Egis (×6 adsetów)", spend:1237.69, results:1332, cpr:0.93, reach:42000, frequency:3.80}
+        ],
+        action: "CPR 0,93 PLN za 6 zestawów reklam kalkulatorów. Świetny format angażujący. Sprawdź w PostHog, ile UU korzysta z kalkulatorów — to potencjalny argument do rozszerzenia współpracy z Egis."
+    },
+    {
+        name: "Modyfikacja leczenia (TD)",
+        client: "Egis",
+        format: "VOD",
+        uu: 222, kpi: 400, deadline: "—",
+        meta: [
+            {adset:"VOD TD | Modyfikacja leczenia | Egis", spend:537.89, results:117, cpr:4.60, reach:17200, frequency:3.50}
+        ],
+        action: "Realizacja 56%. CPR 4,60 PLN — najdroższy VOD. Brak deadline'u to plus — jest czas. Rozważ przesunięcie części budżetu na format Treści klienckie (CPR 0,48–0,65) żeby wygenerować ruch taniej."
+    },
+    {
+        name: "D&L: Cukrzyca t.2 + tarczyca",
+        client: "Merck",
+        format: "Diagnozuj i lecz",
+        uu: 314, kpi: 400, deadline: "—",
+        meta: [
+            {adset:"DIL | Cukrzyca t.2 + niedoczynność tarczycy | Merck", spend:534.47, results:319, cpr:1.68, reach:15826, frequency:3.21}
+        ],
+        action: "Realizacja 79% — na dobrej drodze. CPR 1,68 PLN to OK. Utrzymaj tempo, powinien domknąć KPI organicznie w ciągu 2–3 tygodni."
+    },
+    {
+        name: "Case: 45-latka astma – Bufomix",
+        client: "OrionPharma",
+        format: "Przypadek kliniczny",
+        uu: 73, kpi: 400, deadline: "20.01 ⚠️",
+        meta: [
+            {adset:"ICS | Astma nawracająca | OrionPharma Bufomix", spend:82.89, results:42, cpr:1.97, reach:3500, frequency:2.50},
+            {adset:"DiL | Astma | OrionPharma Bufomix", spend:9.65, results:8, cpr:1.21, reach:450, frequency:1.80}
+        ],
+        action: "ALARM: 18% realizacji, deadline minął 20.01. Materiał opublikowany dopiero 9.03 — problem operacyjny, nie kampanijny. Natychmiastowa rozmowa z klientem: renegocjuj deadline lub budżet. Meta spend minimalny (93 PLN)."
+    },
+    {
+        name: "Profilaktyka RSV – Abrysvo",
+        client: "Pfizer",
+        format: "Medyczne espresso",
+        uu: 488, kpi: 500, deadline: "28.02",
+        meta: [],
+        action: "Realizacja 98%, deadline minął 28.02. Prawie domknięty! Brak aktywnej kampanii Meta — cały ruch organiczny. Wystarczy 12 UU — newsletter + push zamknie KPI."
+    },
+    {
+        name: "D&L: Intensyfikacja POChP",
+        client: "Chiesi",
+        format: "Diagnozuj i lecz",
+        uu: 328, kpi: 400, deadline: "08.03",
+        meta: [],
+        action: "Realizacja 82%, deadline minął 08.03. Brak Meta — ruch organiczny. Potrzebuje jeszcze 72 UU. Newsletter pulmonologia powinien wystarczyć."
+    },
+    {
+        name: "Case: 28-latka ciąża – Bonjesta",
+        client: "Exeltis",
+        format: "Przypadek kliniczny",
+        uu: 296, kpi: 400, deadline: "16.03",
+        meta: [],
+        action: "Realizacja 74%, deadline minął 16.03. Brak Meta ads. Brakuje 104 UU — newsletter ginekologia + push. Sprawdź z klientem, czy deadline jest twardy."
+    },
+    {
+        name: "D&L: Zwyrodnienie kolana",
+        client: "HascoLek",
+        format: "Diagnozuj i lecz",
+        uu: 438, kpi: 500, deadline: "—",
+        meta: [],
+        action: "Realizacja 88%, bez Meta ads — cały ruch organiczny! Brak deadline'u. Powinien domknąć KPI sam. Doskonały przykład, że nie każdy materiał potrzebuje Meta."
+    },
+    {
+        name: "Obrzęk stawu skokowego",
+        client: "MagnaPharm",
+        format: "Przypadek kliniczny",
+        uu: 505, kpi: 400, deadline: "—",
+        meta: [],
+        action: "KPI przekroczone (126%)! Bez Meta ads — 100% organiczny. Świetny case study do prezentacji skuteczności platformy."
+    },
+    {
+        name: "Case: 60-latka – kolano",
+        client: "HascoLek",
+        format: "Przypadek kliniczny",
+        uu: 177, kpi: 400, deadline: "—",
+        meta: [],
+        action: "Realizacja 44%. Brak Meta ads. Bez deadline'u, ale postęp wolny. Rozważ uruchomienie kampanii Meta (format Treści klienckie, CPR ~0,60 PLN) lub newsletter ortopedia."
+    }
+];
+
+// Meta adsets that don't map to specific PostHog materials
+const META_ONLY = [
+    {campaign:"[KL] Konferencje", adset:"PKwPOZ Diabetologia 2026", spend:1094.15, results:512, cpr:2.14, type:"Zapisy", note:"Dobry CPR. Zapisy na konferencję — trudno zmapować do jednego materiału."},
+    {campaign:"[KL] Konferencje", adset:"MKK 2026", spend:949.26, results:266, cpr:3.57, type:"Zapisy", note:"CPR wyższy niż PKwPOZ. Sprawdź, czy frekwencja na konferencji uzasadnia koszt."},
+    {campaign:"[KL] Webinary", adset:"Jak dobrać antydepresant | Egis", spend:651.19, results:205, cpr:3.18, type:"Zapisy", note:"CPR 3,18 za zapis na webinar — akceptowalny. Sprawdź frekwencję post-webinar."},
+    {campaign:"[KL] Konferencje FB", adset:"PKwPOZ + MKK (reakcje FB)", spend:521.61, results:273, cpr:1.91, type:"Reakcje FB", note:"Tani format engagement — dobry do budowania community."},
+    {campaign:"[KL] Webinary FB", adset:"Antydepresant | Egis (reakcje FB)", spend:164.71, results:148, cpr:1.11, type:"Reakcje FB", note:"Najtańszy CPR! Dobry do uzupełnienia zasięgu webinarów."},
+    {campaign:"[KL] Kursy", adset:"Kurs hiperurykemia | Egis", spend:352.44, results:160, cpr:2.20, type:"Odtworzenie", note:"CPR 2,20 za odtworzenie kursu — OK. Sprawdź completion rate w PostHog."},
+    {campaign:"[KL] Kursy", adset:"Kurs nadciśnienie | Egis", spend:222.42, results:107, cpr:2.08, type:"Odtworzenie", note:"CPR 2,08 — dobry. Utrzymaj."},
+    {campaign:"Nagrania konferencji", adset:"26 zestawów nagrań konferencji własnych", spend:10582.40, results:6051, cpr:1.75, type:"Video Play", note:"33% budżetu aktywnego! CPR 1,75 OK, ale brak jasnego KPI. Rozważ przesunięcie części budżetu na formaty klienckie (CPR 0,48–0,65)."},
+    {campaign:"Rejestracje", adset:"Prospecting – Lekarze", spend:5231.31, results:532, cpr:9.83, type:"Rejestracja", note:"CPR 9,83 — drogie, ale rejestracje mają wysoką LTV. Sprawdź retention rate nowych użytkowników z Meta w PostHog."},
+    // Glenmark poradniki
+    {campaign:"[KL] Treści klienckie", adset:"Poradnik | Alergiczny nieżyt nosa | Glenmark", spend:823.80, results:532, cpr:1.55, type:"LPV", note:"CPR 1,55 — wyższy niż średnia (0,75). Audience może być nasycony (freq 4,77). Zmniejsz budżet lub refresh creative."},
+    {campaign:"[KL] Treści klienckie", adset:"Poradnik | Migotanie przedsionków | Glenmark", spend:804.49, results:663, cpr:1.21, type:"LPV", note:"CPR 1,21 — akceptowalny. Częstotliwość 4,24 — na granicy."},
+    {campaign:"[KL] Treści klienckie", adset:"Poradnik | Katar, nieżyt nosa i zatok | Glenmark", spend:803.88, results:645, cpr:1.25, type:"LPV", note:"CPR 1,25. Podobny do powyższego. Razem 3 poradniki Glenmark = 2 432 PLN. Sprawdź, czy to w ramach jednej umowy."},
+    {campaign:"[KL] Treści klienckie", adset:"Poradnik | Migrena | Teva", spend:731.29, results:570, cpr:1.28, type:"LPV", note:"CPR 1,28 — solidny. Dobry zasięg (23k). Utrzymaj."},
+    {campaign:"[KL] Treści klienckie", adset:"ICS | Pacjentka po NSTEMI | Merck", spend:135.59, results:91, cpr:1.49, type:"LPV", note:"Mały budżet. CPR 1,49 — OK. Niedawno uruchomiony."},
+    {campaign:"[KL] Treści klienckie", adset:"Poradnik | Kolonoskopia | Swixx", spend:8.83, results:13, cpr:0.68, type:"LPV", note:"Świeżo uruchomiony, minimalny spend. CPR 0,68 — obiecujący start."},
+];
+
+const AUDIENCE = [
+    {segment:"Lek. bez specjalizacji", uu:10556, color:"#6366f1"},
+    {segment:"Studenci", uu:10137, color:"#8b5cf6"},
+    {segment:"Rezydenci", uu:4878, color:"#3b82f6"},
+    {segment:"Specjaliści", uu:3626, color:"#22c55e"},
+    {segment:"Stażyści", uu:2766, color:"#eab308"},
+    {segment:"Pielęgniarki + inni", uu:1537, color:"#64748b"},
+];
+
+// =====================================================
+// HELPERS
+// =====================================================
+const fmt = n => n == null ? '—' : n.toLocaleString('pl-PL');
+const fmtPLN = n => n == null ? '—' : n.toLocaleString('pl-PL', {minimumFractionDigits:0, maximumFractionDigits:0}) + ' zł';
+
+function getMetaSpend(c) { return c.meta.reduce((s,m) => s + m.spend, 0); }
+function getMetaResults(c) { return c.meta.reduce((s,m) => s + m.results, 0); }
+function getAvgCPR(c) { const s = getMetaSpend(c); const r = getMetaResults(c); return r > 0 ? s/r : 0; }
+function getPct(c) { return c.kpi ? Math.round(c.uu / c.kpi * 100) : null; }
+
+function getStatusClass(c) {
+    const pct = getPct(c);
+    if (pct === null) return '';
+    if (pct >= 100) return 'good';
+    if (c.deadline === '20.01 ⚠️') return 'urgent';
+    if (c.deadline === '31.03' && pct < 75) return 'urgent';
+    if (pct < 50) return 'urgent';
+    if (pct < 75) return 'warning';
+    return 'good';
+}
+
+function statusBadge(c) {
+    const pct = getPct(c);
+    if (pct === null) return '<span class="badge badge-blue">Meta only</span>';
+    if (pct >= 100) return `<span class="badge badge-green">${pct}% ✓</span>`;
+    if (pct >= 75) return `<span class="badge badge-yellow">${pct}%</span>`;
+    if (pct >= 50) return `<span class="badge badge-orange">${pct}%</span>`;
+    return `<span class="badge badge-red">${pct}%</span>`;
+}
+
+function deadlineBadge(d) {
+    if (!d || d === '—') return '<span class="deadline-tag deadline-ok">bez deadline</span>';
+    if (d.includes('⚠️') || d === '28.02' || d === '08.03' || d === '16.03') return `<span class="deadline-tag deadline-overdue">${d} — minął</span>`;
+    if (d === '31.03') return `<span class="deadline-tag deadline-soon">${d} — za 13 dni</span>`;
+    return `<span class="deadline-tag deadline-ok">${d}</span>`;
+}
+
+function metaContribution(c) {
+    if (!c.meta.length) return '<span style="color:var(--text-dim)">0% Meta</span>';
+    if (!c.uu || !c.kpi) return '<span style="color:var(--blue)">tylko Meta</span>';
+    const metaR = getMetaResults(c);
+    // Rough estimate: Meta LPV/video_plays → not all convert to logged-in UU.
+    // Assume ~15-25% conversion from Meta result to logged-in UU
+    const estConversion = Math.round(metaR * 0.20);
+    const pctMeta = c.uu > 0 ? Math.min(Math.round(estConversion / c.uu * 100), 100) : 0;
+    return `<span style="color:var(--blue)">~${pctMeta}% z Meta</span>`;
+}
+
+// =====================================================
+// RENDER KPIs
+// =====================================================
+function renderKPIs() {
+    const withKPI = CAMPAIGNS.filter(c => c.kpi);
+    const totalUU = withKPI.reduce((s,c) => s + c.uu, 0);
+    const totalKPI = withKPI.reduce((s,c) => s + c.kpi, 0);
+    const totalPct = Math.round(totalUU/totalKPI*100);
+
+    const totalMetaSpend = CAMPAIGNS.reduce((s,c) => s + getMetaSpend(c), 0) + META_ONLY.reduce((s,m) => s + m.spend, 0);
+    const totalMetaResults = CAMPAIGNS.reduce((s,c) => s + getMetaResults(c), 0) + META_ONLY.reduce((s,m) => s + m.results, 0);
+
+    const deadline31 = withKPI.filter(c => c.deadline === '31.03');
+    const atRisk = deadline31.filter(c => getPct(c) < 75).length;
+    const completed = withKPI.filter(c => getPct(c) >= 100).length;
+    const noMeta = CAMPAIGNS.filter(c => c.meta.length === 0 && c.kpi).length;
+
+    document.getElementById('kpiRow').innerHTML = `
+        <div class="kpi"><div class="kpi-label">Realizacja KPI</div><div class="kpi-value">${totalPct}%</div><div class="kpi-sub">${fmt(totalUU)} / ${fmt(totalKPI)} UU · ${withKPI.length} materiałów</div></div>
+        <div class="kpi"><div class="kpi-label">Active Meta Spend</div><div class="kpi-value">${fmtPLN(totalMetaSpend)}</div><div class="kpi-sub">${fmt(totalMetaResults)} wyników łącznie</div></div>
+        <div class="kpi"><div class="kpi-label">KPI domknięte</div><div class="kpi-value" style="color:var(--green)">${completed}</div><div class="kpi-sub">z ${withKPI.length} materiałów</div></div>
+        <div class="kpi" style="border-left:3px solid var(--red)"><div class="kpi-label">⚠ Zagrożone 31.03</div><div class="kpi-value" style="color:var(--red)">${atRisk}</div><div class="kpi-sub">${deadline31.length} materiałów z tym deadline</div></div>
+        <div class="kpi"><div class="kpi-label">Bez Meta ads</div><div class="kpi-value">${noMeta}</div><div class="kpi-sub">materiałów z KPI ale bez aktywnej kampanii Meta</div></div>
+    `;
+}
+
+// =====================================================
+// CHARTS
+// =====================================================
+function renderCharts() {
+    const kpiCampaigns = CAMPAIGNS.filter(c => c.kpi).sort((a,b) => getPct(a) - getPct(b));
+
+    // Chart 1: UU vs KPI
+    new Chart(document.getElementById('chartKPI'), {
+        type: 'bar',
+        data: {
+            labels: kpiCampaigns.map(c => c.name.substring(0, 20)),
+            datasets: [
+                {label: 'UU login', data: kpiCampaigns.map(c => c.uu), backgroundColor: kpiCampaigns.map(c => getPct(c)>=100?'#22c55eCC':getPct(c)>=75?'#eab308CC':getPct(c)>=50?'#f97316CC':'#ef4444CC'), borderRadius:3},
+                {label: 'KPI target', data: kpiCampaigns.map(c => c.kpi), type:'line', borderColor:'#818cf8', backgroundColor:'transparent', borderWidth:2, pointRadius:3, borderDash:[4,4], tension:0.3}
+            ]
+        },
+        options: {
+            responsive:true, maintainAspectRatio:false,
+            plugins:{legend:{labels:{color:'#8b8fa3',usePointStyle:true,padding:10,font:{size:10}}}},
+            scales:{
+                x:{grid:{display:false},ticks:{color:'#8b8fa3',font:{size:9},maxRotation:45}},
+                y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#8b8fa3'}}
+            }
+        }
+    });
+
+    // Chart 2: Meta spend vs PostHog UU scatter-like
+    const withBoth = CAMPAIGNS.filter(c => c.kpi && c.meta.length > 0);
+    new Chart(document.getElementById('chartCorrelation'), {
+        type: 'bar',
+        data: {
+            labels: withBoth.map(c => c.name.substring(0, 18)),
+            datasets: [
+                {label: 'Meta spend (PLN)', data: withBoth.map(c => getMetaSpend(c)), backgroundColor:'#3b82f6AA', borderRadius:3, yAxisID:'y'},
+                {label: 'PostHog UU', data: withBoth.map(c => c.uu || 0), type:'line', borderColor:'#22c55e', backgroundColor:'transparent', borderWidth:2, pointRadius:4, tension:0.3, yAxisID:'y1'}
+            ]
+        },
+        options: {
+            responsive:true, maintainAspectRatio:false,
+            plugins:{legend:{labels:{color:'#8b8fa3',usePointStyle:true,padding:10,font:{size:10}}}},
+            scales:{
+                x:{grid:{display:false},ticks:{color:'#8b8fa3',font:{size:9},maxRotation:45}},
+                y:{position:'left',grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#3b82f6',callback:v=>v+' zł'},title:{display:true,text:'Meta spend',color:'#3b82f6',font:{size:10}}},
+                y1:{position:'right',grid:{display:false},ticks:{color:'#22c55e'},title:{display:true,text:'UU login',color:'#22c55e',font:{size:10}}}
+            }
+        }
+    });
+}
+
+// =====================================================
+// CAMPAIGN CARDS
+// =====================================================
+function renderCards() {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    const status = document.getElementById('filterStatus').value;
+    const sort = document.getElementById('sortBy').value;
+
+    let data = [...CAMPAIGNS];
+
+    // Filter by search
+    if (search) {
+        data = data.filter(c => c.name.toLowerCase().includes(search) || c.client.toLowerCase().includes(search) || c.format.toLowerCase().includes(search));
+    }
+
+    // Filter by status
+    if (status === 'urgent') data = data.filter(c => {const p=getPct(c); return p!==null && p<50;});
+    if (status === 'warning') data = data.filter(c => {const p=getPct(c); return p!==null && p>=50 && p<75;});
+    if (status === 'ok') data = data.filter(c => {const p=getPct(c); return p!==null && p>=75;});
+
+    // Sort
+    switch(sort) {
+        case 'pct-asc': data.sort((a,b) => (getPct(a)||0) - (getPct(b)||0)); break;
+        case 'pct-desc': data.sort((a,b) => (getPct(b)||0) - (getPct(a)||0)); break;
+        case 'spend-desc': data.sort((a,b) => getMetaSpend(b) - getMetaSpend(a)); break;
+        case 'deadline': data.sort((a,b) => {
+            const da = a.deadline==='—'?'9999':a.deadline;
+            const db = b.deadline==='—'?'9999':b.deadline;
+            return da.localeCompare(db);
+        }); break;
+    }
+
+    document.getElementById('cardCount').textContent = data.length;
+
+    document.getElementById('campaignCards').innerHTML = data.map((c, i) => {
+        const pct = getPct(c);
+        const spend = getMetaSpend(c);
+        const results = getMetaResults(c);
+        const cpr = getAvgCPR(c);
+        const statusCls = getStatusClass(c);
+
+        return `
+        <div class="campaign-card ${statusCls}" id="card-${i}">
+            <div class="card-header" onclick="toggleCard(${i})">
+                <div>
+                    <div class="card-title">${c.name}</div>
+                    <div class="card-client">${c.client}</div>
+                    <div class="card-format">${c.format} ${deadlineBadge(c.deadline)}</div>
+                </div>
+                <div class="card-header-right">
+                    ${statusBadge(c)}
+                    <div style="margin-top:4px;font-size:10px;color:var(--text-dim)">
+                        ${spend > 0 ? fmtPLN(spend) + ' Meta' : 'bez Meta'}
+                    </div>
+                </div>
+            </div>
+            <div class="card-body" id="body-${i}">
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <h4><span class="dot dot-posthog"></span> PostHog — realizacja KPI</h4>
+                        ${pct !== null ? `
+                            <div class="metric-row"><span class="label">UU login</span><span class="value">${fmt(c.uu)}</span></div>
+                            <div class="metric-row"><span class="label">KPI target</span><span class="value">${fmt(c.kpi)}</span></div>
+                            <div class="metric-row"><span class="label">Realizacja</span><span class="value" style="color:${pct>=100?'var(--green)':pct>=75?'var(--yellow)':pct>=50?'var(--orange)':'var(--red)'}">${pct}%</span></div>
+                            <div class="metric-row"><span class="label">Brakuje</span><span class="value">${c.uu>=c.kpi ? '—' : fmt(c.kpi - c.uu) + ' UU'}</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${pct>=100?'var(--green)':pct>=75?'var(--yellow)':pct>=50?'var(--orange)':'var(--red)'}"></div></div>
+                        ` : `
+                            <div style="color:var(--text-dim);font-size:11px;padding:8px 0">Brak osobnego KPI w PostHog.<br>Sprawdź materiał w Notion.</div>
+                        `}
+                    </div>
+                    <div class="metric-box">
+                        <h4><span class="dot dot-meta"></span> Meta Ads — wydatki i wyniki</h4>
+                        ${c.meta.length > 0 ? `
+                            <div class="metric-row"><span class="label">Spend</span><span class="value">${fmtPLN(spend)}</span></div>
+                            <div class="metric-row"><span class="label">Wyniki (LPV/video)</span><span class="value">${fmt(results)}</span></div>
+                            <div class="metric-row"><span class="label">Avg CPR</span><span class="value" style="color:${cpr<2?'var(--green)':cpr<4?'var(--yellow)':'var(--red)'}">${cpr.toFixed(2)} zł</span></div>
+                            <div class="metric-row"><span class="label">Zasięg</span><span class="value">${fmt(c.meta.reduce((s,m)=>s+m.reach,0))}</span></div>
+                            <div class="metric-row"><span class="label">Udział Meta w UU</span><span class="value">${metaContribution(c)}</span></div>
+                            ${c.meta.length > 1 ? `<div style="font-size:10px;color:var(--text-dim);margin-top:4px">${c.meta.length} zestawów reklam</div>` : ''}
+                        ` : `
+                            <div style="color:var(--text-dim);font-size:11px;padding:8px 0">Brak aktywnej kampanii Meta.<br>Cały ruch organiczny / newsletter / push.</div>
+                        `}
+                    </div>
+                </div>
+                <div class="action-note">
+                    <strong>→ Co zrobić:</strong> ${c.action}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function toggleCard(i) {
+    document.getElementById('body-' + i).classList.toggle('open');
+}
+
+// =====================================================
+// META-ONLY TABLE
+// =====================================================
+function renderMetaOnly() {
+    document.getElementById('metaOnlyCount').textContent = META_ONLY.length;
+    document.getElementById('metaOnlyBody').innerHTML = META_ONLY.map(m => `
+        <tr>
+            <td><strong>${m.adset}</strong><br><span style="color:var(--accent-light);font-size:10px">${m.campaign}</span></td>
+            <td>${fmtPLN(m.spend)}</td>
+            <td>${fmt(m.results)}</td>
+            <td style="color:${m.cpr<2?'var(--green)':m.cpr<4?'var(--yellow)':'var(--red)'}">${m.cpr.toFixed(2)} zł</td>
+            <td style="font-size:11px;max-width:300px;white-space:normal">${m.note}</td>
+        </tr>
+    `).join('');
+}
+
+// =====================================================
+// EVENTS
+// =====================================================
+document.getElementById('searchBox').addEventListener('input', renderCards);
+document.getElementById('filterStatus').addEventListener('change', renderCards);
+document.getElementById('sortBy').addEventListener('change', renderCards);
+document.getElementById('expandAll').addEventListener('click', () => {
+    const bodies = document.querySelectorAll('.card-body');
+    const anyOpen = [...bodies].some(b => b.classList.contains('open'));
+    bodies.forEach(b => anyOpen ? b.classList.remove('open') : b.classList.add('open'));
+    document.getElementById('expandAll').textContent = anyOpen ? 'Rozwiń wszystkie' : 'Zwiń wszystkie';
+});
+
+// =====================================================
+// INIT
+// =====================================================
+renderKPIs();
+renderCharts();
+renderCards();
+renderMetaOnly();
+</script>
+</body>
+</html>

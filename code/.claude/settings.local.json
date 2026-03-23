@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/sebastiancencyk/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/c51c3c8f-abc1-41b4-b4c3-53eb448dbc42/a6456bb6-9c4a-4942-95ba-00c57fc83be3/skills/xlsx/**)",
+      "Bash(python3 -c \":*)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npx skills:*)",
+      "Bash(npx shadcn@latest add card tabs badge table)",
+      "Bash(npm install:*)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

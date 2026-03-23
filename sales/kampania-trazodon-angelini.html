@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trazodon – dowód skuteczności kampanii Angelini</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --border: rgba(0,0,0,0.06);
+    --text-primary: #1A1A19;
+    --text-secondary: #6B6B67;
+    --text-tertiary: #9B9B95;
+    --accent-purple: #534AB7;
+    --accent-blue: #185FA5;
+    --accent-amber: #854F0B;
+    --accent-green: #0F6E56;
+    --accent-rose: #B91C3B;
+    --bg-purple: rgba(83,74,183,0.08);
+    --bg-blue: rgba(24,95,165,0.08);
+    --bg-amber: rgba(133,79,11,0.08);
+    --bg-green: rgba(15,110,86,0.08);
+    --bg-rose: rgba(185,28,59,0.06);
+    --bg-secondary: #F5F5F3;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+    --radius: 16px;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 24px 60px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .page-header { text-align: center; margin-bottom: 8px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; color: var(--text-secondary); letter-spacing: 0.3px; }
+  .page-header .top-badge {
+    display: inline-block; background: var(--bg-purple); color: var(--accent-purple);
+    font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  /* Cards */
+  .card {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 28px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .card-header h2 { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+  .card-header .badge {
+    font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .card-body { padding: 20px 28px 28px; }
+
+  /* Card hover — subtle lift */
+  @media (hover: hover) and (pointer: fine) {
+    .card { transition: transform 250ms var(--ease-out), box-shadow 250ms var(--ease-out); }
+    .card:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04); }
+  }
+
+  .divider { width: 48px; height: 2px; border-radius: 1px; background: var(--border); }
+
+  /* KPIs */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi-item {
+    background: var(--bg-secondary); border-radius: 12px; padding: 16px 18px;
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+    will-change: transform;
+  }
+  .kpi-item .kpi-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi-item .kpi-value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+  .kpi-item .kpi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .kpi-green { color: var(--accent-green); }
+  .kpi-amber { color: var(--accent-amber); }
+  @media (hover: hover) and (pointer: fine) {
+    .kpi-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  }
+  .kpi-item:active { transform: scale(0.97); }
+
+  /* Period cards */
+  .period-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .period-card { background: var(--bg-secondary); border-radius: 12px; padding: 16px 18px; position: relative; overflow: hidden; }
+  .period-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 3px 3px 0 0; }
+  .period-card.pre::before { background: var(--text-tertiary); }
+  .period-card.campaign::before { background: var(--accent-purple); }
+  .period-card.post::before { background: var(--accent-green); }
+  .period-card .pt { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .period-card .pt small { font-weight: 400; font-size: 11px; color: var(--text-secondary); display: block; margin-top: 2px; }
+  .period-card .ps { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .period-card .ps:last-child { border-bottom: none; }
+  .period-card .ps .l { color: var(--text-secondary); }
+  .period-card .ps .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* Chart */
+  .chart-wrap { position: relative; height: 300px; margin-top: 12px; }
+
+  /* Highlight */
+  .highlight-box {
+    background: var(--bg-amber); border-radius: 12px; padding: 28px; text-align: center;
+  }
+  .highlight-box .big { font-size: 52px; font-weight: 800; letter-spacing: -1px; color: var(--accent-amber); }
+  .highlight-box .big-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .highlight-box .sub { font-size: 15px; font-weight: 600; margin-top: 10px; color: var(--text-primary); }
+
+  /* Table */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { text-align: left; color: var(--text-tertiary); font-weight: 500; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl .num { text-align: right; font-weight: 600; }
+  @media (hover: hover) and (pointer: fine) {
+    .tbl tbody tr { transition: background 150ms ease; }
+    .tbl tbody tr:hover { background: var(--bg-secondary); }
+  }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .tag-vod { background: var(--bg-purple); color: var(--accent-purple); }
+  .tag-art { background: var(--bg-green); color: var(--accent-green); }
+  .tag-meds { background: var(--bg-blue); color: var(--accent-blue); }
+  .tag-trittico { background: var(--bg-amber); color: var(--accent-amber); }
+
+  /* Insights */
+  .insight-row { display: flex; flex-direction: column; gap: 8px; }
+  .insight {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--bg-secondary); border-radius: 10px; padding: 14px 18px;
+    font-size: 13.5px; line-height: 1.55;
+    transition: transform 200ms var(--ease-out), background 200ms ease;
+    will-change: transform;
+  }
+  .insight .ic { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  @media (hover: hover) and (pointer: fine) {
+    .insight:hover { transform: translateX(3px); background: #EDEDEB; }
+  }
+  .insight:active { transform: scale(0.98); }
+
+  /* Verdict */
+  .verdict-card { background: var(--bg-green); border: 1px solid rgba(15,110,86,0.15); }
+  .verdict-card .card-body { text-align: center; }
+  .verdict-card h2 { color: var(--accent-green); font-size: 20px; margin-bottom: 10px; }
+  .verdict-card p { font-size: 14px; color: var(--text-primary); max-width: 720px; margin: 0 auto; line-height: 1.65; }
+
+  /* Two-col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; }
+
+  @media (max-width: 720px) {
+    body { padding: 20px 12px 40px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .two-col, .three-col, .period-grid { grid-template-columns: 1fr; }
+    .card-body { padding: 16px; }
+    .card-header { padding: 16px 16px 0; }
+  }
+
+  /* Animations — Emil: start from scale(0.98), never scale(0) */
+  .anim { opacity: 0; transform: translateY(12px) scale(0.98); animation: slideIn 500ms var(--ease-out) forwards; }
+  @keyframes slideIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+  .d1{animation-delay:50ms}.d2{animation-delay:100ms}.d3{animation-delay:150ms}.d4{animation-delay:200ms}
+  .d5{animation-delay:250ms}.d6{animation-delay:300ms}.d7{animation-delay:350ms}.d8{animation-delay:400ms}
+  .d9{animation-delay:450ms}.d10{animation-delay:500ms}.d11{animation-delay:550ms}.d12{animation-delay:600ms}
+
+  /* Stagger children within cards — 50ms between siblings */
+  .kpi-grid .kpi-item,
+  .period-grid .period-card,
+  .insight-row .insight {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: childIn 400ms var(--ease-out) forwards;
+  }
+  @keyframes childIn { to { opacity: 1; transform: translateY(0); } }
+  .kpi-grid .kpi-item:nth-child(1),
+  .period-grid .period-card:nth-child(1),
+  .insight-row .insight:nth-child(1) { animation-delay: 100ms; }
+  .kpi-grid .kpi-item:nth-child(2),
+  .period-grid .period-card:nth-child(2),
+  .insight-row .insight:nth-child(2) { animation-delay: 150ms; }
+  .kpi-grid .kpi-item:nth-child(3),
+  .period-grid .period-card:nth-child(3),
+  .insight-row .insight:nth-child(3) { animation-delay: 200ms; }
+  .kpi-grid .kpi-item:nth-child(4) { animation-delay: 250ms; }
+
+  /* Highlight number — subtle scale entrance */
+  .highlight-box .big {
+    opacity: 0;
+    transform: scale(0.9);
+    animation: numIn 600ms var(--ease-out) 300ms forwards;
+  }
+  @keyframes numIn { to { opacity: 1; transform: scale(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .anim, .kpi-grid .kpi-item, .period-grid .period-card, .insight-row .insight, .highlight-box .big {
+      animation: fadeOnly 300ms ease forwards;
+      transform: none;
+    }
+    @keyframes fadeOnly { to { opacity: 1; } }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header anim">
+    <div class="top-badge">Angelini Pharma &middot; Trazodon</div>
+    <h1>Dlaczego kampanie na Remedium działają</h1>
+    <p>Kampania: kwiecień 2025 – styczeń 2026 &middot; Kontrola: sertralina, escitalopram &middot; PostHog (zalogowani, bez backoffice)</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="card anim d1">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-purple)"></div>
+      <h2>Podsumowanie kampanii</h2>
+      <div class="badge" style="background:var(--bg-purple);color:var(--accent-purple)">IV.25–I.26</div>
+    </div>
+    <div class="card-body">
+      <div class="kpi-grid">
+        <div class="kpi-item">
+          <div class="kpi-label">Odsłony</div>
+          <div class="kpi-value">7 444</div>
+          <div class="kpi-sub">treści trazodonu</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Unikalni lekarze</div>
+          <div class="kpi-value">3 291</div>
+          <div class="kpi-sub">dotarcie kampanii</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Wzrost ruchu</div>
+          <div class="kpi-value kpi-green">9.4×</div>
+          <div class="kpi-sub">vs pre-campaign</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Efekt po kampanii</div>
+          <div class="kpi-value kpi-green">3×</div>
+          <div class="kpi-sub">wciąż powyżej baseline</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Argument 1: Search uplift -->
+  <div class="card anim d2">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-green)"></div>
+      <h2>Argument #1 — Więcej lekarzy szuka leku</h2>
+      <div class="badge" style="background:var(--bg-green);color:var(--accent-green)">Search uplift</div>
+    </div>
+    <div class="card-body">
+      <div class="period-grid">
+        <div class="period-card pre">
+          <div class="pt" style="color:var(--text-tertiary)">Przed kampanią<small>I–III 2025</small></div>
+          <div class="ps"><span class="l">Search / mies.</span><span class="v">94</span></div>
+          <div class="ps"><span class="l">UU szukających</span><span class="v">48 / mies.</span></div>
+          <div class="ps"><span class="l">PV na treściach</span><span class="v">79 / mies.</span></div>
+        </div>
+        <div class="period-card campaign">
+          <div class="pt" style="color:var(--accent-purple)">Kampania aktywna<small>IV.25–I.26</small></div>
+          <div class="ps"><span class="l">Search / mies.</span><span class="v kpi-green">100 <small style="color:var(--accent-green)">+6%</small></span></div>
+          <div class="ps"><span class="l">UU szukających</span><span class="v kpi-green">67 / mies. <small style="color:var(--accent-green)">+40%</small></span></div>
+          <div class="ps"><span class="l">PV na treściach</span><span class="v kpi-green">744 / mies.</span></div>
+        </div>
+        <div class="period-card post">
+          <div class="pt" style="color:var(--accent-green)">Po kampanii<small>II–III 2026</small></div>
+          <div class="ps"><span class="l">Search / mies.</span><span class="v">103</span></div>
+          <div class="ps"><span class="l">UU szukających</span><span class="v kpi-green">74 / mies. <small style="color:var(--accent-green)">+54%</small></span></div>
+          <div class="ps"><span class="l">PV na treściach</span><span class="v">239 / mies.</span></div>
+        </div>
+      </div>
+      <div class="insight-row" style="margin-top:16px">
+        <div class="insight">
+          <span class="ic">🔑</span>
+          <div>Liczba unikalnych lekarzy szukających trazodonu wzrosła o <strong style="color:var(--accent-green)">+40%</strong> w trakcie kampanii i utrzymuje się na <strong style="color:var(--accent-green)">+54%</strong> powyżej baseline'u po jej zakończeniu. Kampania trwale poszerza bazę lekarzy zainteresowanych lekiem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 2: Control group -->
+  <div class="card anim d3">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-blue)"></div>
+      <h2>Argument #2 — Wzrost NIE jest organiczny</h2>
+      <div class="badge" style="background:var(--bg-blue);color:var(--accent-blue)">Grupa kontrolna</div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Sertralina i escitalopram nie miały kampanii — służą jako benchmark organicznego wzrostu</p>
+      <div class="chart-wrap"><canvas id="chartControl"></canvas></div>
+      <div class="insight-row" style="margin-top:16px">
+        <div class="insight">
+          <span class="ic">📊</span>
+          <div><strong>Trazodon UU:</strong> 48 → 67 → 74/mies. (<strong style="color:var(--accent-green)">+54%</strong>). <strong>Sertralina UU:</strong> 27 → 26 → 33 (<span style="color:var(--text-tertiary)">+22% organiczny</span>). Po odjęciu organiki kampania odpowiada za <strong>+32pp dodatkowego wzrostu</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 3: Traffic -->
+  <div class="card anim d4">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-purple)"></div>
+      <h2>Argument #3 — Masowy ruch na treści edukacyjne</h2>
+      <div class="badge" style="background:var(--bg-purple);color:var(--accent-purple)">Pageviews</div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Fioletowe tło = okres kampanii (IV.25–I.26)</p>
+      <div class="chart-wrap"><canvas id="chartTraffic"></canvas></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Argument 4: Trittico -->
+  <div class="card anim d5">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-amber)"></div>
+      <h2>Argument #4 — Trittico dominuje w wyszukiwaniach</h2>
+      <div class="badge" style="background:var(--bg-amber);color:var(--accent-amber)">Brand share</div>
+    </div>
+    <div class="card-body">
+      <div class="highlight-box" style="margin-bottom:20px">
+        <div class="big">62%</div>
+        <div class="big-label">udziału w wyszukiwaniach trazodonu należy do marki <strong>Trittico</strong></div>
+        <div class="sub">919 × „trittico" &nbsp;&middot;&nbsp; 494 × „trazodon" &nbsp;&middot;&nbsp; 5 × „neuraxpharm"</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <p style="font-size:13px;font-weight:600;margin-bottom:8px">Trittico vs ogólne „trazodon" — trend</p>
+          <div class="chart-wrap" style="height:240px"><canvas id="chartTrittico"></canvas></div>
+        </div>
+        <div>
+          <p style="font-size:13px;font-weight:600;margin-bottom:8px">Top frazy wyszukiwań</p>
+          <table class="tbl">
+            <thead><tr><th>Fraza</th><th class="num">Szukania</th><th class="num">UU</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-trittico">trittico</span></td><td class="num">728</td><td class="num">311</td></tr>
+              <tr><td>trazodon</td><td class="num">424</td><td class="num">309</td></tr>
+              <tr><td><span class="tag tag-trittico">trittico cr</span></td><td class="num">66</td><td class="num">49</td></tr>
+              <tr><td>trazodone</td><td class="num">50</td><td class="num">40</td></tr>
+              <tr><td><span class="tag tag-trittico">trittico xr</span></td><td class="num">22</td><td class="num">19</td></tr>
+              <tr><td style="color:var(--text-tertiary)">trazodone neuraxpharm</td><td class="num" style="color:var(--text-tertiary)">5</td><td class="num" style="color:var(--text-tertiary)">5</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 5: Cross-content -->
+  <div class="card anim d6">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-blue)"></div>
+      <h2>Argument #5 — Lejek: edukacja → wyszukiwanie leku</h2>
+      <div class="badge" style="background:var(--bg-blue);color:var(--accent-blue)">Cross-content</div>
+    </div>
+    <div class="card-body">
+      <div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="kpi-item">
+          <div class="kpi-label">VOD → Search</div>
+          <div class="kpi-value" style="color:var(--accent-purple)">227</div>
+          <div class="kpi-sub">lekarzy obejrzało VOD, potem szukało leku</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">VOD → Karta leku</div>
+          <div class="kpi-value" style="color:var(--accent-blue)">84</div>
+          <div class="kpi-sub">lekarzy przeszło na stronę leku</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Multi-content</div>
+          <div class="kpi-value" style="color:var(--accent-green)">500+</div>
+          <div class="kpi-sub">lekarzy z 2+ odsłonami treści</div>
+        </div>
+      </div>
+      <div class="insight-row" style="margin-top:16px">
+        <div class="insight">
+          <span class="ic">🔄</span>
+          <div>227 lekarzy po obejrzeniu materiału wideo szukało trazodonu/Trittico w wyszukiwarce. 84 przeszło na kartę leku. Kampania prowadzi lekarza od edukacji do aktywnego zainteresowania lekiem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 6: Audience + Content -->
+  <div class="two-col anim d7">
+    <div class="card">
+      <div class="card-header">
+        <div class="dot" style="background:var(--accent-purple)"></div>
+        <h2>Argument #6 — Precyzyjne dotarcie</h2>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap" style="height:240px"><canvas id="chartRoles"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="dot" style="background:var(--accent-green)"></div>
+        <h2>Top treści kampanii</h2>
+      </div>
+      <div class="card-body">
+        <table class="tbl">
+          <thead><tr><th>Treść</th><th>Typ</th><th class="num">UU</th></tr></thead>
+          <tbody>
+            <tr><td>Trazodon</td><td><span class="tag tag-vod">VOD</span></td><td class="num">958</td></tr>
+            <tr><td>Trazodon w praktyce POZ</td><td><span class="tag tag-vod">VOD</span></td><td class="num">675</td></tr>
+            <tr><td>Różne oblicza trazodonu</td><td><span class="tag tag-art">Art.</span></td><td class="num">365</td></tr>
+            <tr><td>Case study: depresja – trazodon XR</td><td><span class="tag tag-art">Art.</span></td><td class="num">349</td></tr>
+            <tr><td>Chlorowodorek trazodonu</td><td><span class="tag tag-meds">Lek</span></td><td class="num">131</td></tr>
+            <tr><td>Trazodone Neuraxpharm</td><td><span class="tag tag-meds">Lek</span></td><td class="num">110</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 7: Video -->
+  <div class="card anim d8">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-purple)"></div>
+      <h2>Argument #7 — Realne zaangażowanie wideo</h2>
+      <div class="badge" style="background:var(--bg-purple);color:var(--accent-purple)">Video</div>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap"><canvas id="chartVideo"></canvas></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Verdict -->
+  <div class="card verdict-card anim d9">
+    <div class="card-body" style="padding:32px 28px">
+      <h2>Kampania działa na 4 poziomach</h2>
+      <p>
+        <strong>1. Ruch:</strong> 9.4× wzrost odsłon, 3× utrzymany po zakończeniu.<br>
+        <strong>2. Wyszukiwania:</strong> +40% unikalnych lekarzy szukających leku w trakcie, +54% po — wzrost trwały, potwierdzony grupą kontrolną.<br>
+        <strong>3. Marka:</strong> Trittico = 62% udziału w search, 184× więcej wyszukiwań niż Neuraxpharm.<br>
+        <strong>4. Lejek:</strong> 227 lekarzy: VOD → search, 84 → karta leku. Kampania edukuje i konwertuje.
+      </p>
+      <p style="color:var(--text-tertiary);font-size:12px;margin-top:12px">PostHog &middot; Zalogowani z rolą (bez backoffice) &middot; Kontrola: sertralina / escitalopram</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const allMonths = ['I.25','II.25','III.25','IV.25','V.25','VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26*'];
+
+Chart.defaults.color = '#9B9B95';
+Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
+Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+Chart.defaults.font.size = 12;
+
+const campaignZone = {
+  id: 'campaignZone',
+  beforeDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!scales.x || !chartArea) return;
+    const x1 = scales.x.getPixelForValue(3);
+    const x2 = scales.x.getPixelForValue(12);
+    ctx.fillStyle = 'rgba(83,74,183,0.04)';
+    ctx.fillRect(x1, chartArea.top, x2 - x1, chartArea.bottom - chartArea.top);
+    ctx.strokeStyle = 'rgba(83,74,183,0.15)';
+    ctx.setLineDash([4, 4]);
+    [x1, x2].forEach(x => { ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke(); });
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#534AB7';
+    ctx.font = "600 11px 'Inter', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('KAMPANIA', (x1 + x2) / 2, chartArea.top + 16);
+  }
+};
+
+// 1. Control group
+new Chart(document.getElementById('chartControl'), {
+  type: 'line',
+  plugins: [campaignZone],
+  data: {
+    labels: allMonths,
+    datasets: [
+      {
+        label: 'Trazodon/Trittico UU',
+        data: [47,49,47,52,61,77,67,36,51,46,77,108,97,91,56],
+        borderColor: '#534AB7', backgroundColor: 'rgba(83,74,183,0.06)',
+        fill: true, tension: 0.35, pointRadius: 5,
+        pointBackgroundColor: '#534AB7', borderWidth: 2.5
+      },
+      {
+        label: 'Sertralina UU (kontrola)',
+        data: [22,30,28,30,22,29,32,18,23,27,33,33,39,39,26],
+        borderColor: '#B91C3B', borderDash: [5, 5], tension: 0.35,
+        pointRadius: 4, pointBackgroundColor: '#B91C3B', borderWidth: 2, fill: false
+      },
+      {
+        label: 'Escitalopram UU (kontrola)',
+        data: [10,11,10,9,13,15,11,16,11,17,14,22,30,12,10],
+        borderColor: '#9B9B95', borderDash: [3, 3], tension: 0.35,
+        pointRadius: 3, pointBackgroundColor: '#9B9B95', borderWidth: 1.5, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 14, font: { size: 11 } } } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Unikalni szukający / mies.', color: '#9B9B95', font: { size: 11 } } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. Traffic
+new Chart(document.getElementById('chartTraffic'), {
+  type: 'bar',
+  plugins: [campaignZone],
+  data: {
+    labels: allMonths,
+    datasets: [
+      {
+        label: 'Odsłony',
+        data: [84,80,73,61,971,1342,1183,387,323,238,925,703,716,351,126],
+        backgroundColor: allMonths.map((_,i) => i>=3&&i<=12 ? 'rgba(83,74,183,0.55)' : 'rgba(83,74,183,0.15)'),
+        borderRadius: { topLeft: 4, topRight: 4 }, barPercentage: 0.7, order: 1
+      },
+      {
+        label: 'Unikalni użytkownicy',
+        data: [49,45,47,34,602,725,681,205,170,114,446,363,332,181,74],
+        type: 'line', borderColor: '#0F6E56', backgroundColor: 'rgba(15,110,86,0.05)',
+        fill: true, tension: 0.3, pointRadius: 4,
+        pointBackgroundColor: '#0F6E56', borderWidth: 2, order: 0
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. Trittico
+new Chart(document.getElementById('chartTrittico'), {
+  type: 'line',
+  plugins: [campaignZone],
+  data: {
+    labels: allMonths,
+    datasets: [
+      {
+        label: 'Trittico (marka)',
+        data: [90,66,66,52,49,52,57,42,40,38,71,90,79,76,51],
+        borderColor: '#854F0B', backgroundColor: 'rgba(133,79,11,0.06)',
+        fill: true, tension: 0.35, pointRadius: 4,
+        pointBackgroundColor: '#854F0B', borderWidth: 2.5
+      },
+      {
+        label: 'trazodon (ogólne)',
+        data: [26,23,10,24,35,53,43,26,36,30,45,66,70,54,24],
+        borderColor: '#534AB7', borderDash: [4, 4], tension: 0.35,
+        pointRadius: 4, pointBackgroundColor: '#534AB7', borderWidth: 2, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 12, font: { size: 11 } } } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 4. Roles
+new Chart(document.getElementById('chartRoles'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Lek. bez specj. (POZ)','Rezydenci','Specjaliści','Studenci','Stażyści','Farmaceuci','Inni'],
+    datasets: [{
+      data: [935,564,383,245,197,148,53],
+      backgroundColor: ['#534AB7','#0F6E56','#185FA5','#854F0B','#B91C3B','#7B6EC7','#CBCBC5'],
+      borderWidth: 0, cutout: '65%'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { usePointStyle: true, padding: 10, font: { size: 11 }, color: '#6B6B67' } },
+      tooltip: { callbacks: { label(ctx) {
+        const t = ctx.dataset.data.reduce((a,b)=>a+b,0);
+        return ` ${ctx.label}: ${ctx.raw} UU (${Math.round(ctx.raw/t*100)}%)`;
+      }}}
+    }
+  }
+});
+
+// 5. Video
+const vidMonths = ['V.25','VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26*'];
+new Chart(document.getElementById('chartVideo'), {
+  type: 'bar',
+  data: {
+    labels: vidMonths,
+    datasets: [
+      {
+        label: 'Video started',
+        data: [231,394,81,81,80,48,316,254,223,66,35],
+        backgroundColor: 'rgba(83,74,183,0.55)',
+        borderRadius: { topLeft: 4, topRight: 4 }, barPercentage: 0.6
+      },
+      {
+        label: 'Video finished',
+        data: [47,80,16,16,16,10,63,51,45,13,7],
+        backgroundColor: 'rgba(15,110,86,0.5)',
+        borderRadius: { topLeft: 4, topRight: 4 }, barPercentage: 0.6
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } },
+      tooltip: { callbacks: { afterBody(items) {
+        const s = items[0].raw, f = items[1]?items[1].raw:0;
+        if(s>0) return `Completion rate: ${Math.round(f/s*100)}%`;
+      }}}
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<style>
+*{margin:0;box-sizing:border-box}
+canvas{display:block;width:100%;border-radius:var(--border-radius-lg)}
+.top-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}
+.top-bar select{flex:1;min-width:200px}
+.top-bar .badge{font-size:11px;padding:3px 10px;border-radius:var(--border-radius-md);font-weight:500;white-space:nowrap}
+.controls{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0 0;font-size:13px;color:var(--color-text-secondary)}
+.ctrl{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}
+.ctrl input[type=range]{flex:1}
+.val{font-weight:500;font-size:14px;color:var(--color-text-primary);min-width:44px;text-align:right}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0 0}
+.stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px}
+.stat-label{font-size:11px;color:var(--color-text-secondary)}
+.stat-val{font-size:18px;font-weight:500;margin-top:2px}
+.stat-sub{font-size:10px;color:var(--color-text-secondary);margin-top:1px}
+.rank-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin:12px 0 0;max-height:340px;overflow-y:auto}
+.rank-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);cursor:pointer;transition:background 0.15s}
+.rank-row:hover{background:var(--color-background-tertiary)}
+.rank-name{flex:1;font-size:13px;font-weight:500;color:var(--color-text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-bar-wrap{width:80px;height:6px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden}
+.rank-bar{height:100%;border-radius:3px;transition:width 0.3s}
+.rank-pct{font-size:12px;font-weight:500;min-width:38px;text-align:right}
+.rank-cnt{font-size:11px;color:var(--color-text-secondary);min-width:40px;text-align:right}
+.note{font-size:11px;color:var(--color-text-secondary);margin-top:8px;font-style:italic}
+</style>
+<div class="top-bar">
+<select id="specSelect" onchange="onSelect()"></select>
+<span class="badge" id="scrBadge" style="background:var(--color-background-info);color:var(--color-text-info)">SCR: —</span>
+</div>
+<div id="animWrap"><canvas id="c" height="420"></canvas></div>
+<div id="rankWrap" style="display:none"></div>
+<div class="controls" id="ctrlWrap">
+<div class="ctrl"><label>Activation rate (est.)</label><input type="range" id="actSlider" min="10" max="80" value="35" step="1" oninput="updateAct()"><span class="val" id="actVal">35%</span></div>
+</div>
+<div class="stats" id="statsWrap">
+<div class="stat"><div class="stat-label">Rynek (GUS 2024)</div><div class="stat-val" id="sM">—</div></div>
+<div class="stat"><div class="stat-label">W Remedium</div><div class="stat-val" id="sR">—</div><div class="stat-sub" id="sRsub"></div></div>
+<div class="stat"><div class="stat-label">SCR</div><div class="stat-val" id="sSCR">—</div></div>
+<div class="stat"><div class="stat-label">Opt-in marketing</div><div class="stat-val" id="sO">—</div><div class="stat-sub" id="sOsub"></div></div>
+<div class="stat"><div class="stat-label">Aktywowani (est.)</div><div class="stat-val" id="sA">—</div></div>
+<div class="stat"><div class="stat-label">U produktu</div><div class="stat-val" id="sK" style="color:#1D9E75">—</div></div>
+</div>
+<div class="note" id="noteWrap">Activation rate to szacunek — brak danych per specjalizacja. Dane rynkowe: GUS 2024 (specjaliści pracujący z pacjentem). Dane Remedium: stan na 7.02.2026.</div>
+<script>
+const DATA=[
+{name:"Choroby wewnętrzne",rem:4871,gus:18200,opt:863},
+{name:"Medycyna rodzinna",rem:4389,gus:10800,opt:703},
+{name:"Pediatria",rem:3288,gus:7400,opt:579},
+{name:"Anestezjologia i int. terapia",rem:1550,gus:5600,opt:195},
+{name:"Kardiologia",rem:1324,gus:5100,opt:188},
+{name:"Psychiatria",rem:1310,gus:3800,opt:119},
+{name:"Położnictwo i ginekologia",rem:1277,gus:6200,opt:180},
+{name:"Chirurgia ogólna",rem:1201,gus:5800,opt:147},
+{name:"Radiologia i diag. obrazowa",rem:997,gus:3700,opt:75},
+{name:"Neurologia",rem:977,gus:3500,opt:130},
+{name:"Ortopedia i traumatologia",rem:775,gus:3900,opt:71},
+{name:"Okulistyka",rem:648,gus:3600,opt:45},
+{name:"Otorynolaryngologia",rem:477,gus:2100,opt:57},
+{name:"Dermatologia i wenerologia",rem:425,gus:1900,opt:51},
+{name:"Choroby płuc",rem:390,gus:2300,opt:76},
+{name:"Diabetologia",rem:359,gus:1500,opt:66},
+{name:"Neonatologia",rem:354,gus:1500,opt:67},
+{name:"Onkologia kliniczna",rem:344,gus:null,opt:40},
+{name:"Endokrynologia",rem:339,gus:1700,opt:41},
+{name:"Urologia",rem:315,gus:1300,opt:22},
+{name:"Reumatologia",rem:296,gus:1600,opt:44},
+{name:"Medycyna ratunkowa",rem:266,gus:null,opt:47},
+{name:"Nefrologia",rem:275,gus:1300,opt:47},
+{name:"Medycyna pracy",rem:268,gus:1500,opt:63},
+{name:"Alergologia",rem:247,gus:1400,opt:48},
+{name:"Rehabilitacja medyczna",rem:247,gus:1700,opt:45},
+{name:"Choroby zakaźne",rem:189,gus:null,opt:44},
+{name:"Chirurgia dziecięca",rem:175,gus:null,opt:28},
+{name:"Hematologia",rem:152,gus:null,opt:25},
+{name:"Radioterapia onkologiczna",rem:146,gus:null,opt:8},
+{name:"Geriatria",rem:137,gus:null,opt:22},
+{name:"Chirurgia naczyniowa",rem:130,gus:null,opt:14},
+{name:"Chirurgia onkologiczna",rem:127,gus:null,opt:16},
+{name:"Medycyna paliatywna",rem:125,gus:null,opt:40},
+{name:"Neurochirurgia",rem:116,gus:null,opt:11},
+{name:"Psychiatria dzieci i młodzieży",rem:196,gus:null,opt:29},
+{name:"Gastroenterologia",rem:217,gus:null,opt:41},
+{name:"Patomorfologia",rem:123,gus:null,opt:13}
+];
+DATA.forEach(d=>{d.scr=d.gus?Math.round(d.rem/d.gus*1000)/10:null;});
+DATA.sort((a,b)=>(b.scr||0)-(a.scr||0));
+
+const TOTAL={name:"Wszystkie specjalizacje (agregat)",rem:DATA.reduce((s,d)=>s+d.rem,0),gus:91100,opt:DATA.reduce((s,d)=>s+d.opt,0)};
+TOTAL.scr=Math.round(TOTAL.rem/TOTAL.gus*1000)/10;
+
+const sel=document.getElementById('specSelect');
+const ov=document.createElement('option');ov.value='__overview';ov.textContent='Ranking SCR — wszystkie specjalizacje';sel.appendChild(ov);
+const ag=document.createElement('option');ag.value='__all';ag.textContent='Agregat — cała baza specjalistów';sel.appendChild(ag);
+DATA.forEach((d,i)=>{const o=document.createElement('option');o.value=i;o.textContent=d.name+(d.scr!==null?' (SCR '+d.scr+'%)':'');sel.appendChild(o);});
+
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+let W,H,dpr;
+let actRate=0.35;
+let curData=null;
+let mode='overview';
+const dark=matchMedia('(prefers-color-scheme:dark)').matches;
+const C={
+  market:dark?'#888780':'#B4B2A9',scr:'#534AB7',active:'#1D9E75',prod:'#2e35ff',
+  lost:dark?'#E24B4A':'#d85a30',text:dark?'#c2c0b6':'#3d3d3a',text2:dark?'#888780':'#888780',
+  zBg:dark?'rgba(255,255,255,0.03)':'rgba(0,0,0,0.018)',zBord:dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.05)',
+  pipe:dark?'rgba(255,255,255,0.025)':'rgba(0,0,0,0.025)',pipeBord:dark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.04)',
+  growthBg:dark?'rgba(83,74,183,0.06)':'rgba(83,74,183,0.04)',growthBord:dark?'rgba(83,74,183,0.2)':'rgba(83,74,183,0.15)',
+  prodBg:dark?'rgba(46,53,255,0.06)':'rgba(46,53,255,0.04)',prodBord:dark?'rgba(46,53,255,0.2)':'rgba(46,53,255,0.15)'
+};
+let Z={};
+const HEADER=62;
+function resize(){
+  dpr=window.devicePixelRatio||1;W=canvas.getBoundingClientRect().width;H=420;
+  canvas.width=W*dpr;canvas.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+  const zw=W*0.19,gap=W*0.04,x0=W*0.03,yMid=H*0.50;
+  Z={market:{x:x0,w:zw,cx:x0+zw/2,cy:yMid},scr:{x:x0+zw+gap,w:zw,cx:x0+zw+gap+zw/2,cy:yMid},act:{x:x0+2*(zw+gap),w:zw,cx:x0+2*(zw+gap)+zw/2,cy:yMid},prod:{x:x0+3*(zw+gap),w:zw,cx:x0+3*(zw+gap)+zw/2,cy:yMid}};
+}
+resize();window.addEventListener('resize',resize);
+
+class Ball{
+  constructor(scrR){
+    this.r=3;this.state='market';this.x=-8;this.y=Z.market.cy+(Math.random()-0.5)*50;
+    this.homeX=Z.market.cx+(Math.random()-0.5)*Z.market.w*0.55;
+    this.homeY=Z.market.cy+(Math.random()-0.5)*80;
+    this.vx=0;this.vy=0;this.opacity=0;this.dead=false;this.timer=0;
+    this.willConvert=Math.random()<scrR;
+    this.willActivate=this.willConvert&&Math.random()<actRate;
+    this.dwell=160+Math.random()*200;
+    this.wb=Math.random()*Math.PI*2;this.ws=0.008+Math.random()*0.012;this.wa=0.2+Math.random()*0.3;
+    this.settled=false;this.churnTimer=0;this.churnAt=800+Math.random()*2000;
+  }
+  setHome(z,sp){this.homeX=z.cx+(Math.random()-0.5)*z.w*sp;this.homeY=z.cy+(Math.random()-0.5)*80;}
+  col(){
+    if(this.state==='market')return C.market;
+    if(this.state==='pipe_scr'||this.state==='scr')return C.scr;
+    if(this.state==='pipe_act'||this.state==='act')return C.active;
+    if(this.state==='pipe_prod'||this.state==='prod')return C.prod;
+    if(this.state==='falling')return C.lost;
+    return C.market;
+  }
+  steer(tx,ty,s,d){this.vx+=(tx-this.x)*s;this.vy+=(ty-this.y)*s;this.vx*=d;this.vy*=d;}
+  update(){
+    this.timer++;this.wb+=this.ws;
+    const wx=Math.sin(this.wb)*this.wa,wy=Math.cos(this.wb*1.3)*this.wa*0.7;
+    if(this.state==='market'){
+      if(this.opacity<1)this.opacity=Math.min(1,this.opacity+0.02);
+      this.steer(this.homeX,this.homeY,0.004,0.96);this.x+=this.vx+wx;this.y+=this.vy+wy;
+      if(this.timer>this.dwell&&this.willConvert){this.state='pipe_scr';this.timer=0;}
+    }else if(this.state==='pipe_scr'){
+      this.steer(Z.scr.x-4,Z.scr.cy,0.018,0.93);this.x+=this.vx+wx*0.3;this.y+=this.vy+wy*0.3;
+      if(this.x>=Z.scr.x+10){this.state='scr';this.timer=0;this.setHome(Z.scr,0.55);this.dwell=120+Math.random()*180;}
+    }else if(this.state==='scr'){
+      this.steer(this.homeX,this.homeY,0.004,0.96);this.x+=this.vx+wx;this.y+=this.vy+wy;
+      if(this.timer>this.dwell){if(this.willActivate){this.state='pipe_act';this.timer=0;}else{this.state='falling';this.timer=0;this.vx=(Math.random()-0.5)*0.5;this.vy=0.3;}}
+    }else if(this.state==='pipe_act'){
+      this.steer(Z.act.x-4,Z.act.cy,0.018,0.93);this.x+=this.vx+wx*0.3;this.y+=this.vy+wy*0.3;
+      if(this.x>=Z.act.x+10){this.state='act';this.timer=0;this.setHome(Z.act,0.55);this.dwell=80+Math.random()*120;}
+    }else if(this.state==='act'){
+      this.steer(this.homeX,this.homeY,0.004,0.96);this.x+=this.vx+wx;this.y+=this.vy+wy;
+      if(this.timer>this.dwell){this.state='pipe_prod';this.timer=0;}
+    }else if(this.state==='pipe_prod'){
+      this.steer(Z.prod.x-4,Z.prod.cy,0.018,0.93);this.x+=this.vx+wx*0.3;this.y+=this.vy+wy*0.3;
+      if(this.x>=Z.prod.x+10){this.state='prod';this.timer=0;this.settled=true;this.setHome(Z.prod,0.7);}
+    }else if(this.state==='prod'){
+      this.churnTimer++;this.steer(this.homeX,this.homeY,0.005,0.96);this.x+=this.vx+wx*0.6;this.y+=this.vy+wy*0.6;
+      if(this.churnTimer>this.churnAt){this.opacity-=0.003;if(this.opacity<=0)this.dead=true;}
+    }else if(this.state==='falling'){
+      this.vy+=0.04;this.x+=this.vx+wx*0.3;this.y+=this.vy;this.opacity-=0.005;if(this.opacity<=0||this.y>H+20)this.dead=true;
+    }
+    const z=this.curZone();
+    if(z){const l=z.x+this.r+2,r=z.x+z.w-this.r-2,t=HEADER+H*0.10+this.r+40,b=HEADER+H*0.10+H*0.58-this.r-4;
+      if(this.x<l){this.x=l;this.vx*=-0.3;}if(this.x>r){this.x=r;this.vx*=-0.3;}
+      if(this.y<t){this.y=t;this.vy*=-0.3;}if(this.y>b){this.y=b;this.vy*=-0.3;}}
+  }
+  curZone(){if(this.state==='market')return Z.market;if(this.state==='scr')return Z.scr;if(this.state==='act')return Z.act;if(this.state==='prod')return Z.prod;return null;}
+  draw(){if(this.opacity<=0)return;ctx.globalAlpha=this.opacity;ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.col();ctx.fill();ctx.globalAlpha=1;}
+}
+
+let balls=[];let spawnT=0;
+
+function drawBg(){
+  const yT=HEADER+H*0.10,zH=H*0.58;
+  const growthL=Z.market.x-8,growthR=Z.act.x+Z.act.w+8,prodL=Z.prod.x-8,prodR=Z.prod.x+Z.prod.w+8;
+  ctx.fillStyle=C.growthBg;ctx.strokeStyle=C.growthBord;ctx.lineWidth=1;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.roundRect(growthL,yT-38,growthR-growthL,zH+50,16);ctx.fill();ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=dark?'#AFA9EC':'#534AB7';ctx.font='500 11px "Anthropic Sans",sans-serif';ctx.textAlign='left';
+  ctx.fillText('GROWTH',growthL+10,yT-24);
+  ctx.fillStyle=C.prodBg;ctx.strokeStyle=C.prodBord;ctx.lineWidth=1;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.roundRect(prodL,yT-38,prodR-prodL,zH+50,16);ctx.fill();ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=dark?'#85B7EB':'#185FA5';ctx.font='500 11px "Anthropic Sans",sans-serif';
+  ctx.fillText('PRODUKT',prodL+10,yT-24);
+  const handX=(Z.act.x+Z.act.w+Z.prod.x)/2;
+  ctx.strokeStyle=dark?'rgba(255,255,255,0.12)':'rgba(0,0,0,0.08)';ctx.lineWidth=1.5;ctx.setLineDash([2,4]);
+  ctx.beginPath();ctx.moveTo(handX,yT-30);ctx.lineTo(handX,yT+zH+6);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=dark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.25)';ctx.font='500 9px "Anthropic Sans",sans-serif';ctx.textAlign='center';
+  ctx.fillText('przekazanie',handX,yT+zH+18);
+  const zones=[{z:Z.market,l:'Rynek',s:'GUS 2024'},{z:Z.scr,l:'SCR',s:'akwizycja + data'},{z:Z.act,l:'Aktywacja',s:'7 dni'},{z:Z.prod,l:'Produkt',s:'retencja'}];
+  zones.forEach(({z,l,s})=>{
+    ctx.fillStyle=C.zBg;ctx.strokeStyle=C.zBord;ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.roundRect(z.x,yT,z.w,zH,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle=C.text;ctx.font='500 12px "Anthropic Sans",sans-serif';ctx.textAlign='center';ctx.fillText(l,z.cx,yT+20);
+    ctx.fillStyle=C.text2;ctx.font='400 9px "Anthropic Sans",sans-serif';ctx.fillText(s,z.cx,yT+33);
+  });
+  const pairs=[[Z.market,Z.scr],[Z.scr,Z.act],[Z.act,Z.prod]];
+  pairs.forEach(([a,b])=>{
+    const x1=a.x+a.w,x2=b.x,py=Z.market.cy,ph=12;
+    ctx.fillStyle=C.pipe;ctx.beginPath();ctx.roundRect(x1,py-ph/2,x2-x1,ph,ph/2);ctx.fill();
+    ctx.strokeStyle=C.pipeBord;ctx.lineWidth=0.5;ctx.beginPath();ctx.roundRect(x1,py-ph/2,x2-x1,ph,ph/2);ctx.stroke();
+    ctx.strokeStyle=C.text2;ctx.lineWidth=0.8;ctx.globalAlpha=0.3;const ax=x2-3,sz=3;
+    ctx.beginPath();ctx.moveTo(ax-sz,py-sz);ctx.lineTo(ax,py);ctx.lineTo(ax-sz,py+sz);ctx.stroke();ctx.globalAlpha=1;
+  });
+  const fx=(Z.scr.cx+Z.act.cx)/2;
+  ctx.strokeStyle=C.lost;ctx.lineWidth=0.5;ctx.globalAlpha=0.4;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(fx,yT+zH+4);ctx.lineTo(fx,yT+zH+26);ctx.stroke();ctx.setLineDash([]);
+  const s2=3;ctx.beginPath();ctx.moveTo(fx-s2,yT+zH+26-s2);ctx.lineTo(fx,yT+zH+26);ctx.lineTo(fx+s2,yT+zH+26-s2);ctx.stroke();
+  ctx.fillStyle=C.lost;ctx.font='400 9px "Anthropic Sans",sans-serif';ctx.textAlign='center';ctx.fillText('nie aktywowani',fx,yT+zH+38);ctx.globalAlpha=1;
+  const pc=balls.filter(b=>b.state==='prod').length;
+  if(pc>0){ctx.fillStyle=C.prod;ctx.globalAlpha=0.7;ctx.font='500 11px "Anthropic Sans",sans-serif';ctx.textAlign='center';ctx.fillText(pc+' aktywnych',Z.prod.cx,yT+zH-6);ctx.globalAlpha=1;}
+}
+
+function updateStats(){
+  const d=curData;if(!d)return;
+  const fmt=n=>n?n.toLocaleString('pl-PL'):'b/d';
+  document.getElementById('sM').textContent=fmt(d.gus);
+  document.getElementById('sR').textContent=fmt(d.rem);
+  document.getElementById('sRsub').textContent=d.gus?Math.round(d.rem/d.gus*100)+'% rynku':'';
+  document.getElementById('sSCR').textContent=d.scr!==null?d.scr+'%':'b/d';
+  document.getElementById('sSCR').style.color=d.scr>35?'#1D9E75':d.scr>20?C.text:'#d85a30';
+  document.getElementById('sO').textContent=fmt(d.opt);
+  document.getElementById('sOsub').textContent=d.rem?Math.round(d.opt/d.rem*100)+'% bazy':'';
+  const act=d.scr!==null?Math.round(d.rem*actRate):null;
+  document.getElementById('sA').textContent=act?fmt(act):'b/d';
+  document.getElementById('sK').textContent=act?fmt(act):'b/d';
+  document.getElementById('scrBadge').textContent='SCR: '+(d.scr!==null?d.scr+'%':'b/d');
+}
+
+function buildRanking(){
+  const wrap=document.getElementById('rankWrap');
+  wrap.innerHTML='<div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">Ranking SCR — kliknij specjalizację</div>';
+  const grid=document.createElement('div');grid.className='rank-grid';
+  const withScr=DATA.filter(d=>d.scr!==null).sort((a,b)=>b.scr-a.scr);
+  const maxScr=Math.max(...withScr.map(d=>d.scr));
+  withScr.forEach((d,i)=>{
+    const row=document.createElement('div');row.className='rank-row';
+    const col=d.scr>35?'#1D9E75':d.scr>20?'#534AB7':'#d85a30';
+    row.innerHTML=`<span style="font-size:11px;color:var(--color-text-secondary);min-width:18px">${i+1}</span><span class="rank-name">${d.name}</span><span class="rank-cnt">${d.rem.toLocaleString('pl-PL')}</span><div class="rank-bar-wrap"><div class="rank-bar" style="width:${Math.round(d.scr/maxScr*100)}%;background:${col}"></div></div><span class="rank-pct" style="color:${col}">${d.scr}%</span>`;
+    row.onclick=()=>{sel.value=DATA.indexOf(d);onSelect();};
+    grid.appendChild(row);
+  });
+  wrap.appendChild(grid);
+}
+
+function onSelect(){
+  const v=sel.value;
+  if(v==='__overview'){
+    mode='overview';
+    document.getElementById('animWrap').style.display='none';
+    document.getElementById('rankWrap').style.display='block';
+    document.getElementById('ctrlWrap').style.display='none';
+    document.getElementById('statsWrap').style.display='none';
+    document.getElementById('scrBadge').textContent='Ranking';
+    buildRanking();
+  }else{
+    mode='anim';
+    document.getElementById('animWrap').style.display='block';
+    document.getElementById('rankWrap').style.display='none';
+    document.getElementById('ctrlWrap').style.display='flex';
+    document.getElementById('statsWrap').style.display='grid';
+    curData=v==='__all'?TOTAL:DATA[parseInt(v)];
+    balls=[];spawnT=0;
+    updateStats();
+  }
+}
+
+function updateAct(){
+  actRate=parseInt(document.getElementById('actSlider').value)/100;
+  document.getElementById('actVal').textContent=Math.round(actRate*100)+'%';
+  updateStats();
+}
+
+function animate(){
+  if(mode==='anim'&&curData){
+    ctx.clearRect(0,0,W,H);
+    drawBg();
+    spawnT++;
+    const scrR=curData.scr!==null?curData.scr/100:0.25;
+    if(spawnT>=18&&balls.length<400){spawnT=0;balls.push(new Ball(scrR));}
+    for(let i=0;i<balls.length;i++){const a=balls[i];for(let j=i+1;j<balls.length;j++){const b=balls[j];const dx=b.x-a.x,dy=b.y-a.y,dist=Math.sqrt(dx*dx+dy*dy),minD=a.r+b.r+1.5;if(dist<minD&&dist>0.1){const p=(minD-dist)*0.15/dist;a.vx-=dx*p;a.vy-=dy*p;b.vx+=dx*p;b.vy+=dy*p;}}}
+    balls.forEach(b=>{b.update();b.draw();});
+    balls=balls.filter(b=>!b.dead);
+  }
+  requestAnimationFrame(animate);
+}
+
+onSelect();
+animate();
+</script>

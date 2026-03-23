@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remedium — Insighty sprzedażowe: Sezon alergiczny 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2129;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --pink: #f778ba;
+    /* Emil: custom easing curves — built-in CSS easings are too weak */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-out-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* Emil: stagger animation — elements enter with cascading delay */
+  .stagger {
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeIn 400ms var(--ease-out) forwards;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* 50ms stagger between elements */
+  .stagger:nth-child(1) { animation-delay: 0ms; }
+  .stagger:nth-child(2) { animation-delay: 50ms; }
+  .stagger:nth-child(3) { animation-delay: 100ms; }
+  .stagger:nth-child(4) { animation-delay: 150ms; }
+  .stagger:nth-child(5) { animation-delay: 200ms; }
+  .stagger:nth-child(6) { animation-delay: 250ms; }
+  .stagger:nth-child(7) { animation-delay: 300ms; }
+  .stagger:nth-child(8) { animation-delay: 350ms; }
+
+  .section-enter {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: sectionIn 500ms var(--ease-out) forwards;
+  }
+  @keyframes sectionIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section-enter:nth-of-type(1) { animation-delay: 0ms; }
+  .section-enter:nth-of-type(2) { animation-delay: 120ms; }
+  .section-enter:nth-of-type(3) { animation-delay: 240ms; }
+  .section-enter:nth-of-type(4) { animation-delay: 360ms; }
+  .section-enter:nth-of-type(5) { animation-delay: 480ms; }
+  .section-enter:nth-of-type(6) { animation-delay: 600ms; }
+  .section-enter:nth-of-type(7) { animation-delay: 720ms; }
+  .section-enter:nth-of-type(8) { animation-delay: 840ms; }
+
+  /* prefers-reduced-motion: keep opacity, remove movement */
+  @media (prefers-reduced-motion: reduce) {
+    .stagger, .section-enter {
+      animation: fadeOnly 200ms ease forwards;
+      transform: none;
+    }
+    @keyframes fadeOnly { to { opacity: 1; } }
+    .kpi, .insight-box, .chart-container, table tr { transition: none !important; }
+  }
+
+  .header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeIn 500ms var(--ease-out) 50ms forwards;
+  }
+  .header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .3rem; letter-spacing: -0.02em; }
+  .header .subtitle { color: var(--text-muted); font-size: .95rem; }
+  .header .date { color: var(--accent); font-size: .85rem; margin-top: .5rem; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    /* Emil: subtle scale on hover — pressable feel */
+    transition: transform 160ms var(--ease-out), box-shadow 200ms ease;
+    will-change: transform;
+  }
+  /* Emil: gate hover behind pointer:fine */
+  @media (hover: hover) and (pointer: fine) {
+    .kpi:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+    }
+    .kpi:active { transform: scale(0.98); }
+  }
+  .kpi .label { font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: .3rem; }
+  .kpi .value { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; }
+  .kpi .delta { font-size: .82rem; margin-top: .2rem; }
+  .up { color: var(--green); }
+  .down { color: var(--red); }
+  .neutral { color: var(--orange); }
+
+  .section { margin-bottom: 2.5rem; }
+  .section h2 {
+    font-size: 1.2rem; font-weight: 600;
+    margin-bottom: 1rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+  .section h3 { font-size: 1rem; font-weight: 600; margin-bottom: .6rem; color: var(--accent); }
+
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    /* Emil: never animate from scale(0) — start from 0.97 */
+    transition: box-shadow 200ms ease;
+  }
+  .chart-container canvas { max-height: 380px; }
+  .chart-container.hero canvas { max-height: 420px; }
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+
+  .insight-box {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+    /* Emil: transitions on transform only — skip layout/paint */
+    transition: transform 160ms var(--ease-out), border-left-color 200ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .insight-box:hover { transform: translateX(3px); }
+  }
+  .insight-box.hot { border-left-color: var(--red); }
+  .insight-box.opportunity { border-left-color: var(--green); }
+  .insight-box .title { font-weight: 600; margin-bottom: .3rem; }
+  .insight-box p { color: var(--text-muted); font-size: .9rem; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+  th { background: var(--surface2); text-align: left; padding: .7rem 1rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
+  td { padding: .6rem 1rem; border-top: 1px solid var(--border); font-size: .88rem; }
+  /* Emil: subtle row hover, transform only */
+  tr { transition: background 150ms ease; }
+  @media (hover: hover) and (pointer: fine) {
+    tr:hover td { background: rgba(88,166,255,.04); }
+  }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: .75rem; font-weight: 500; }
+  .tag-green { background: rgba(63,185,80,.15); color: var(--green); }
+  .tag-orange { background: rgba(210,153,34,.15); color: var(--orange); }
+  .tag-red { background: rgba(248,81,73,.15); color: var(--red); }
+  .tag-blue { background: rgba(88,166,255,.15); color: var(--accent); }
+  .tag-purple { background: rgba(188,140,255,.15); color: var(--purple); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  .footer {
+    margin-top: 3rem; padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted); font-size: .8rem;
+    opacity: 0; animation: fadeIn 400ms var(--ease-out) 1s forwards;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>Sezon alergiczny 2026 — Insighty dla sprzedaży</h1>
+  <div class="subtitle">Analiza ruchu, profilu użytkowników i potencjału komercyjnego w obszarze alergologii i pokrewnych</div>
+  <div class="date">Data raportu: 19 marca 2026 &middot; Źródła: PostHog + budżetowanie 2026</div>
+</div>
+
+<!-- HERO 1: Total traffic -->
+<div class="section section-enter">
+  <h2>Ruch alergologiczny — dołek zimowy i wiosenny wzrost</h2>
+  <p style="color:var(--text-muted);font-size:.88rem;margin-top:-.5rem;margin-bottom:1rem">Pageviews + wyszukiwania tematów alergologicznych. Unikalni użytkownicy z rolą, bez backoffice.</p>
+  <div class="chart-container hero">
+    <canvas id="heroTotalChart"></canvas>
+  </div>
+  <div class="kpi-row">
+    <div class="kpi stagger">
+      <div class="label">Dołek zimowy (VIII 2025)</div>
+      <div class="value" style="color:var(--text-muted)">1 078 UU</div>
+      <div class="delta down">najniższy punkt w cyklu</div>
+    </div>
+    <div class="kpi stagger">
+      <div class="label">Pik XII 2025 (konferencja)</div>
+      <div class="value" style="color:var(--purple)">2 998 UU</div>
+      <div class="delta up">+178% vs dołek</div>
+    </div>
+    <div class="kpi stagger">
+      <div class="label">Sty-Lut 2026 vs Sty-Lut 2025</div>
+      <div class="value" style="color:var(--green)">+51%</div>
+      <div class="delta up">3 892 vs 2 574 UU</div>
+    </div>
+    <div class="kpi stagger">
+      <div class="label">III.26* (19/31 dni)</div>
+      <div class="value" style="color:var(--red)">1 254 UU</div>
+      <div class="delta neutral">ekstrapolacja ~2 045</div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO 2: Stacked by role -->
+<div class="section section-enter">
+  <h2>Kto generuje ten ruch? Podział na role i statusy lekarzy</h2>
+  <p style="color:var(--text-muted);font-size:.88rem;margin-top:-.5rem;margin-bottom:1rem">To nie alergolodzy — to lekarze POZ, rezydenci i studenci szukający wiedzy o alergiach u swoich pacjentów.</p>
+  <div class="chart-container hero">
+    <canvas id="heroRoleChart"></canvas>
+  </div>
+  <div class="insight-box hot stagger">
+    <div class="title">Sezon rośnie — i widzimy to we wszystkich grupach</div>
+    <p>Po dołku w sierpniu 2025 (1 078 UU) ruch odbił dzięki konferencji PKwPOZ (XII: 2 998 UU). Zimowy spadek I-II 2026 jest <strong>płytszy</strong> niż rok wcześniej — baseline wzrósł o 50%+. Marzec 2026 (19/31 dni) ekstrapolowany to ~2 050 UU — powyżej marca 2025. Wzrost widać przede wszystkim w grupie lekarzy bez specjalizacji (POZ) i rezydentów.</p>
+  </div>
+</div>
+
+<!-- KPI ROW -->
+<div class="section section-enter">
+  <div class="kpi-row">
+    <div class="kpi stagger">
+      <div class="label">Szczyt sezonu 2025 (kwiecień)</div>
+      <div class="value">2 184 UU</div>
+      <div class="delta neutral">najwyższy miesiąc wiosny 2025</div>
+    </div>
+    <div class="kpi stagger">
+      <div class="label">Sty-Lut 2026 vs Sty-Lut 2025</div>
+      <div class="value">+46%</div>
+      <div class="delta up">3 750 vs 2 574 UU</div>
+    </div>
+    <div class="kpi stagger">
+      <div class="label">Łączny zasięg alergo+derma+pulmo</div>
+      <div class="value">~9 000 UU</div>
+      <div class="delta up">w szczycie sezonu</div>
+    </div>
+    <div class="kpi stagger">
+      <div class="label">Główna grupa docelowa</div>
+      <div class="value">POZ / med. rodzinna</div>
+      <div class="delta neutral">50%+ ruchu w alergologii</div>
+    </div>
+  </div>
+</div>
+
+<!-- TREND CHART -->
+<div class="section section-enter">
+  <h2>Trend ruchu — alergia vs derma vs pulmo (UU/mies.)</h2>
+  <div class="chart-container">
+    <canvas id="trendChart"></canvas>
+  </div>
+  <div class="insight-box hot stagger">
+    <div class="title">Sezon alergiczny widoczny w danych</div>
+    <p>W 2025 roku wyraźny wzrost UU w alergologii od marca (+39% m/m) z pikiem w kwietniu (2 184 UU). W 2026 roku Q1 jest już mocniejsze niż Q1 2025 o 48%, co sugeruje rosnącą bazę zainteresowanych.</p>
+  </div>
+  <div class="insight-box stagger">
+    <div class="title">Dermatologia i pulmonologia — synergiczne obszary</div>
+    <p>Konferencja PKwPOZ „Pierwsze kroki w POZ — alergo, pulmo, derma" (jesień 2025) wygenerowała 2 356 UU. Derma utrzymuje stabilnie 2 500–3 500 UU/mies., a pulmo rośnie dynamicznie. Te trzy obszary tworzą naturalny pakiet sprzedażowy.</p>
+  </div>
+</div>
+
+<!-- USER PROFILE -->
+<div class="section section-enter">
+  <h2>Kto ogląda treści alergologiczne?</h2>
+  <div class="chart-row">
+    <div class="chart-container">
+      <canvas id="roleChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="specChart"></canvas>
+    </div>
+  </div>
+  <div class="insight-box opportunity stagger">
+    <div class="title">Kluczowy insight: to NIE alergolodzy szukają treści o alergiach</div>
+    <p>Spośród lekarzy przeglądających treści alergologiczne w sezonie (marzec-maj 2025): 51% to lekarze bez specjalizacji, 26% rezydenci, 11% stażyści, 11% specjaliści. Dominująca specjalizacja to medycyna rodzinna (375 UU) i pediatria (244 UU) — to lekarze POZ, którzy na co dzień stykają się z pacjentami alergicznymi.</p>
+  </div>
+</div>
+
+<!-- TOP CONTENT -->
+<div class="section section-enter">
+  <h2>Najchętniej oglądane treści alergologiczne (cały okres)</h2>
+  <table>
+    <thead><tr><th>Treść</th><th>Typ</th><th>UU</th><th>PV</th></tr></thead>
+    <tbody>
+      <tr><td>Encyklopedia rezydentur — Alergologia</td><td><span class="tag tag-blue">encyklopedia</span></td><td>4 956</td><td>13 561</td></tr>
+      <tr><td>PKwPOZ — Alergo, Pulmo, Derma (jesień 2025)</td><td><span class="tag tag-purple">konferencja</span></td><td>2 356</td><td>3 648</td></tr>
+      <tr><td>Jak nie diagnozować alergii pokarmowej u dzieci?</td><td><span class="tag tag-green">wideo</span></td><td>948</td><td>1 855</td></tr>
+      <tr><td>Nie każdy katar to alergia — diagnostyka ANN</td><td><span class="tag tag-green">webinar</span></td><td>713</td><td>1 066</td></tr>
+      <tr><td>20-letni pacjent z alergicznym nieżytem nosa</td><td><span class="tag tag-orange">przypadek kliniczny</span></td><td>602</td><td>1 028</td></tr>
+      <tr><td>Poradnik: Alergiczny nieżyt nosa</td><td><span class="tag tag-red">poradnik</span></td><td>575</td><td>1 007</td></tr>
+      <tr><td>Nowe możliwości w terapii ANN</td><td><span class="tag tag-green">webinar</span></td><td>509</td><td>779</td></tr>
+      <tr><td>Sezon alergiczny w praktyce lekarza rodzinnego</td><td><span class="tag tag-green">wideo</span></td><td>506</td><td>1 150</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEARCH DEMAND -->
+<div class="section section-enter">
+  <h2>Popyt wewnętrzny — co szukają lekarze?</h2>
+  <div class="chart-row">
+    <div class="chart-container">
+      <canvas id="searchChart"></canvas>
+    </div>
+    <div>
+      <div class="insight-box stagger">
+        <div class="title">Wyszukiwania alergologiczne — trend sezonowy</div>
+        <p>Piki wyszukiwań w marcu-kwietniu (200-218 UU). Frazy top: „alergia" (481), „pokrzywka" (249), „alergologia" (337), „atopowe" (80).</p>
+      </div>
+      <div class="insight-box opportunity stagger">
+        <div class="title">Pokrzywka, AZS, ANN — najgorętsze tematy</div>
+        <p>Lekarze aktywnie szukają: pokrzywka (249), atopowe zapalenie skóry (80+), alergiczny nieżyt nosa (28 dokładna fraza + setki wariantów). Duży potencjał na kampanie edukacyjne.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMERCIAL -->
+<div class="section section-enter">
+  <h2>Potencjał komercyjny — komu i co sprzedać?</h2>
+  <h3>Klienci z budżetowaniem na alergologię 2026</h3>
+  <table>
+    <thead><tr><th>Firma</th><th>Obszar / Produkt</th><th>Budżet 100%</th><th>Formaty w budżetowaniu</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Adamed</strong></td><td>Hitaxa, Adablix, Metmin — alergia</td><td>319 000 zł</td><td>Ścieżki edu, kampania wizerunkowa IV-VIII, PKwPOZ Alergo złoty</td><td><span class="tag tag-green">planowany</span></td></tr>
+      <tr><td><strong>Glenmark</strong></td><td>Ryaltris — alergologia</td><td>250 600 zł</td><td>Do ustalenia</td><td><span class="tag tag-orange">do zaofertowania</span></td></tr>
+      <tr><td><strong>Aflofarm</strong></td><td>Derma/Alergologia</td><td>102 000 zł</td><td>PKwPOZ derma srebrny Q2/Q3/Q4, kampania wizerunkowa</td><td><span class="tag tag-green">planowany</span></td></tr>
+      <tr><td><strong>Chiesi</strong></td><td>Astma (Trimbow) + POChP</td><td>133 500 zł</td><td>Ścieżki edu, kampania wizerunkowa, case study</td><td><span class="tag tag-orange">w ofertowaniu</span></td></tr>
+      <tr><td><strong>OM Pharma / Vifor</strong></td><td>Jovesto, Nasometin, Broncho-Vaxom</td><td>297 000 zł</td><td>Kurs immunologia, kampania edu, PKwPOZ infekcje + alergo</td><td><span class="tag tag-green">planowany</span></td></tr>
+      <tr><td><strong>Pfizer</strong></td><td>Cardura, Histigen — alergologia</td><td>100 000 zł</td><td>Kampania wizerunkowa, PKwPOZ alergologia</td><td><span class="tag tag-green">planowany</span></td></tr>
+      <tr><td><strong>Orion Pharma</strong></td><td>Bufomix, Salflumix — pulmo/astma</td><td>206 000 zł</td><td>Kampania wizerunkowa, ścieżki edu astma, PKwPOZ pulmo złoty</td><td><span class="tag tag-green">planowany</span></td></tr>
+    </tbody>
+  </table>
+  <h3 style="margin-top:1.5rem">Firmy do dodatkowego kontaktu — PKwPOZ Alergo/Derma</h3>
+  <table>
+    <thead><tr><th>Firma</th><th>Deal</th><th>Wartość</th><th>Status w pipeline</th></tr></thead>
+    <tbody>
+      <tr><td>Almirall</td><td>PKwPOZ alergologia, dermatologia</td><td>45 000 zł</td><td><span class="tag tag-orange">do zaofertowania</span></td></tr>
+      <tr><td>Leo Pharma</td><td>PKwPOZ alergologia, dermatologia</td><td>25 000 zł</td><td><span class="tag tag-orange">do zaofertowania</span></td></tr>
+      <tr><td>Novartis</td><td>PKwPOZ alergologia, dermatologia</td><td>35 000 zł</td><td><span class="tag tag-orange">w ofertowaniu</span></td></tr>
+      <tr><td>Magna Pharm</td><td>PKwPOZ alergo/derma + kampania derma</td><td>74 000 zł</td><td><span class="tag tag-orange">w ofertowaniu</span></td></tr>
+      <tr><td>TZF</td><td>PKwPOZ alergologia, dermatologia</td><td>15 000 zł</td><td><span class="tag tag-orange">w ofertowaniu</span></td></tr>
+      <tr><td>Bausch</td><td>PKwPOZ alergologia, dermatologia</td><td>15 000 zł</td><td><span class="tag tag-blue">pipeline</span></td></tr>
+      <tr><td>Perrigo</td><td>PKwPOZ alergologia, dermatologia</td><td>15 000 zł</td><td><span class="tag tag-blue">pipeline</span></td></tr>
+      <tr><td>Polpharma</td><td>PKwPOZ alergologia, dermatologia</td><td>15 000 zł</td><td><span class="tag tag-blue">pipeline</span></td></tr>
+      <tr><td>Lek-AM</td><td>kampania alergo</td><td>60 000 zł</td><td><span class="tag tag-blue">pipeline</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FORMATS -->
+<div class="section section-enter">
+  <h2>Rekomendowane formaty i pakiety</h2>
+  <div class="two-col">
+    <div class="insight-box opportunity stagger"><div class="title">1. Pakiet „Sezon alergiczny" (kwiecień-sierpień)</div><p><strong>Dla kogo:</strong> Adamed (Hitaxa), Glenmark (Ryaltris), Lek-AM, Chiesi<br><strong>Co wchodzi:</strong> kampania banerowa + link w newsletterze + baner w aplikacji mobilnej IV-VIII<br><strong>Argument:</strong> 2 184 UU w szczycie sezonu (IV.2025), rosnąca baza rok do roku (+48% Q1 y/y). Lekarze POZ — ci, którzy wypisują recepty na antyhistaminiki.</p></div>
+    <div class="insight-box opportunity stagger"><div class="title">2. Konferencja PKwPOZ Alergologia</div><p><strong>Dla kogo:</strong> Almirall, Novartis, Leo Pharma, Magna Pharm, TZF, Bausch, Perrigo, Polpharma<br><strong>Co wchodzi:</strong> sponsoring konferencji (złoty/srebrny/brązowy)<br><strong>Argument:</strong> PKwPOZ alergo+derma jesień 2025 = 2 356 UU. Pakiety od 15 000 do 45 000 zł.</p></div>
+    <div class="insight-box opportunity stagger"><div class="title">3. Ścieżka edukacyjna „Alergie" (typ 2 — 228k/rok)</div><p><strong>Dla kogo:</strong> Adamed (zaplanowane), Glenmark (do zaofertowania), OM Pharma<br><strong>Co wchodzi:</strong> roczna ścieżka edukacyjna alergologii (typ 2 = 228k zł/rok, 19k zł/mies.)<br><strong>Argument:</strong> Encyklopedia rezydentur — alergologia = 4 956 UU. Rezydenci = 26% ruchu.</p></div>
+    <div class="insight-box opportunity stagger"><div class="title">4. Webinar + VOD replay</div><p><strong>Dla kogo:</strong> Glenmark, Chiesi, Orion Pharma<br><strong>Co wchodzi:</strong> sponsorowany webinar + nagranie VOD<br><strong>Argument:</strong> Webinary alergologiczne w sezonie = 783-868 UU. VOD „dojeżdża" w kolejnych miesiącach (421-563 UU).</p></div>
+  </div>
+</div>
+
+<!-- SALES ARGUMENTS -->
+<div class="section section-enter">
+  <h2>Argumenty sprzedażowe</h2>
+  <div class="insight-box hot stagger"><div class="title">Dlaczego TERAZ?</div><p>1. Sezon alergiczny zaczyna się w marcu — ruch rośnie o 39% m/m i szczytuje w kwietniu<br>2. Q1 2026 jest o 48% silniejsze niż Q1 2025 — baza rośnie organicznie<br>3. Lekarze POZ stanowią 50%+ ruchu w tym obszarze<br>4. Okno decyzyjne kampanii to TERAZ — startując w maju tracimy szczyt</p></div>
+  <div class="insight-box stagger"><div class="title">Dla kogo są nasze treści?</div><p>&bull; 50% — lekarze bez specjalizacji (pracujący w POZ)<br>&bull; 26% — rezydenci (budują bazę wiedzy, przyszli decydenci)<br>&bull; 11% — stażyści &bull; 11% — specjaliści<br>&bull; Dominujące spec.: medycyna rodzinna (375 UU), pediatria (244 UU), choroby wewnętrzne (185 UU)</p></div>
+  <div class="insight-box stagger"><div class="title">Cross-sell: pakiet alergo + derma + pulmo</div><p>Łączny potencjał ruchu: do <strong>9 000 UU/mies.</strong> w szczycie sezonu. Konferencja łączona (PKwPOZ jesień 2025) dała 2 356 UU jednorazowo.</p></div>
+</div>
+
+<div class="footer">
+  Źródła danych: PostHog (Remedium analytics, okres sty 2025 — mar 2026, role IS SET, bez backoffice) &middot; Plik budżetowania 2026 &middot; Pipeline Łukasz Radwański<br>
+  Raport wygenerowany 19 marca 2026
+</div>
+
+</div>
+
+<script>
+// Emil: chart tooltip and interaction styling — crisp, no excess
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+const chartDefaults = {
+  responsive: true,
+  plugins: { legend: { labels: { color: '#e6edf3', font: { size: 11 }, padding: 14, usePointStyle: true, pointStyleWidth: 10 } } },
+  scales: {
+    x: { ticks: { color: '#8b949e', font: { size: 11 } }, grid: { color: 'rgba(48,54,61,.3)' } },
+    y: { ticks: { color: '#8b949e' }, grid: { color: 'rgba(48,54,61,.3)' } }
+  }
+};
+
+// ============ HERO 1: Total allergy traffic ============
+const heroLabels = ['VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26*'];
+const heroTotalActual = [1223,1151,1078,1815,1438,2395,2998,1913,1979,1254];
+const heroPrevYear = [1163,1411,1963,2184,1313,1160,1099,1039,1771,1402];
+
+const heroAnnotationPlugin = {
+  id: 'heroAnnotations',
+  afterDraw(chart) {
+    const ctx = chart.ctx;
+    const x = chart.scales.x;
+    const y = chart.scales.y;
+    // Dip zone
+    const dipStart = x.getPixelForValue(0) - 15;
+    const dipEnd = x.getPixelForValue(2) + 15;
+    ctx.save();
+    ctx.fillStyle = 'rgba(88,166,255,.05)';
+    ctx.fillRect(dipStart, y.top, dipEnd - dipStart, y.bottom - y.top);
+    ctx.fillStyle = 'rgba(88,166,255,.5)';
+    ctx.font = '500 10px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('LATO — DOŁEK', (dipStart+dipEnd)/2, y.top + 14);
+    ctx.restore();
+    // Ramp zone
+    const rampStart = x.getPixelForValue(7) - 10;
+    const rampEnd = x.getPixelForValue(9) + 10;
+    ctx.save();
+    ctx.fillStyle = 'rgba(63,185,80,.05)';
+    ctx.fillRect(rampStart, y.top, rampEnd - rampStart, y.bottom - y.top);
+    ctx.fillStyle = 'rgba(63,185,80,.5)';
+    ctx.font = '500 10px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('WIOSENNY WZROST', (rampStart+rampEnd)/2, y.top + 14);
+    ctx.restore();
+    // Arrow dip→peak
+    const dipX = x.getPixelForValue(2), dipY = y.getPixelForValue(1078);
+    const peakX = x.getPixelForValue(6), peakY = y.getPixelForValue(2998);
+    ctx.save();
+    ctx.setLineDash([3,3]);
+    ctx.strokeStyle = 'rgba(63,185,80,.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(dipX, dipY); ctx.lineTo(peakX, peakY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#3fb950';
+    ctx.font = 'bold 11px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('+178%', (dipX+peakX)/2 - 30, (dipY+peakY)/2 - 8);
+    ctx.restore();
+  }
+};
+
+new Chart(document.getElementById('heroTotalChart'), {
+  type: 'line',
+  plugins: [heroAnnotationPlugin],
+  data: {
+    labels: heroLabels,
+    datasets: [
+      { label: 'Alergologia 2025/26 (UU)', data: heroTotalActual, borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,.12)', tension: .35, fill: true, pointRadius: 5, pointHoverRadius: 7, pointBackgroundColor: heroTotalActual.map(v => v <= 1100 ? '#58a6ff' : v >= 2500 ? '#3fb950' : '#f85149'), borderWidth: 2.5, spanGaps: false },
+      { label: 'Rok wcześniej (+12 mies.)', data: heroPrevYear, borderColor: 'rgba(139,148,158,.4)', borderDash: [4,4], tension: .35, pointRadius: 2.5, pointBackgroundColor: 'rgba(139,148,158,.4)', borderWidth: 1.5, fill: false }
+    ]
+  },
+  options: { ...chartDefaults, interaction: { mode: 'index', intersect: false }, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, suggestedMin: 0, suggestedMax: 3200, ticks: { color: '#8b949e', callback: v => v.toLocaleString('pl') } } } }
+});
+
+// ============ HERO 2: Stacked by role ============
+const roleLabels = ['VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26*'];
+const roleBezSpec =    [438,426,448,779,507,939,1112,648,657,641];
+const roleRezydent =   [201,192,177,303,222,347,565,292,280,316];
+const roleStazysta =   [104,85,121,242,202,344,420,246,231,215];
+const roleSpecjalista= [108,143,55,88,79,173,323,200,242,232];
+const roleStudent =    [240,210,213,309,355,470,404,401,446,468];
+const roleInni =       [69,95,64,94,73,122,174,126,123,173];
+
+new Chart(document.getElementById('heroRoleChart'), {
+  type: 'bar',
+  data: {
+    labels: roleLabels,
+    datasets: [
+      { label: 'Lek. bez specjalizacji (POZ)', data: roleBezSpec, backgroundColor: '#58a6ff', borderRadius: 0, stack: 'stack' },
+      { label: 'Rezydenci', data: roleRezydent, backgroundColor: '#3fb950', stack: 'stack' },
+      { label: 'Stażyści', data: roleStazysta, backgroundColor: '#d29922', stack: 'stack' },
+      { label: 'Specjaliści', data: roleSpecjalista, backgroundColor: '#f85149', stack: 'stack' },
+      { label: 'Studenci medycyny', data: roleStudent, backgroundColor: '#bc8cff', stack: 'stack' },
+      { label: 'Inni', data: roleInni, backgroundColor: '#8b949e', borderRadius: {topLeft:3,topRight:3}, stack: 'stack' }
+    ]
+  },
+  options: {
+    ...chartDefaults,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { ...chartDefaults.plugins, tooltip: { callbacks: { footer: items => { const t = items.reduce((s,i) => s + i.parsed.y, 0); return `RAZEM: ${t.toLocaleString('pl')} UU`; } } } },
+    scales: { x: { stacked: true, ...chartDefaults.scales.x }, y: { stacked: true, ...chartDefaults.scales.y, suggestedMax: 3200, ticks: { color: '#8b949e', callback: v => v.toLocaleString('pl') } } }
+  }
+});
+
+// ============ TREND: 3 areas ============
+const months = ['I.25','II.25','III.25','IV.25','V.25','VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26'];
+const allergyUU = [1163,1411,1963,2184,1313,1160,1099,1039,1771,1402,2327,2927,1832,1918,1187];
+const dermaUU = [2768,3224,2631,2747,2310,2192,2522,2445,2955,3066,3771,4007,3056,3179,1735];
+const pulmoUU = [1871,1764,1707,1821,1628,1667,1612,1472,1520,1909,2860,3688,2867,2957,1763];
+
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'Alergologia UU', data: allergyUU, borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,.08)', tension: .3, fill: true, pointRadius: 3.5, borderWidth: 2.5 },
+      { label: 'Dermatologia UU', data: dermaUU, borderColor: '#bc8cff', tension: .3, pointRadius: 2.5, borderWidth: 1.5 },
+      { label: 'Pulmonologia UU', data: pulmoUU, borderColor: '#58a6ff', tension: .3, pointRadius: 2.5, borderWidth: 1.5 }
+    ]
+  },
+  options: { ...chartDefaults, interaction: { mode: 'index', intersect: false } }
+});
+
+// ============ ROLE DONUT ============
+new Chart(document.getElementById('roleChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Lek. bez spec.','Studenci','Rezydenci','Stażyści','Specjaliści','Farmaceuci','Inni'],
+    datasets: [{ data: [1353,987,625,488,442,46,76], backgroundColor: ['#58a6ff','#bc8cff','#3fb950','#d29922','#f85149','#f778ba','#8b949e'], borderWidth: 0 }]
+  },
+  options: { responsive: true, cutout: '55%', plugins: { legend: { position: 'right', labels: { color: '#e6edf3', font: { size: 10 }, padding: 10, usePointStyle: true } }, title: { display: true, text: 'Role — treści alergo Q1 2026', color: '#e6edf3', font: { size: 12 } } } }
+});
+
+// ============ SPEC BAR ============
+new Chart(document.getElementById('specChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Med. rodzinna','Pediatria','Choroby wewn.','Alergologia','Dermatologia','Inne/brak'],
+    datasets: [{ label: 'UU (lekarze, III-V 2025)', data: [375,244,185,26,25,2605], backgroundColor: ['#58a6ff','#3fb950','#bc8cff','#f85149','#f778ba','#30363d'], borderRadius: 3 }]
+  },
+  options: { ...chartDefaults, indexAxis: 'y', plugins: { ...chartDefaults.plugins, title: { display: true, text: 'Specjalizacje — sezon III-V 2025', color: '#e6edf3', font: { size: 12 } } } }
+});
+
+// ============ SEARCH BAR ============
+const searchMonths = ['I.25','II.25','III.25','IV.25','V.25','VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26'];
+const searchUU = [148,181,200,218,162,159,156,135,175,113,191,178,200,174,164];
+new Chart(document.getElementById('searchChart'), {
+  type: 'bar',
+  data: {
+    labels: searchMonths,
+    datasets: [{ label: 'UU szukających fraz alergologicznych', data: searchUU, backgroundColor: searchUU.map((v,i) => (i>=2 && i<=4) || (i>=14) ? 'rgba(248,81,73,.65)' : 'rgba(88,166,255,.4)'), borderRadius: 3 }]
+  },
+  options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, title: { display: true, text: 'Wyszukiwania alergologiczne (UU/mies.)', color: '#e6edf3', font: { size: 12 } } } }
+});
+</script>
+</body>
+</html>

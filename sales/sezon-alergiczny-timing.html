@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sezon alergiczny – dlaczego teraz jest idealny moment na kampanię</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #FAFAF8;
+    --surface: #FFFFFF;
+    --border: rgba(0,0,0,0.06);
+    --text-primary: #1A1A19;
+    --text-secondary: #6B6B67;
+    --text-tertiary: #9B9B95;
+    --accent-purple: #534AB7;
+    --accent-blue: #185FA5;
+    --accent-amber: #854F0B;
+    --accent-green: #0F6E56;
+    --accent-rose: #B91C3B;
+    --bg-purple: rgba(83,74,183,0.08);
+    --bg-blue: rgba(24,95,165,0.08);
+    --bg-amber: rgba(133,79,11,0.08);
+    --bg-green: rgba(15,110,86,0.08);
+    --bg-rose: rgba(185,28,59,0.06);
+    --bg-secondary: #F5F5F3;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+    --radius: 16px;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 24px 60px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .page-header { text-align: center; margin-bottom: 8px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; color: var(--text-secondary); letter-spacing: 0.3px; }
+  .page-header .top-badge {
+    display: inline-block; background: var(--bg-green); color: var(--accent-green);
+    font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+  }
+
+  /* Cards */
+  .card {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 28px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .card-header h2 { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+  .card-header .badge {
+    font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .card-body { padding: 20px 28px 28px; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card { transition: transform 250ms var(--ease-out), box-shadow 250ms var(--ease-out); }
+    .card:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04); }
+  }
+
+  .divider { width: 48px; height: 2px; border-radius: 1px; background: var(--border); }
+
+  /* KPIs */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi-item {
+    background: var(--bg-secondary); border-radius: 12px; padding: 16px 18px;
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+    will-change: transform;
+  }
+  .kpi-item .kpi-label { font-size: 11px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi-item .kpi-value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+  .kpi-item .kpi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .kpi-green { color: var(--accent-green); }
+  .kpi-amber { color: var(--accent-amber); }
+  .kpi-rose { color: var(--accent-rose); }
+  @media (hover: hover) and (pointer: fine) {
+    .kpi-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  }
+  .kpi-item:active { transform: scale(0.97); }
+
+  /* Period cards */
+  .period-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .period-card { background: var(--bg-secondary); border-radius: 12px; padding: 16px 18px; position: relative; overflow: hidden; }
+  .period-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 3px 3px 0 0; }
+  .period-card.low::before { background: var(--accent-rose); }
+  .period-card.rising::before { background: var(--accent-amber); }
+  .period-card.peak::before { background: var(--accent-green); }
+  .period-card .pt { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .period-card .pt small { font-weight: 400; font-size: 11px; color: var(--text-secondary); display: block; margin-top: 2px; }
+  .period-card .ps { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .period-card .ps:last-child { border-bottom: none; }
+  .period-card .ps .l { color: var(--text-secondary); }
+  .period-card .ps .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* Chart */
+  .chart-wrap { position: relative; height: 300px; margin-top: 12px; }
+
+  /* Highlight */
+  .highlight-box {
+    background: var(--bg-green); border-radius: 12px; padding: 28px; text-align: center;
+  }
+  .highlight-box .big { font-size: 52px; font-weight: 800; letter-spacing: -1px; color: var(--accent-green); }
+  .highlight-box .big-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .highlight-box .sub { font-size: 15px; font-weight: 600; margin-top: 10px; color: var(--text-primary); }
+
+  .highlight-amber { background: var(--bg-amber); }
+  .highlight-amber .big { color: var(--accent-amber); }
+
+  /* Table */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { text-align: left; color: var(--text-tertiary); font-weight: 500; padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl .num { text-align: right; font-weight: 600; }
+  @media (hover: hover) and (pointer: fine) {
+    .tbl tbody tr { transition: background 150ms ease; }
+    .tbl tbody tr:hover { background: var(--bg-secondary); }
+  }
+
+  /* Tags */
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .tag-vod { background: var(--bg-purple); color: var(--accent-purple); }
+  .tag-art { background: var(--bg-green); color: var(--accent-green); }
+  .tag-case { background: var(--bg-blue); color: var(--accent-blue); }
+  .tag-conf { background: var(--bg-amber); color: var(--accent-amber); }
+  .tag-drug { background: var(--bg-rose); color: var(--accent-rose); }
+
+  /* Insights */
+  .insight-row { display: flex; flex-direction: column; gap: 8px; }
+  .insight {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--bg-secondary); border-radius: 10px; padding: 14px 18px;
+    font-size: 13.5px; line-height: 1.55;
+    transition: transform 200ms var(--ease-out), background 200ms ease;
+    will-change: transform;
+  }
+  .insight .ic { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  @media (hover: hover) and (pointer: fine) {
+    .insight:hover { transform: translateX(3px); background: #EDEDEB; }
+  }
+  .insight:active { transform: scale(0.98); }
+
+  /* Verdict */
+  .verdict-card { background: var(--bg-green); border: 1px solid rgba(15,110,86,0.15); }
+  .verdict-card .card-body { text-align: center; }
+  .verdict-card h2 { color: var(--accent-green); font-size: 20px; margin-bottom: 10px; }
+  .verdict-card p { font-size: 14px; color: var(--text-primary); max-width: 720px; margin: 0 auto; line-height: 1.65; }
+
+  /* Two-col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; }
+
+  @media (max-width: 720px) {
+    body { padding: 20px 12px 40px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .two-col, .three-col, .period-grid { grid-template-columns: 1fr; }
+    .card-body { padding: 16px; }
+    .card-header { padding: 16px 16px 0; }
+  }
+
+  /* Animations */
+  .anim { opacity: 0; transform: translateY(12px) scale(0.98); animation: slideIn 500ms var(--ease-out) forwards; }
+  @keyframes slideIn { to { opacity: 1; transform: translateY(0) scale(1); } }
+  .d1{animation-delay:50ms}.d2{animation-delay:100ms}.d3{animation-delay:150ms}.d4{animation-delay:200ms}
+  .d5{animation-delay:250ms}.d6{animation-delay:300ms}.d7{animation-delay:350ms}.d8{animation-delay:400ms}
+  .d9{animation-delay:450ms}.d10{animation-delay:500ms}.d11{animation-delay:550ms}.d12{animation-delay:600ms}
+
+  .kpi-grid .kpi-item,
+  .period-grid .period-card,
+  .insight-row .insight {
+    opacity: 0; transform: translateY(8px);
+    animation: childIn 400ms var(--ease-out) forwards;
+  }
+  @keyframes childIn { to { opacity: 1; transform: translateY(0); } }
+  .kpi-grid .kpi-item:nth-child(1),
+  .period-grid .period-card:nth-child(1),
+  .insight-row .insight:nth-child(1) { animation-delay: 100ms; }
+  .kpi-grid .kpi-item:nth-child(2),
+  .period-grid .period-card:nth-child(2),
+  .insight-row .insight:nth-child(2) { animation-delay: 150ms; }
+  .kpi-grid .kpi-item:nth-child(3),
+  .period-grid .period-card:nth-child(3),
+  .insight-row .insight:nth-child(3) { animation-delay: 200ms; }
+  .kpi-grid .kpi-item:nth-child(4) { animation-delay: 250ms; }
+
+  .highlight-box .big {
+    opacity: 0; transform: scale(0.9);
+    animation: numIn 600ms var(--ease-out) 300ms forwards;
+  }
+  @keyframes numIn { to { opacity: 1; transform: scale(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .anim, .kpi-grid .kpi-item, .period-grid .period-card, .insight-row .insight, .highlight-box .big {
+      animation: fadeOnly 300ms ease forwards; transform: none;
+    }
+    @keyframes fadeOnly { to { opacity: 1; } }
+  }
+
+  /* Season indicator bar */
+  .season-bar { display: flex; gap: 2px; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  .season-bar .seg { height: 32px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: white; }
+
+  /* Pulse indicator */
+  .pulse { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-green); position: relative; }
+  .pulse::after {
+    content: ''; position: absolute; inset: -3px; border-radius: 50%;
+    border: 2px solid var(--accent-green); animation: pulseAnim 2s ease-in-out infinite;
+  }
+  @keyframes pulseAnim {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0; transform: scale(1.5); }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header anim">
+    <div class="top-badge">Sezon alergiczny 2026 &middot; Analiza popytu</div>
+    <h1>Dlaczego teraz jest idealny moment na kampanię</h1>
+    <p>Dane: PostHog &middot; Zalogowani lekarze (bez backoffice) &middot; Okres: I.2024–III.2026 &middot; Stan na 19.03.2026</p>
+  </div>
+
+  <!-- Season bar -->
+  <div class="card anim d1">
+    <div class="card-header">
+      <span class="pulse"></span>
+      <h2>Teraz jesteś tutaj — fala rośnie</h2>
+      <div class="badge" style="background:var(--bg-green);color:var(--accent-green)">MARZEC 2026</div>
+    </div>
+    <div class="card-body">
+      <div class="season-bar">
+        <div class="seg" style="flex:2;background:#B91C3B;opacity:0.5">Lato</div>
+        <div class="seg" style="flex:2;background:#854F0B;opacity:0.6">Jesień</div>
+        <div class="seg" style="flex:2;background:#854F0B;opacity:0.8">Wzrost</div>
+        <div class="seg" style="flex:3;background:var(--accent-green);box-shadow:0 0 12px rgba(15,110,86,0.4)">
+          <span style="margin-right:4px">&#9650;</span> SZCZYT MAR–KWI
+        </div>
+        <div class="seg" style="flex:2;background:var(--accent-green);opacity:0.6">Maj</div>
+        <div class="seg" style="flex:1;background:#B91C3B;opacity:0.4">Spadek</div>
+      </div>
+      <div class="insight-row">
+        <div class="insight">
+          <span class="ic">&#x1F4C8;</span>
+          <div>Wyszukiwania alergii rosną od stycznia i osiągają <strong>szczyt w marcu–kwietniu</strong>. W marcu 2026 (do 19. dnia) mamy już <strong>449 wyszukiwań</strong> — w prognozowanym tempie miesiąc zamknie się na <strong>~735</strong>, bijąc rekord z kwietnia 2025 (609). Start kampanii TERAZ to wejście na szczyt fali.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="card anim d2">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-green)"></div>
+      <h2>Popyt na treści alergiczne — podsumowanie</h2>
+      <div class="badge" style="background:var(--bg-green);color:var(--accent-green)">2025–2026</div>
+    </div>
+    <div class="card-body">
+      <div class="kpi-grid">
+        <div class="kpi-item">
+          <div class="kpi-label">Wyszukiwania / rok</div>
+          <div class="kpi-value">6 568</div>
+          <div class="kpi-sub">XI.24–III.26 (17 mies.)</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Odsłony treści</div>
+          <div class="kpi-value">66 573</div>
+          <div class="kpi-sub">I.2025–III.2026</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Unikalni lekarze</div>
+          <div class="kpi-value kpi-green">3 017</div>
+          <div class="kpi-sub">najlepszy miesiąc (XII.25)</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Video starty</div>
+          <div class="kpi-value kpi-green">4 577</div>
+          <div class="kpi-sub">XII.25–III.26 (4 mies.)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Argument 1: Seasonality proof -->
+  <div class="card anim d3">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-green)"></div>
+      <h2>Argument #1 — Sezonowość potwierdzona danymi</h2>
+      <div class="badge" style="background:var(--bg-green);color:var(--accent-green)">Wyszukiwania</div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Zielone tło = okno szczytu (marzec–kwiecień)</p>
+      <div class="chart-wrap"><canvas id="chartSearchSeason"></canvas></div>
+      <div class="period-grid" style="margin-top:16px">
+        <div class="period-card low">
+          <div class="pt" style="color:var(--accent-rose)">Dołek sezonu<small>VII–X (lato–jesień)</small></div>
+          <div class="ps"><span class="l">Śr. search / mies.</span><span class="v">328</span></div>
+          <div class="ps"><span class="l">Śr. UU / mies.</span><span class="v">158</span></div>
+        </div>
+        <div class="period-card rising">
+          <div class="pt" style="color:var(--accent-amber)">Faza wzrostu<small>XI–II (zima)</small></div>
+          <div class="ps"><span class="l">Śr. search / mies.</span><span class="v">453</span></div>
+          <div class="ps"><span class="l">Śr. UU / mies.</span><span class="v">196</span></div>
+        </div>
+        <div class="period-card peak">
+          <div class="pt" style="color:var(--accent-green)">Szczyt<small>III–IV (wiosna)</small></div>
+          <div class="ps"><span class="l">Śr. search / mies.</span><span class="v kpi-green">588</span></div>
+          <div class="ps"><span class="l">Śr. UU / mies.</span><span class="v kpi-green">246</span></div>
+          <div class="ps"><span class="l">vs dołek</span><span class="v kpi-green">+79%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 2: YoY growth -->
+  <div class="card anim d4">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-purple)"></div>
+      <h2>Argument #2 — Ruch rośnie rok do roku</h2>
+      <div class="badge" style="background:var(--bg-purple);color:var(--accent-purple)">YoY</div>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap"><canvas id="chartYoY"></canvas></div>
+      <div class="insight-row" style="margin-top:16px">
+        <div class="insight">
+          <span class="ic">&#x1F4C8;</span>
+          <div><strong>Kwiecień 2025 vs kwiecień 2024:</strong> odsłony 4 815 vs 4 036 (<strong style="color:var(--accent-green)">+19%</strong>), unikalni lekarze 2 241 vs 1 129 (<strong style="color:var(--accent-green)">+98% — prawie 2×</strong>). Baza użytkowników zainteresowanych alergią podwaja się co rok.</div>
+        </div>
+        <div class="insight">
+          <span class="ic">&#x1F680;</span>
+          <div>Grudzień 2025 osiągnął rekordowe <strong>6 133 odsłon</strong> i <strong>3 017 UU</strong> — efekt nowych treści alergicznych (konferencje, VOD). Popyt na edukację alergologiczną eksploduje, a szczytu wiosennego jeszcze nie było.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Argument 3: What they search -->
+  <div class="card anim d5">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-amber)"></div>
+      <h2>Argument #3 — Lekarze szukają konkretnych leków</h2>
+      <div class="badge" style="background:var(--bg-amber);color:var(--accent-amber)">Top frazy</div>
+    </div>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chartPhrases"></canvas></div>
+        </div>
+        <div>
+          <table class="tbl">
+            <thead><tr><th>Fraza</th><th class="num">Szukania</th><th class="num">UU</th></tr></thead>
+            <tbody>
+              <tr><td><strong>alergia</strong> (ogólne)</td><td class="num">555</td><td class="num">326</td></tr>
+              <tr><td><span class="tag tag-drug">Zyrtec</span></td><td class="num">503</td><td class="num">235</td></tr>
+              <tr><td>alergologia</td><td class="num">354</td><td class="num">212</td></tr>
+              <tr><td><span class="tag tag-drug">Xyzal</span></td><td class="num">188</td><td class="num">100</td></tr>
+              <tr><td><span class="tag tag-drug">bilastyna</span></td><td class="num">166</td><td class="num">115</td></tr>
+              <tr><td><span class="tag tag-drug">cetyryzyna</span></td><td class="num">161</td><td class="num">102</td></tr>
+              <tr><td><span class="tag tag-drug">Allegra</span></td><td class="num">94</td><td class="num">62</td></tr>
+              <tr><td><span class="tag tag-drug">Claritine</span></td><td class="num">60</td><td class="num">44</td></tr>
+              <tr><td><span class="tag tag-drug">loratadyna</span></td><td class="num">57</td><td class="num">45</td></tr>
+              <tr><td>alergiczny nieżyt nosa</td><td class="num">41</td><td class="num">30</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="insight-row" style="margin-top:16px">
+        <div class="insight">
+          <span class="ic">&#x1F48A;</span>
+          <div>Lekarze nie szukają tylko informacji — szukają <strong>konkretnych marek</strong>. Zyrtec (503×), Xyzal (188×), Allegra (94×), Claritine (60×). Kampania marki antyhistaminowej trafi w aktywnie poszukiwaną niszę.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 4: Video exploding -->
+  <div class="card anim d6">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-purple)"></div>
+      <h2>Argument #4 — Eksplozja zaangażowania wideo</h2>
+      <div class="badge" style="background:var(--bg-purple);color:var(--accent-purple)">Video</div>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrap"><canvas id="chartVideo"></canvas></div>
+      <div class="highlight-box highlight-amber" style="margin-top:20px">
+        <div class="big">570</div>
+        <div class="big-label">unikalnych lekarzy obejrzało wideo alergologiczne w lutym 2026</div>
+        <div class="sub">20× więcej niż w lutym 2025 (30 UU) &middot; Trend rośnie przed sezonem</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Argument 5: Target audience -->
+  <div class="two-col anim d7">
+    <div class="card">
+      <div class="card-header">
+        <div class="dot" style="background:var(--accent-purple)"></div>
+        <h2>Argument #5 — Ogromna grupa docelowa</h2>
+      </div>
+      <div class="card-body">
+        <div class="chart-wrap" style="height:260px"><canvas id="chartAudience"></canvas></div>
+        <p style="font-size:12px;color:var(--text-tertiary);margin-top:8px;text-align:center">Struktura lekarzy szukających treści alergicznych</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="dot" style="background:var(--accent-green)"></div>
+        <h2>Specjalizacje zainteresowane</h2>
+      </div>
+      <div class="card-body">
+        <table class="tbl">
+          <thead><tr><th>Specjalizacja</th><th class="num">UU (odsłony)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bez specjalizacji (POZ/NPL)</strong></td><td class="num" style="color:var(--accent-purple)">7 625</td></tr>
+            <tr><td>Medycyna rodzinna</td><td class="num">1 071</td></tr>
+            <tr><td>Choroby wewnętrzne</td><td class="num">576</td></tr>
+            <tr><td>Pediatria</td><td class="num">574</td></tr>
+            <tr><td>Dermatologia</td><td class="num">110</td></tr>
+            <tr><td>Alergologia</td><td class="num">84</td></tr>
+            <tr><td>Laryngologia</td><td class="num">82</td></tr>
+          </tbody>
+        </table>
+        <div class="highlight-box" style="margin-top:16px;padding:16px">
+          <div class="big" style="font-size:36px">10 644</div>
+          <div class="big-label">lekarzy w bazie z powiązanych specjalizacji</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Argument 6: Content ecosystem -->
+  <div class="card anim d8">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-blue)"></div>
+      <h2>Argument #6 — Bogaty ekosystem treści do kampanii</h2>
+      <div class="badge" style="background:var(--bg-blue);color:var(--accent-blue)">Istniejące treści</div>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Remedium ma już silną bazę treści alergicznych — kampania od razu ma co promować</p>
+      <table class="tbl">
+        <thead><tr><th>Treść</th><th>Typ</th><th class="num">UU (2025)</th></tr></thead>
+        <tbody>
+          <tr><td>Encyklopedia rezydentur: Alergologia</td><td><span class="tag tag-art">Encykl.</span></td><td class="num">3 010</td></tr>
+          <tr><td>Konf. Pierwsze kroki w POZ – alergologia (jesień 2025)</td><td><span class="tag tag-conf">Konf.</span></td><td class="num">2 356</td></tr>
+          <tr><td>Jak nie diagnozować alergii pokarmowej u dzieci</td><td><span class="tag tag-vod">VOD</span></td><td class="num">955</td></tr>
+          <tr><td>Nie każdy katar to alergia – jak diagnozować ANN</td><td><span class="tag tag-vod">VOD</span></td><td class="num">713</td></tr>
+          <tr><td>20-letni pacjent z alergicznym nieżytem nosa</td><td><span class="tag tag-case">Case</span></td><td class="num">603</td></tr>
+          <tr><td>Poradnik: Alergiczny nieżyt nosa (ANN)</td><td><span class="tag tag-art">Poradn.</span></td><td class="num">576</td></tr>
+          <tr><td>Nowe możliwości w terapii ANN</td><td><span class="tag tag-vod">VOD</span></td><td class="num">509</td></tr>
+          <tr><td>Sezon alergiczny w praktyce lekarza rodzinnego</td><td><span class="tag tag-vod">VOD</span></td><td class="num">506</td></tr>
+          <tr><td>38-letnia pacjentka z ANN i astmą</td><td><span class="tag tag-case">Case</span></td><td class="num">322</td></tr>
+          <tr><td>ICD-10: T78.4 — Alergia nieokreślona</td><td><span class="tag tag-drug">ICD-10</span></td><td class="num">337</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Argument 7: March projection -->
+  <div class="card anim d9">
+    <div class="card-header">
+      <div class="dot" style="background:var(--accent-green)"></div>
+      <h2>Argument #7 — Prognoza: marzec 2026 bije rekordy</h2>
+      <div class="badge" style="background:var(--bg-green);color:var(--accent-green)">Prognoza</div>
+    </div>
+    <div class="card-body">
+      <div class="kpi-grid" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="kpi-item">
+          <div class="kpi-label">Search (do 19.03)</div>
+          <div class="kpi-value">449</div>
+          <div class="kpi-sub">61% miesiąca</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Prognoza III.26</div>
+          <div class="kpi-value kpi-green">~736</div>
+          <div class="kpi-sub">+21% vs rekord (IV.25: 609)</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Prognoza UU III.26</div>
+          <div class="kpi-value kpi-green">~338</div>
+          <div class="kpi-sub">+43% vs rekord (IV.25: 256)</div>
+        </div>
+      </div>
+      <div class="insight-row" style="margin-top:16px">
+        <div class="insight">
+          <span class="ic">&#x26A0;&#xFE0F;</span>
+          <div>Marzec 2026 jest na dobrej drodze do pobicia rekordu wyszukiwań alergii. <strong>Kwiecień będzie jeszcze mocniejszy</strong> — historycznie kwiecień przewyższa marzec o 8–15%. Kampania startująca teraz złapie pełny szczyt i zostawi trwały ślad w świadomości lekarzy.</div>
+        </div>
+        <div class="insight">
+          <span class="ic">&#x23F0;</span>
+          <div>Okno jest wąskie: <strong>marzec–maj</strong> to 3 miesiące szczytu. Po maju zainteresowanie spada o 30–40%. Kampania startująca w czerwcu traci najgorętszą część sezonu.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verdict -->
+  <div class="card verdict-card anim d10">
+    <div class="card-body" style="padding:32px 28px">
+      <h2>Start kampanii: teraz albo za rok</h2>
+      <p>
+        <strong>1. Sezonowość:</strong> Marzec–kwiecień to szczyt wyszukiwań alergii (+79% vs dołek). Jesteśmy w epicentrum fali.<br>
+        <strong>2. Wzrost YoY:</strong> UU na treściach alergicznych rośnie 2× rok do roku. Popyt eksploduje.<br>
+        <strong>3. Marki w search:</strong> Zyrtec (503×), Xyzal (188×), bilastyna (166×) — lekarze aktywnie szukają marek.<br>
+        <strong>4. Video boom:</strong> 570 UU na wideo alergicznych w lutym 2026, 20× więcej niż rok temu.<br>
+        <strong>5. Audience:</strong> 10 644 lekarzy z powiązanych specjalizacji. Dominacja POZ/NPL — idealna grupa na edukację.<br>
+        <strong>6. Ekosystem:</strong> 10+ istniejących treści alergicznych, konferencje, VOD, case study — jest co promować.
+      </p>
+      <p style="color:var(--text-tertiary);font-size:12px;margin-top:12px">PostHog &middot; Zalogowani z rolą (bez backoffice) &middot; Dane: I.2024–III.2026</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const searchMonths = ['XI.24','XII.24','I.25','II.25','III.25','IV.25','V.25','VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26*'];
+const searchData = [291,350,419,481,566,609,414,455,352,324,397,238,471,410,561,371,449];
+const searchUU = [113,140,169,203,236,256,191,206,169,142,194,125,205,207,234,198,206];
+
+Chart.defaults.color = '#9B9B95';
+Chart.defaults.borderColor = 'rgba(0,0,0,0.06)';
+Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+Chart.defaults.font.size = 12;
+
+// Season zone plugin (spring peak)
+function makeSeasonZone(startIdx, endIdx, label) {
+  return {
+    id: 'seasonZone',
+    beforeDraw(chart) {
+      const { ctx, chartArea, scales } = chart;
+      if (!scales.x || !chartArea) return;
+      const x1 = scales.x.getPixelForValue(startIdx);
+      const x2 = scales.x.getPixelForValue(endIdx);
+      ctx.fillStyle = 'rgba(15,110,86,0.05)';
+      ctx.fillRect(x1, chartArea.top, x2 - x1, chartArea.bottom - chartArea.top);
+      ctx.strokeStyle = 'rgba(15,110,86,0.2)';
+      ctx.setLineDash([4, 4]);
+      [x1, x2].forEach(x => { ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke(); });
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#0F6E56';
+      ctx.font = "600 11px 'Inter', sans-serif";
+      ctx.textAlign = 'center';
+      ctx.fillText(label || 'SZCZYT', (x1 + x2) / 2, chartArea.top + 16);
+    }
+  };
+}
+
+// Now marker plugin
+const nowMarker = {
+  id: 'nowMarker',
+  afterDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!scales.x || !chartArea) return;
+    const idx = chart.data.labels.indexOf('III.26*');
+    if (idx < 0) return;
+    const x = scales.x.getPixelForValue(idx);
+    ctx.save();
+    ctx.strokeStyle = '#0F6E56';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke();
+    ctx.fillStyle = '#0F6E56';
+    ctx.font = "700 11px 'Inter', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText('TERAZ', x, chartArea.bottom + 14);
+    ctx.restore();
+  }
+};
+
+// 1. Search seasonality
+new Chart(document.getElementById('chartSearchSeason'), {
+  type: 'bar',
+  plugins: [makeSeasonZone(4, 5, 'SZCZYT III–IV'), nowMarker],
+  data: {
+    labels: searchMonths,
+    datasets: [
+      {
+        label: 'Wyszukiwania',
+        data: searchData,
+        backgroundColor: searchMonths.map((l, i) => {
+          if (i === 4 || i === 5) return 'rgba(15,110,86,0.6)'; // peak
+          if (i >= 14) return 'rgba(15,110,86,0.5)'; // current season
+          return 'rgba(15,110,86,0.15)';
+        }),
+        borderRadius: { topLeft: 4, topRight: 4 }, barPercentage: 0.7, order: 1
+      },
+      {
+        label: 'Unikalni lekarze',
+        data: searchUU,
+        type: 'line', borderColor: '#534AB7', backgroundColor: 'rgba(83,74,183,0.05)',
+        fill: true, tension: 0.3, pointRadius: 4,
+        pointBackgroundColor: '#534AB7', borderWidth: 2, order: 0
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. YoY comparison — pageviews
+const pvMonths2024 = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+const pv2024 = [1121,1920,1418,4036,2361,1895,1104,1706,2212,2866,2646,2566];
+const pv2025 = [2428,3204,3636,4815,2691,2262,2396,2299,4651,2807,4724,6133];
+const uu2024 = [444,768,593,1129,830,712,522,1035,1040,1426,1418,1276];
+const uu2025 = [1264,1529,2043,2241,1374,1220,1157,1149,1949,1514,2450,3017];
+
+new Chart(document.getElementById('chartYoY'), {
+  type: 'line',
+  data: {
+    labels: pvMonths2024,
+    datasets: [
+      {
+        label: 'UU 2025',
+        data: uu2025,
+        borderColor: '#0F6E56', backgroundColor: 'rgba(15,110,86,0.06)',
+        fill: true, tension: 0.35, pointRadius: 5,
+        pointBackgroundColor: '#0F6E56', borderWidth: 2.5
+      },
+      {
+        label: 'UU 2024',
+        data: uu2024,
+        borderColor: '#9B9B95', borderDash: [5, 5], tension: 0.35,
+        pointRadius: 4, pointBackgroundColor: '#9B9B95', borderWidth: 2, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { position: 'top', labels: { usePointStyle: true, padding: 14, font: { size: 11 } } },
+      tooltip: { callbacks: { afterBody(items) {
+        if (items.length >= 2) {
+          const v25 = items[0].raw, v24 = items[1].raw;
+          if (v24 > 0) return `Wzrost YoY: +${Math.round((v25/v24-1)*100)}%`;
+        }
+      }}}
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Unikalni lekarze / mies.', color: '#9B9B95', font: { size: 11 } } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. Top search phrases — horizontal bar
+new Chart(document.getElementById('chartPhrases'), {
+  type: 'bar',
+  data: {
+    labels: ['alergia','Zyrtec','alergologia','Xyzal','bilastyna','cetyryzyna','Allegra','Claritine','loratadyna','ANN'],
+    datasets: [{
+      label: 'Wyszukiwania',
+      data: [555,503,354,188,166,161,94,60,57,41],
+      backgroundColor: [
+        'rgba(15,110,86,0.5)',
+        'rgba(185,28,59,0.5)',
+        'rgba(15,110,86,0.3)',
+        'rgba(185,28,59,0.4)',
+        'rgba(185,28,59,0.35)',
+        'rgba(185,28,59,0.3)',
+        'rgba(185,28,59,0.25)',
+        'rgba(185,28,59,0.2)',
+        'rgba(185,28,59,0.15)',
+        'rgba(15,110,86,0.2)'
+      ],
+      borderRadius: 4, barPercentage: 0.75
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 4. Video engagement
+const vidMonths = ['VI.24','VII.24','VIII.24','IX.24','X.24','XI.24','XII.24','I.25','II.25','III.25','IV.25','V.25','VI.25','VII.25','VIII.25','IX.25','X.25','XI.25','XII.25','I.26','II.26','III.26*'];
+const vidStarts = [23,14,14,94,373,129,59,34,57,42,493,356,159,59,33,62,73,85,591,1424,1435,718];
+const vidUU = [18,13,8,72,254,95,46,28,30,32,287,225,113,39,24,36,42,55,181,509,570,338];
+
+const springVidZone = {
+  id: 'springZone',
+  beforeDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    if (!scales.x || !chartArea) return;
+    // Highlight April 2025 (idx 10) and current Dec25-Mar26 (idx 18-21)
+    [[10, 11], [18, 21]].forEach(([s, e]) => {
+      const x1 = scales.x.getPixelForValue(s);
+      const x2 = scales.x.getPixelForValue(e);
+      ctx.fillStyle = 'rgba(83,74,183,0.04)';
+      ctx.fillRect(x1, chartArea.top, x2 - x1, chartArea.bottom - chartArea.top);
+    });
+  }
+};
+
+new Chart(document.getElementById('chartVideo'), {
+  type: 'bar',
+  plugins: [springVidZone],
+  data: {
+    labels: vidMonths,
+    datasets: [
+      {
+        label: 'Video started',
+        data: vidStarts,
+        backgroundColor: vidMonths.map((_, i) => i >= 18 ? 'rgba(83,74,183,0.6)' : 'rgba(83,74,183,0.2)'),
+        borderRadius: { topLeft: 4, topRight: 4 }, barPercentage: 0.65
+      },
+      {
+        label: 'Unikalni widzowie',
+        data: vidUU,
+        type: 'line', borderColor: '#0F6E56',
+        tension: 0.3, pointRadius: 3,
+        pointBackgroundColor: '#0F6E56', borderWidth: 2, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 11 } } } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } },
+      x: { grid: { display: false }, ticks: { maxRotation: 45, font: { size: 10 } } }
+    }
+  }
+});
+
+// 5. Audience doughnut
+new Chart(document.getElementById('chartAudience'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Lek. bez specj. (POZ)','Rezydenci','Studenci','Stażyści','Specjaliści','Farmaceuci','Inni'],
+    datasets: [{
+      data: [855,410,340,168,83,23,51],
+      backgroundColor: ['#534AB7','#0F6E56','#854F0B','#B91C3B','#185FA5','#7B6EC7','#CBCBC5'],
+      borderWidth: 0, cutout: '65%'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { usePointStyle: true, padding: 8, font: { size: 10 }, color: '#6B6B67' } },
+      tooltip: { callbacks: { label(ctx) {
+        const t = ctx.dataset.data.reduce((a,b)=>a+b,0);
+        return ` ${ctx.label}: ${ctx.raw} UU (${Math.round(ctx.raw/t*100)}%)`;
+      }}}
+    }
+  }
+});
+</script>
+</body>
+</html>

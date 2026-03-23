@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__posthog__projects-get",
+      "mcp__posthog__query-run",
+      "mcp__claude_ai_Notion__notion-fetch",
+      "Bash(gh auth:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"https://scencyk.github.io/klub-medyka-beta/remedium_combined.html\")"
+    ]
+  }
+}
