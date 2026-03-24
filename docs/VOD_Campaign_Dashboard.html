@@ -244,9 +244,9 @@ const CAMPAIGNS = [
         id: 6, kampania: "130-2025 Adamed", klient: "Adamed", material: "Bisoprolol+ramipryl",
         path: "/wideo/5-minut-o-leku-63/bisoprolol-ramipryl-785", kpi_uu: 400,
         deadline_start: "2026-01-01", deadline_end: "2026-01-31",
-        uu_login: 456, pv_login: 0, video_started_uu: 0,
-        watchtime_pings: 0, watchtime_uu: 0, avg_watchtime_sec: 0,
-        uu_organic: 0, uu_facebook: 0, uu_instagram: 0, data_aktualizacji: "2026-03-24"
+        uu_login: 461, pv_login: 773, video_started_uu: 224,
+        watchtime_pings: 6426, watchtime_uu: 219, avg_watchtime_sec: 293,
+        uu_organic: 274, uu_facebook: 180, uu_instagram: 7, data_aktualizacji: "2026-03-24"
     }
 ];
 
@@ -339,7 +339,7 @@ function generateDailyData(c) {
         const pct = weights[i] / sumW;
 
         let dayUU = isLast ? (totalUU - cumUU) : Math.round(totalUU * pct);
-        let dayPV = isLast ? (totalPV - cumPV) : Math.round(totalPV * pct * (1.2 + rand() * 0.3));
+        let dayPV = isLast ? (totalPV - cumPV) : Math.round(totalPV * pct);
         let dayVS = isLast ? (totalVS - cumVS) : Math.round(totalVS * pct);
 
         dayUU = Math.max(0, dayUU); dayPV = Math.max(0, dayPV); dayVS = Math.max(0, dayVS);
@@ -587,10 +587,9 @@ class Dashboard {
         const organic = active.reduce((s,c)=>s+c.uu_organic,0);
         const fb = active.reduce((s,c)=>s+c.uu_facebook,0);
         const ig = active.reduce((s,c)=>s+c.uu_instagram,0);
-        const other = active.reduce((s,c)=>s+c.uu_login,0) - organic - fb - ig;
         this.charts.utm = new Chart(document.getElementById('chart-utm').getContext('2d'), {
             type:'doughnut',
-            data:{labels:['Organic','Facebook','Instagram','Inne'],datasets:[{data:[organic,fb,ig,Math.max(0,other)],backgroundColor:[COLORS.green+'cc',COLORS.blue+'cc',COLORS.pink+'cc',COLORS.slate+'66'],borderWidth:2,borderColor:'#fff'}]},
+            data:{labels:['Bez UTM (organic+direct)','Facebook','Instagram'],datasets:[{data:[organic,fb,ig],backgroundColor:[COLORS.green+'cc',COLORS.blue+'cc',COLORS.pink+'cc'],borderWidth:2,borderColor:'#fff'}]},
             options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16}},tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t>0?`${ctx.label}: ${ctx.parsed} UU (${((ctx.parsed/t)*100).toFixed(1)}%)`:ctx.label;}}}}}
         });
 
@@ -742,7 +741,7 @@ class Dashboard {
             // UTM doughnut
             new Chart(document.getElementById('detail-chart-utm').getContext('2d'), {
                 type:'doughnut',
-                data:{labels:['Organic','Facebook','Instagram'],datasets:[{data:[c.uu_organic,c.uu_facebook,c.uu_instagram],backgroundColor:[COLORS.green+'cc',COLORS.blue+'cc',COLORS.pink+'cc'],borderWidth:2,borderColor:'#fff'}]},
+                data:{labels:['Bez UTM (organic+direct)','Facebook','Instagram'],datasets:[{data:[c.uu_organic,c.uu_facebook,c.uu_instagram],backgroundColor:[COLORS.green+'cc',COLORS.blue+'cc',COLORS.pink+'cc'],borderWidth:2,borderColor:'#fff'}]},
                 options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true}},tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t>0?`${ctx.label}: ${ctx.parsed} (${((ctx.parsed/t)*100).toFixed(0)}%)`:ctx.label;}}}}}
             });
 
