@@ -7,422 +7,270 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
     <style>
         :root {
-            --bg-primary: #f0f2f5;
-            --bg-card: #ffffff;
-            --bg-header: #0f172a;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-on-dark: #ffffff;
-            --accent: #3b82f6;
-            --accent-light: #eff6ff;
-            --positive: #16a34a;
-            --negative: #dc2626;
-            --warning: #f59e0b;
-            --border: #e2e8f0;
-            --gap: 16px;
-            --radius: 12px;
+            --bg: #f0f2f5; --card: #fff; --header-bg: #0f172a;
+            --text: #1e293b; --text2: #64748b; --text-w: #fff;
+            --accent: #3b82f6; --accent-light: #eff6ff;
+            --pos: #16a34a; --neg: #dc2626; --warn: #f59e0b;
+            --border: #e2e8f0; --gap: 16px; --r: 12px;
             --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .dashboard-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: var(--gap);
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+        .wrap { max-width:1440px; margin:0 auto; padding:var(--gap); }
 
         /* HEADER */
-        .dashboard-header {
-            background: var(--bg-header);
-            color: var(--text-on-dark);
-            padding: 20px 28px;
-            border-radius: var(--radius);
-            margin-bottom: var(--gap);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .dashboard-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-        .header-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-        .header-left { display: flex; flex-direction: column; }
+        .hdr { background:var(--header-bg); color:var(--text-w); padding:18px 28px; border-radius:var(--r); margin-bottom:var(--gap); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+        .hdr h1 { font-size:20px; font-weight:700; letter-spacing:-0.3px; }
+        .hdr-sub { font-size:13px; color:rgba(255,255,255,0.5); margin-top:2px; }
+        .hdr-left { display:flex; flex-direction:column; }
+        .hdr-right { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+        .filter-group { display:flex; align-items:center; gap:6px; }
+        .filter-group label { font-size:12px; color:rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.5px; }
+        .filter-group select { padding:7px 12px; border:1px solid rgba(255,255,255,0.15); border-radius:6px; background:rgba(255,255,255,0.08); color:var(--text-w); font-size:13px; cursor:pointer; }
+        .filter-group select option { background:var(--header-bg); color:var(--text-w); }
+        .date-badge { font-size:12px; color:rgba(255,255,255,0.5); padding:6px 14px; border:1px solid rgba(255,255,255,0.12); border-radius:6px; }
 
-        .filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .filter-group { display: flex; align-items: center; gap: 6px; }
-        .filter-group label { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; }
-        .filter-group select {
-            padding: 7px 12px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
-            background: rgba(255,255,255,0.08); color: var(--text-on-dark); font-size: 13px;
-            cursor: pointer; transition: all 0.15s;
-        }
-        .filter-group select:hover { background: rgba(255,255,255,0.14); }
-        .filter-group select option { background: var(--bg-header); color: var(--text-on-dark); }
-
-        /* TABS (Overview / Detail) */
-        .view-tabs {
-            display: flex; gap: 4px; background: rgba(255,255,255,0.08); border-radius: 8px; padding: 3px;
-        }
-        .view-tab {
-            padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;
-            cursor: pointer; color: rgba(255,255,255,0.6); transition: all 0.15s; border: none; background: none;
-        }
-        .view-tab.active { background: rgba(255,255,255,0.15); color: #fff; }
-        .view-tab:hover:not(.active) { color: rgba(255,255,255,0.85); }
+        /* CARD */
+        .card { background:var(--card); border-radius:var(--r); padding:20px 24px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:var(--gap); }
+        .card h3 { font-size:14px; font-weight:700; margin-bottom:14px; }
 
         /* KPI ROW */
-        .kpi-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: var(--gap); margin-bottom: var(--gap);
-        }
-        .kpi-card {
-            background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px;
-            box-shadow: var(--shadow); border: 1px solid var(--border); transition: transform 0.15s;
-        }
-        .kpi-card:hover { transform: translateY(-1px); }
-        .kpi-label {
-            font-size: 12px; color: var(--text-secondary); text-transform: uppercase;
-            letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;
-        }
-        .kpi-value { font-size: 32px; font-weight: 800; color: var(--text-primary); letter-spacing: -1px; }
-        .kpi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
-        .kpi-sub.positive { color: var(--positive); }
-        .kpi-sub.negative { color: var(--negative); }
-        .kpi-sub.warning { color: var(--warning); }
+        .kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:var(--gap); margin-bottom:var(--gap); }
+        .kpi { background:var(--card); border-radius:var(--r); padding:16px 20px; box-shadow:var(--shadow); border:1px solid var(--border); }
+        .kpi-label { font-size:11px; color:var(--text2); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:3px; }
+        .kpi-val { font-size:26px; font-weight:800; color:var(--text); letter-spacing:-1px; }
+        .kpi-sub { font-size:12px; color:var(--text2); margin-top:2px; }
+        .kpi-sub.pos { color:var(--pos); } .kpi-sub.neg { color:var(--neg); }
 
-        /* CHART ROW */
-        .chart-row {
-            display: grid; grid-template-columns: 2fr 1fr;
-            gap: var(--gap); margin-bottom: var(--gap);
+        /* MAIN TABLE */
+        .tbl { width:100%; border-collapse:collapse; font-size:13px; }
+        .tbl thead th {
+            text-align:left; padding:10px 12px; border-bottom:2px solid var(--border);
+            color:var(--text2); font-weight:600; font-size:11px; text-transform:uppercase;
+            letter-spacing:0.5px; white-space:nowrap; user-select:none; cursor:pointer;
         }
-        .chart-row.equal { grid-template-columns: 1fr 1fr; }
-        .chart-container {
-            background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px;
-            box-shadow: var(--shadow); border: 1px solid var(--border);
-        }
-        .chart-container h3 {
-            font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px;
-        }
-        .chart-container canvas { max-height: 320px; }
-        .chart-container.full-width { grid-column: 1 / -1; }
+        .tbl thead th:hover { color:var(--text); }
+        .tbl tbody td { padding:11px 12px; border-bottom:1px solid #f1f5f9; }
+        .tbl tbody tr { cursor:pointer; transition:background 0.1s; }
+        .tbl tbody tr:hover { background:var(--accent-light); }
+        .tbl tbody tr.row-critical { border-left:3px solid var(--neg); }
+        .tbl tbody tr.row-warning { border-left:3px solid var(--warn); }
+        .tbl tbody tr.row-ok { border-left:3px solid var(--pos); }
+        .tbl tbody tr.row-done { border-left:3px solid #94a3b8; opacity:0.6; }
 
-        /* TABLE SECTION */
-        .table-section {
-            background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px;
-            box-shadow: var(--shadow); border: 1px solid var(--border); overflow-x: auto;
-            margin-bottom: var(--gap);
-        }
-        .table-section h3 {
-            font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px;
-        }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .data-table thead th {
-            text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--border);
-            color: var(--text-secondary); font-weight: 600; font-size: 11px;
-            text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
-            user-select: none; cursor: pointer; transition: color 0.15s;
-        }
-        .data-table thead th:hover { color: var(--text-primary); }
-        .data-table tbody td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }
-        .data-table tbody tr { cursor: pointer; transition: background 0.1s; }
-        .data-table tbody tr:hover { background: var(--accent-light); }
-        .data-table tbody tr.selected { background: #dbeafe; }
+        /* Progress bar */
+        .prog-wrap { display:flex; align-items:center; gap:8px; min-width:140px; }
+        .prog-bar { flex:1; height:8px; background:#f1f5f9; border-radius:4px; position:relative; overflow:visible; }
+        .prog-fill { height:100%; border-radius:4px; transition:width 0.3s; position:relative; z-index:1; }
+        .prog-fill.g { background:var(--pos); } .prog-fill.y { background:var(--warn); } .prog-fill.r { background:var(--neg); }
+        .prog-expected { position:absolute; top:-4px; height:16px; width:14px; z-index:2; cursor:help; display:flex; justify-content:center; }
+        .prog-expected::before { content:''; display:block; width:2px; height:100%; background:#1e293b; border-radius:1px; }
+        .prog-expected .prog-tip { display:none; position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); background:#1e293b; color:#fff; font-size:11px; line-height:1.4; padding:8px 12px; border-radius:8px; white-space:nowrap; z-index:100; pointer-events:none; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+        .prog-expected .prog-tip::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#1e293b; }
+        .prog-expected:hover .prog-tip { display:block; }
+        .prog-pct { font-weight:700; font-size:12px; min-width:36px; text-align:right; }
 
-        /* STATUS BADGES */
-        .status-badge {
-            display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px;
-            font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
-        }
-        .status-badge.on-track { background: #dcfce7; color: #166534; }
-        .status-badge.at-risk { background: #fef9c3; color: #854d0e; }
-        .status-badge.behind { background: #fee2e2; color: #991b1b; }
-        .status-badge.completed { background: #dbeafe; color: #1e40af; }
+        /* Status badge */
+        .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+        .badge.on-track { background:#dcfce7; color:#166534; }
+        .badge.at-risk { background:#fef9c3; color:#854d0e; }
+        .badge.behind { background:#fee2e2; color:#991b1b; }
+        .badge.done { background:#f1f5f9; color:#475569; }
 
-        /* PROGRESS BAR */
-        .progress-bar-container {
-            width: 100%; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%; border-radius: 4px; transition: width 0.3s ease;
-        }
-        .progress-bar-fill.green { background: var(--positive); }
-        .progress-bar-fill.yellow { background: var(--warning); }
-        .progress-bar-fill.red { background: var(--negative); }
+        /* Tempo comparison */
+        .tempo-cell { display:flex; flex-direction:column; gap:1px; }
+        .tempo-actual { font-weight:600; font-size:13px; }
+        .tempo-req { font-size:11px; color:var(--text2); }
+        .tempo-cell.bad .tempo-actual { color:var(--neg); }
+        .tempo-cell.ok .tempo-actual { color:var(--pos); }
+
+        /* Action hint */
+        .action-hint { font-size:11px; padding:4px 10px; border-radius:6px; font-weight:600; white-space:nowrap; }
+        .action-hint.critical { background:#fef2f2; color:#991b1b; }
+        .action-hint.warning { background:#fffbeb; color:#92400e; }
+        .action-hint.ok { background:#f0fdf4; color:#166534; }
+        .action-hint.done { background:#f8fafc; color:#64748b; }
+
+        /* Chart grid */
+        .chart-grid { display:grid; grid-template-columns:2fr 1fr; gap:var(--gap); margin-bottom:var(--gap); }
+        .chart-grid.eq { grid-template-columns:1fr 1fr; }
+        .card canvas { max-height:300px; }
 
         /* DETAIL VIEW */
-        .detail-view { display: none; }
-        .detail-view.active { display: block; }
-        .overview-view { display: block; }
-        .overview-view.hidden { display: none; }
+        .view { display:none; } .view.active { display:block; }
+        .back-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; color:var(--text); margin-bottom:var(--gap); transition:all 0.15s; }
+        .back-btn:hover { background:#f8fafc; border-color:var(--accent); color:var(--accent); }
+        .detail-hdr { background:var(--card); border-radius:var(--r); padding:24px 28px; box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:var(--gap); }
+        .detail-hdr h2 { font-size:22px; font-weight:700; margin-bottom:4px; }
+        .detail-meta { display:flex; gap:24px; flex-wrap:wrap; margin-top:12px; font-size:13px; color:var(--text2); }
+        .detail-meta span { font-weight:600; color:var(--text); }
 
-        .back-btn {
-            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
-            font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-primary);
-            margin-bottom: var(--gap); transition: all 0.15s;
+        /* Daily table */
+        .daily-tbl { width:100%; border-collapse:collapse; font-size:12px; }
+        .daily-tbl thead th { padding:8px 10px; border-bottom:2px solid var(--border); color:var(--text2); font-size:10px; text-transform:uppercase; letter-spacing:0.5px; text-align:right; font-weight:600; }
+        .daily-tbl thead th:first-child { text-align:left; }
+        .daily-tbl tbody td { padding:7px 10px; border-bottom:1px solid #f1f5f9; text-align:right; font-variant-numeric:tabular-nums; }
+        .daily-tbl tbody td:first-child { text-align:left; font-weight:500; color:var(--text2); }
+        .daily-tbl tbody tr:hover { background:var(--accent-light); }
+        .daily-tbl tbody tr.today { background:#eff6ff; font-weight:600; }
+        .daily-tbl tbody tr.weekend td:first-child { color:#94a3b8; }
+        .daily-delta-pos { color:var(--pos); font-weight:600; }
+        .daily-delta-neg { color:var(--neg); font-weight:600; }
+        .daily-delta-zero { color:#94a3b8; }
+
+        .footer { text-align:center; padding:16px; font-size:12px; color:var(--text2); }
+
+        @media (max-width:900px) {
+            .chart-grid, .chart-grid.eq { grid-template-columns:1fr; }
+            .kpi-row { grid-template-columns:repeat(2,1fr); }
+            .hdr { flex-direction:column; align-items:flex-start; }
         }
-        .back-btn:hover { background: #f8fafc; border-color: var(--accent); color: var(--accent); }
-
-        .detail-header {
-            background: var(--bg-card); border-radius: var(--radius); padding: 24px 28px;
-            box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: var(--gap);
-        }
-        .detail-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-        .detail-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
-        .detail-meta-item { font-size: 13px; color: var(--text-secondary); }
-        .detail-meta-item span { font-weight: 600; color: var(--text-primary); }
-
-        /* FOOTER */
-        .dashboard-footer {
-            text-align: center; padding: 16px; font-size: 12px; color: var(--text-secondary);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .chart-row, .chart-row.equal { grid-template-columns: 1fr; }
-            .kpi-row { grid-template-columns: repeat(2, 1fr); }
-            .dashboard-header { flex-direction: column; align-items: flex-start; }
-        }
-
         @media print {
-            body { background: white; }
-            .dashboard-container { max-width: none; }
-            .filters, .view-tabs, .back-btn { display: none; }
-            .kpi-card, .chart-container, .table-section { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+            body { background:white; }
+            .hdr-right, .back-btn { display:none; }
+            .kpi, .card { box-shadow:none; border:1px solid #ddd; break-inside:avoid; }
         }
     </style>
 </head>
 <body>
-<div class="dashboard-container">
+<div class="wrap">
 
-    <!-- HEADER -->
-    <header class="dashboard-header">
-        <div class="header-left">
+    <header class="hdr">
+        <div class="hdr-left">
             <h1>VOD Campaign Tracker</h1>
-            <div class="header-subtitle">Remedium.md — 5 minut o leku</div>
+            <div class="hdr-sub">Remedium.md — 5 minut o leku</div>
         </div>
-        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-            <div class="view-tabs">
-                <button class="view-tab active" onclick="showView('overview')">Przegld</button>
-                <button class="view-tab" onclick="showView('detail')">Szczegoly</button>
-            </div>
-            <div class="filters">
-                <div class="filter-group">
-                    <label>Klient</label>
-                    <select id="filter-client" onchange="dashboard.applyFilters()">
-                        <option value="all">Wszyscy</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Status</label>
-                    <select id="filter-status" onchange="dashboard.applyFilters()">
-                        <option value="all">Wszystkie</option>
-                    </select>
-                </div>
+        <div class="hdr-right">
+            <div class="date-badge">Dane z: <strong id="data-date"></strong></div>
+            <div class="filter-group">
+                <label>Klient</label>
+                <select id="filter-client" onchange="dashboard.applyFilters()">
+                    <option value="all">Wszyscy</option>
+                </select>
             </div>
         </div>
     </header>
 
-    <!-- OVERVIEW VIEW -->
-    <div class="overview-view" id="overview-view">
+    <!-- ===== OVERVIEW ===== -->
+    <div class="view active" id="view-overview">
 
-        <!-- KPI ROW -->
+        <!-- KPIs -->
         <section class="kpi-row" id="kpi-row"></section>
 
+        <!-- MAIN CAMPAIGN TABLE -->
+        <div class="card" id="main-table-card">
+            <h3>Trwajace kampanie</h3>
+            <div style="overflow-x:auto;" id="main-table"></div>
+        </div>
+
         <!-- CHARTS -->
-        <section class="chart-row">
-            <div class="chart-container">
-                <h3>Realizacja vs Cel (UU) per kampania</h3>
-                <canvas id="chart-realization"></canvas>
+        <section class="chart-grid">
+            <div class="card">
+                <h3>Realizacja vs Deadline — sortowane wg pilnosci</h3>
+                <canvas id="chart-gap"></canvas>
             </div>
-            <div class="chart-container">
+            <div class="card">
                 <h3>Zrodla ruchu (UTM)</h3>
                 <canvas id="chart-utm"></canvas>
             </div>
         </section>
-
-        <section class="chart-row equal">
-            <div class="chart-container">
-                <h3>Pace Index per kampania</h3>
-                <canvas id="chart-pace"></canvas>
+        <section class="chart-grid eq">
+            <div class="card">
+                <h3>Mapa pilnosci — dni do deadline vs brakujace UU</h3>
+                <canvas id="chart-urgency"></canvas>
             </div>
-            <div class="chart-container">
-                <h3>Avg Watchtime (sekundy)</h3>
-                <canvas id="chart-watchtime"></canvas>
+            <div class="card">
+                <h3>Engagement & Watchtime</h3>
+                <canvas id="chart-engagement"></canvas>
             </div>
-        </section>
-
-        <!-- TABLE -->
-        <section class="table-section">
-            <h3>Lista kampanii</h3>
-            <div id="campaign-table"></div>
         </section>
     </div>
 
-    <!-- DETAIL VIEW -->
-    <div class="detail-view" id="detail-view">
-        <button class="back-btn" onclick="showView('overview')">&#8592; Powrot do listy</button>
+    <!-- ===== DETAIL VIEW ===== -->
+    <div class="view" id="view-detail">
+        <button class="back-btn" onclick="dashboard.showOverview()">&larr; Powrot do listy</button>
         <div id="detail-content"></div>
     </div>
 
-    <footer class="dashboard-footer">
-        <span>Dane z: <strong id="data-date"></strong> | Prototyp dashboardu — dane do przeniesienia do Looker Studio</span>
-    </footer>
+    <footer class="footer">Prototyp dashboardu VOD — dane do auto-refresh z PostHog</footer>
 </div>
 
 <script>
 // =============================================
-// EMBEDDED DATA — replace with fresh PostHog data
+// DATA
 // =============================================
 const CAMPAIGNS = [
     {
-        id: 1,
-        kampania: "251-2025 Klosterfrau",
-        klient: "Klosterfrau",
-        material: "Benzydamina",
-        path: "/wideo/5-minut-o-leku-63/benzydamina-798",
-        kpi_uu: 400,
-        deadline_start: "2026-03-13",
-        deadline_end: "2026-03-31",
-        uu_login: 315,
-        pv_login: 462,
-        video_started_uu: 149,
-        watchtime_pings: 977,
-        watchtime_uu: 134,
-        avg_watchtime_sec: 73,
-        uu_organic: 78,
-        uu_facebook: 149,
-        uu_instagram: 0,
-        data_aktualizacji: "2026-03-24"
+        id: 1, kampania: "251-2025 Klosterfrau", klient: "Klosterfrau", material: "Benzydamina",
+        path: "/wideo/5-minut-o-leku-63/benzydamina-798", kpi_uu: 400,
+        deadline_start: "2026-03-13", deadline_end: "2026-03-31",
+        uu_login: 315, pv_login: 462, video_started_uu: 149,
+        watchtime_pings: 977, watchtime_uu: 134, avg_watchtime_sec: 73,
+        uu_organic: 78, uu_facebook: 149, uu_instagram: 0, data_aktualizacji: "2026-03-24"
     },
     {
-        id: 2,
-        kampania: "6-2026 Glenmark-Ryaltris",
-        klient: "Glenmark",
-        material: "Mometazon+olopatadyna",
-        path: "/wideo/5-minut-o-leku-63/mometazon-z-olopatadyna-797",
-        kpi_uu: 500,
-        deadline_start: "2026-03-04",
-        deadline_end: "2026-03-31",
-        uu_login: 347,
-        pv_login: 479,
-        video_started_uu: 164,
-        watchtime_pings: 844,
-        watchtime_uu: 143,
-        avg_watchtime_sec: 59,
-        uu_organic: 76,
-        uu_facebook: 168,
-        uu_instagram: 0,
-        data_aktualizacji: "2026-03-24"
+        id: 2, kampania: "6-2026 Glenmark-Ryaltris", klient: "Glenmark", material: "Mometazon+olopatadyna",
+        path: "/wideo/5-minut-o-leku-63/mometazon-z-olopatadyna-797", kpi_uu: 500,
+        deadline_start: "2026-03-04", deadline_end: "2026-03-31",
+        uu_login: 347, pv_login: 479, video_started_uu: 164,
+        watchtime_pings: 844, watchtime_uu: 143, avg_watchtime_sec: 59,
+        uu_organic: 76, uu_facebook: 168, uu_instagram: 0, data_aktualizacji: "2026-03-24"
     },
     {
-        id: 3,
-        kampania: "229-2025 Egis Escitalopram",
-        klient: "Egis",
-        material: "Escitalopram",
-        path: "/wideo/5-minut-o-leku-63/escitalopram-795",
-        kpi_uu: 400,
-        deadline_start: "2026-03-02",
-        deadline_end: "2026-03-31",
-        uu_login: 372,
-        pv_login: 631,
-        video_started_uu: 187,
-        watchtime_pings: 1917,
-        watchtime_uu: 181,
-        avg_watchtime_sec: 106,
-        uu_organic: 98,
-        uu_facebook: 163,
-        uu_instagram: 2,
-        data_aktualizacji: "2026-03-24"
+        id: 3, kampania: "229-2025 Egis Escitalopram", klient: "Egis", material: "Escitalopram",
+        path: "/wideo/5-minut-o-leku-63/escitalopram-795", kpi_uu: 400,
+        deadline_start: "2026-03-02", deadline_end: "2026-03-31",
+        uu_login: 372, pv_login: 631, video_started_uu: 187,
+        watchtime_pings: 1917, watchtime_uu: 181, avg_watchtime_sec: 106,
+        uu_organic: 98, uu_facebook: 163, uu_instagram: 2, data_aktualizacji: "2026-03-24"
     },
     {
-        id: 4,
-        kampania: "25-2026 Egis Xiltess",
-        klient: "Egis",
-        material: "Rivaroxaban",
-        path: "/wideo/5-minut-o-leku-63/rivaroxaban-355",
-        kpi_uu: 300,
-        deadline_start: "2026-02-16",
-        deadline_end: "2026-05-24",
-        uu_login: 150,
-        pv_login: 266,
-        video_started_uu: 99,
-        watchtime_pings: 1412,
-        watchtime_uu: 95,
-        avg_watchtime_sec: 149,
-        uu_organic: 59,
-        uu_facebook: 67,
-        uu_instagram: 15,
-        data_aktualizacji: "2026-03-24"
+        id: 4, kampania: "25-2026 Egis Xiltess", klient: "Egis", material: "Rivaroxaban",
+        path: "/wideo/5-minut-o-leku-63/rivaroxaban-355", kpi_uu: 300,
+        deadline_start: "2026-02-16", deadline_end: "2026-05-24",
+        uu_login: 150, pv_login: 266, video_started_uu: 99,
+        watchtime_pings: 1412, watchtime_uu: 95, avg_watchtime_sec: 149,
+        uu_organic: 59, uu_facebook: 67, uu_instagram: 15, data_aktualizacji: "2026-03-24"
     },
     {
-        id: 5,
-        kampania: "229-2025 Egis Agomelatyna",
-        klient: "Egis",
-        material: "Agomelatyna",
-        path: "/wideo/5-minut-o-leku-63/agomelatyna-823",
-        kpi_uu: 400,
-        deadline_start: "2026-03-17",
-        deadline_end: "2026-04-16",
-        uu_login: 85,
-        pv_login: 128,
-        video_started_uu: 36,
-        watchtime_pings: 184,
-        watchtime_uu: 28,
-        avg_watchtime_sec: 66,
-        uu_organic: 44,
-        uu_facebook: 11,
-        uu_instagram: 0,
-        data_aktualizacji: "2026-03-24"
+        id: 5, kampania: "229-2025 Egis Agomelatyna", klient: "Egis", material: "Agomelatyna",
+        path: "/wideo/5-minut-o-leku-63/agomelatyna-823", kpi_uu: 400,
+        deadline_start: "2026-03-17", deadline_end: "2026-04-16",
+        uu_login: 85, pv_login: 128, video_started_uu: 36,
+        watchtime_pings: 184, watchtime_uu: 28, avg_watchtime_sec: 66,
+        uu_organic: 44, uu_facebook: 11, uu_instagram: 0, data_aktualizacji: "2026-03-24"
     },
     {
-        id: 6,
-        kampania: "130-2025 Adamed",
-        klient: "Adamed",
-        material: "Bisoprolol+ramipryl",
-        path: "/wideo/5-minut-o-leku-63/bisoprolol-ramipryl-785",
-        kpi_uu: 400,
-        deadline_start: "2026-01-01",
-        deadline_end: "2026-01-31",
-        uu_login: 456,
-        pv_login: 0,
-        video_started_uu: 0,
-        watchtime_pings: 0,
-        watchtime_uu: 0,
-        avg_watchtime_sec: 0,
-        uu_organic: 0,
-        uu_facebook: 0,
-        uu_instagram: 0,
-        data_aktualizacji: "2026-03-24"
+        id: 6, kampania: "130-2025 Adamed", klient: "Adamed", material: "Bisoprolol+ramipryl",
+        path: "/wideo/5-minut-o-leku-63/bisoprolol-ramipryl-785", kpi_uu: 400,
+        deadline_start: "2026-01-01", deadline_end: "2026-01-31",
+        uu_login: 456, pv_login: 0, video_started_uu: 0,
+        watchtime_pings: 0, watchtime_uu: 0, avg_watchtime_sec: 0,
+        uu_organic: 0, uu_facebook: 0, uu_instagram: 0, data_aktualizacji: "2026-03-24"
     }
 ];
 
+const TODAY = new Date('2026-03-24');
+const COLORS = { blue:'#3b82f6', orange:'#f97316', green:'#22c55e', red:'#ef4444', purple:'#8b5cf6', teal:'#14b8a6', pink:'#ec4899', slate:'#64748b' };
+
 // =============================================
-// COMPUTED FIELDS
+// ENRICH
 // =============================================
 function enrichCampaign(c) {
-    const today = new Date();
-    const start = new Date(c.deadline_start);
-    const end = new Date(c.deadline_end);
+    const start = new Date(c.deadline_start), end = new Date(c.deadline_end);
     const totalDays = Math.max(1, Math.ceil((end - start) / 86400000));
-    const daysElapsed = Math.max(0, Math.ceil((today - start) / 86400000));
-    const daysRemaining = Math.max(0, Math.ceil((end - today) / 86400000));
+    const daysElapsed = Math.max(0, Math.ceil((TODAY - start) / 86400000));
+    const daysRemaining = Math.max(0, Math.ceil((end - TODAY) / 86400000));
 
     c.pct_realizacji = (c.uu_login / c.kpi_uu) * 100;
     c.brakuje_uu = Math.max(0, c.kpi_uu - c.uu_login);
+    c.total_days = totalDays;
     c.dni_od_startu = daysElapsed;
     c.dni_do_deadline = daysRemaining;
+    c.expected_pct = Math.min(100, (daysElapsed / totalDays) * 100);
     c.tempo_sr_dzien = daysElapsed > 0 ? c.uu_login / daysElapsed : 0;
     c.wymagane_tempo = daysRemaining > 0 ? c.brakuje_uu / daysRemaining : 0;
-    c.pace_index = c.wymagane_tempo > 0 ? (c.tempo_sr_dzien / c.wymagane_tempo) * 100 : 999;
+    c.pace_index = c.wymagane_tempo > 0 ? (c.tempo_sr_dzien / c.wymagane_tempo) * 100 : (c.pct_realizacji >= 100 ? 999 : 0);
     c.engagement_rate = c.uu_login > 0 ? (c.video_started_uu / c.uu_login) * 100 : 0;
     c.avg_watchtime_min = (c.avg_watchtime_sec / 60).toFixed(1);
     c.pct_facebook = c.uu_login > 0 ? (c.uu_facebook / c.uu_login) * 100 : 0;
@@ -431,218 +279,163 @@ function enrichCampaign(c) {
     c.prognoza_uu = Math.round(c.tempo_sr_dzien * totalDays);
 
     if (c.pct_realizacji >= 100) c.status = "Zrealizowana";
-    else if (c.pace_index >= 120) c.status = "On Track";
-    else if (c.pace_index >= 80) c.status = "At Risk";
-    else c.status = "Behind";
+    else if (c.pace_index >= 120) c.status = "Na kursie";
+    else if (c.pace_index >= 80) c.status = "Uwazaj";
+    else c.status = "Zagrozone";
 
+    if (c.pct_realizacji >= 100) { c.urgency = 0; }
+    else {
+        const pctMissing = 100 - c.pct_realizacji;
+        const timePress = daysRemaining <= 0 ? 100 : Math.max(0, 100 - daysRemaining * 2);
+        const pacePenalty = c.pace_index < 100 ? (100 - Math.min(c.pace_index, 100)) : 0;
+        c.urgency = (pctMissing * 0.4) + (timePress * 0.35) + (pacePenalty * 0.25);
+    }
+
+    // Generate synthetic daily data (prototype — docelowo z PostHog)
+    c.daily = generateDailyData(c);
     return c;
 }
 
+// =============================================
+// SYNTHETIC DAILY DATA
+// Realistic distribution: weekdays higher, weekend lower, ramp-up first days, FB spikes
+// =============================================
+function generateDailyData(c) {
+    const start = new Date(c.deadline_start), end = new Date(c.deadline_end);
+    const daysElapsed = c.dni_od_startu;
+    if (daysElapsed <= 0 || c.uu_login <= 0) return [];
+
+    // Seed random with campaign id for consistency
+    let seed = c.id * 7919;
+    const rand = () => { seed = (seed * 16807 + 0) % 2147483647; return seed / 2147483647; };
+
+    const days = [];
+    let totalUU = c.uu_login, totalPV = c.pv_login, totalVS = c.video_started_uu;
+
+    // Generate weights per day
+    const weights = [];
+    for (let i = 0; i < daysElapsed; i++) {
+        const d = new Date(start); d.setDate(d.getDate() + i);
+        const dow = d.getDay();
+        let w = 1;
+        if (dow === 0) w = 0.4;       // Sunday
+        else if (dow === 6) w = 0.5;   // Saturday
+        else if (dow === 1) w = 1.3;   // Monday boost
+        // Ramp-up first 3 days
+        if (i === 0) w *= 0.5;
+        else if (i === 1) w *= 0.8;
+        // Random variance
+        w *= (0.7 + rand() * 0.6);
+        weights.push(w);
+    }
+
+    const sumW = weights.reduce((a, b) => a + b, 0);
+    let cumUU = 0, cumPV = 0, cumVS = 0;
+
+    for (let i = 0; i < daysElapsed; i++) {
+        const d = new Date(start); d.setDate(d.getDate() + i);
+        const isToday = d.toISOString().slice(0,10) === '2026-03-24';
+        const isLast = i === daysElapsed - 1;
+        const pct = weights[i] / sumW;
+
+        let dayUU = isLast ? (totalUU - cumUU) : Math.round(totalUU * pct);
+        let dayPV = isLast ? (totalPV - cumPV) : Math.round(totalPV * pct * (1.2 + rand() * 0.3));
+        let dayVS = isLast ? (totalVS - cumVS) : Math.round(totalVS * pct);
+
+        dayUU = Math.max(0, dayUU); dayPV = Math.max(0, dayPV); dayVS = Math.max(0, dayVS);
+        cumUU += dayUU; cumPV += dayPV; cumVS += dayVS;
+
+        days.push({
+            date: d.toISOString().slice(0,10),
+            dow: d.getDay(),
+            uu: dayUU,
+            pv: dayPV,
+            vs: dayVS,
+            cum_uu: cumUU,
+            cum_pv: cumPV,
+            cum_vs: cumVS,
+            pct_kpi: (cumUU / c.kpi_uu) * 100,
+            expected_pct: ((i + 1) / c.total_days) * 100,
+            isToday
+        });
+    }
+    return days;
+}
+
 CAMPAIGNS.forEach(enrichCampaign);
+CAMPAIGNS.sort((a, b) => b.urgency - a.urgency);
 
 // =============================================
-// CHART COLORS
-// =============================================
-const COLORS = {
-    blue: '#3b82f6',
-    orange: '#f97316',
-    green: '#22c55e',
-    red: '#ef4444',
-    purple: '#8b5cf6',
-    teal: '#14b8a6',
-    pink: '#ec4899',
-    slate: '#64748b'
-};
-const PALETTE = [COLORS.blue, COLORS.orange, COLORS.green, COLORS.red, COLORS.purple, COLORS.teal];
-
-// =============================================
-// DASHBOARD CLASS
+// DASHBOARD
 // =============================================
 class Dashboard {
     constructor(data) {
         this.rawData = data;
         this.filteredData = [...data];
         this.charts = {};
-        this.sortCol = 'pct_realizacji';
+        this.sortCol = 'urgency';
         this.sortDir = 'desc';
         this.init();
     }
 
     init() {
         this.populateFilters();
-        this.renderKPIs();
-        this.renderCharts();
-        this.renderTable();
+        this.render();
         document.getElementById('data-date').textContent = this.rawData[0]?.data_aktualizacji || 'N/A';
     }
 
     populateFilters() {
-        const clientSelect = document.getElementById('filter-client');
-        const statusSelect = document.getElementById('filter-status');
-        const clients = [...new Set(this.rawData.map(c => c.klient))].sort();
-        const statuses = [...new Set(this.rawData.map(c => c.status))].sort();
-        clients.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; clientSelect.appendChild(o); });
-        statuses.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; statusSelect.appendChild(o); });
+        const sel = document.getElementById('filter-client');
+        [...new Set(this.rawData.map(c => c.klient))].sort().forEach(v => {
+            const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o);
+        });
     }
 
     applyFilters() {
         const client = document.getElementById('filter-client').value;
-        const status = document.getElementById('filter-status').value;
-        this.filteredData = this.rawData.filter(c => {
-            if (client !== 'all' && c.klient !== client) return false;
-            if (status !== 'all' && c.status !== status) return false;
-            return true;
-        });
+        this.filteredData = this.rawData.filter(c => client === 'all' || c.klient === client);
+        this.render();
+    }
+
+    render() {
         this.renderKPIs();
-        this.updateCharts();
-        this.renderTable();
-    }
-
-    // KPIs
-    renderKPIs() {
-        const d = this.filteredData;
-        const totalUU = d.reduce((s, c) => s + c.uu_login, 0);
-        const totalKPI = d.reduce((s, c) => s + c.kpi_uu, 0);
-        const avgRealizacja = d.length ? d.reduce((s, c) => s + c.pct_realizacji, 0) / d.length : 0;
-        const avgWatchtime = d.length ? d.reduce((s, c) => s + c.avg_watchtime_sec, 0) / d.length : 0;
-        const onTrack = d.filter(c => c.status === 'On Track' || c.status === 'Zrealizowana').length;
-        const behind = d.filter(c => c.status === 'Behind').length;
-
-        const kpis = [
-            { label: 'UU Login (suma)', value: totalUU.toLocaleString('pl-PL'), sub: `Cel: ${totalKPI.toLocaleString('pl-PL')}`, cls: '' },
-            { label: 'Avg Realizacja', value: avgRealizacja.toFixed(1) + '%', sub: avgRealizacja >= 70 ? 'Dobry poziom' : 'Ponizej 70%', cls: avgRealizacja >= 70 ? 'positive' : 'negative' },
-            { label: 'Avg Watchtime', value: avgWatchtime.toFixed(0) + 's', sub: (avgWatchtime / 60).toFixed(1) + ' min', cls: '' },
-            { label: 'On Track', value: `${onTrack}/${d.length}`, sub: onTrack === d.length ? 'Wszystkie OK' : `${d.length - onTrack} wymaga uwagi`, cls: onTrack === d.length ? 'positive' : 'warning' },
-            { label: 'Behind', value: behind.toString(), sub: behind === 0 ? 'Brak zagrozen' : 'Wymaga interwencji', cls: behind === 0 ? 'positive' : 'negative' },
-        ];
-
-        document.getElementById('kpi-row').innerHTML = kpis.map(k => `
-            <div class="kpi-card">
-                <div class="kpi-label">${k.label}</div>
-                <div class="kpi-value">${k.value}</div>
-                <div class="kpi-sub ${k.cls}">${k.sub}</div>
-            </div>
-        `).join('');
-    }
-
-    // CHARTS
-    renderCharts() {
-        this.renderRealizationChart();
-        this.renderUTMChart();
-        this.renderPaceChart();
-        this.renderWatchtimeChart();
-    }
-
-    renderRealizationChart() {
-        const d = this.filteredData;
-        const labels = d.map(c => c.material.length > 25 ? c.material.substring(0, 25) + '...' : c.material);
-        const ctx = document.getElementById('chart-realization').getContext('2d');
-        this.charts.realization = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [
-                    { label: 'UU Login', data: d.map(c => c.uu_login), backgroundColor: COLORS.blue + 'cc', borderRadius: 4 },
-                    { label: 'KPI UU', data: d.map(c => c.kpi_uu), backgroundColor: COLORS.orange + '55', borderColor: COLORS.orange, borderWidth: 2, borderRadius: 4 }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } } },
-                scales: {
-                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } }
-                }
-            }
-        });
-    }
-
-    renderUTMChart() {
-        const d = this.filteredData;
-        const organic = d.reduce((s, c) => s + c.uu_organic, 0);
-        const fb = d.reduce((s, c) => s + c.uu_facebook, 0);
-        const ig = d.reduce((s, c) => s + c.uu_instagram, 0);
-        const ctx = document.getElementById('chart-utm').getContext('2d');
-        this.charts.utm = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Organic', 'Facebook', 'Instagram'],
-                datasets: [{ data: [organic, fb, ig], backgroundColor: [COLORS.green + 'cc', COLORS.blue + 'cc', COLORS.pink + 'cc'], borderWidth: 2, borderColor: '#fff' }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false, cutout: '60%',
-                plugins: {
-                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } },
-                    tooltip: {
-                        callbacks: {
-                            label: function(ctx) {
-                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                return `${ctx.label}: ${ctx.parsed} UU (${((ctx.parsed / total) * 100).toFixed(1)}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    renderPaceChart() {
-        const d = this.filteredData.slice().sort((a, b) => b.pace_index - a.pace_index);
-        const labels = d.map(c => c.kampania.length > 22 ? c.kampania.substring(0, 22) + '...' : c.kampania);
-        const colors = d.map(c => c.pace_index >= 120 ? COLORS.green + 'cc' : c.pace_index >= 80 ? COLORS.orange + 'cc' : COLORS.red + 'cc');
-        const ctx = document.getElementById('chart-pace').getContext('2d');
-        this.charts.pace = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [{ label: 'Pace Index', data: d.map(c => Math.min(c.pace_index, 500)), backgroundColor: colors, borderRadius: 4 }]
-            },
-            options: {
-                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { callbacks: { label: ctx => `Pace: ${ctx.parsed.x}` } }
-                },
-                scales: {
-                    x: { beginAtZero: true, grid: { color: '#f1f5f9' },
-                        ticks: { callback: v => v }
-                    },
-                    y: { grid: { display: false }, ticks: { font: { size: 11 } } }
-                }
-            }
-        });
-        // add 100 line annotation manually via plugin
-    }
-
-    renderWatchtimeChart() {
-        const d = this.filteredData;
-        const labels = d.map(c => c.material.length > 20 ? c.material.substring(0, 20) + '...' : c.material);
-        const ctx = document.getElementById('chart-watchtime').getContext('2d');
-        this.charts.watchtime = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels,
-                datasets: [{ label: 'Avg Watchtime (s)', data: d.map(c => c.avg_watchtime_sec), backgroundColor: COLORS.teal + 'cc', borderRadius: 4 }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 's' } }
-                }
-            }
-        });
-    }
-
-    updateCharts() {
-        Object.values(this.charts).forEach(c => c.destroy());
-        this.charts = {};
+        this.renderMainTable();
+        this.destroyCharts();
         this.renderCharts();
     }
 
-    // TABLE
-    renderTable() {
+    destroyCharts() { Object.values(this.charts).forEach(c => c.destroy()); this.charts = {}; }
+
+    // =============================================
+    // KPIs
+    // =============================================
+    renderKPIs() {
+        const active = this.filteredData.filter(c => c.pct_realizacji < 100);
+        const all = this.filteredData;
+        const totalUU = all.reduce((s, c) => s + c.uu_login, 0);
+        const totalKPI = all.reduce((s, c) => s + c.kpi_uu, 0);
+        const critical = active.filter(c => c.status === 'Zagrozone').length;
+        const done = all.filter(c => c.pct_realizacji >= 100).length;
+
+        const kpis = [
+            { label:'Aktywne', value:active.length, sub:`${done} zakonczone` },
+            { label:'Lacznie UU', value:totalUU.toLocaleString('pl-PL'), sub:`Cel: ${totalKPI.toLocaleString('pl-PL')}` },
+            { label:'Zagrozone', value:critical, sub:critical===0?'Brak zagrozen':'Wymaga akcji!', cls:critical===0?'pos':'neg' },
+            { label:'Avg Watchtime', value: active.length ? (active.reduce((s,c)=>s+c.avg_watchtime_sec,0)/active.length).toFixed(0)+'s' : '-', sub:'' },
+        ];
+
+        document.getElementById('kpi-row').innerHTML = kpis.map(k => `
+            <div class="kpi">
+                <div class="kpi-label">${k.label}</div>
+                <div class="kpi-val">${k.value}</div>
+                <div class="kpi-sub ${k.cls||''}">${k.sub}</div>
+            </div>`).join('');
+    }
+
+    // =============================================
+    // MAIN TABLE — the primary view
+    // =============================================
+    renderMainTable() {
         const d = [...this.filteredData].sort((a, b) => {
             const av = a[this.sortCol], bv = b[this.sortCol];
             const cmp = av < bv ? -1 : av > bv ? 1 : 0;
@@ -650,229 +443,326 @@ class Dashboard {
         });
 
         const arrow = (col) => this.sortCol === col ? (this.sortDir === 'asc' ? ' &#9650;' : ' &#9660;') : '';
+
         const statusBadge = (s) => {
-            const cls = s === 'On Track' || s === 'Zrealizowana' ? 'on-track' : s === 'At Risk' ? 'at-risk' : 'behind';
-            return `<span class="status-badge ${cls}">${s}</span>`;
+            const cls = s === 'Na kursie' ? 'on-track' : s === 'Uwazaj' ? 'at-risk' : s === 'Zrealizowana' ? 'done' : 'behind';
+            return `<span class="badge ${cls}">${s}</span>`;
         };
-        const progressBar = (pct) => {
-            const w = Math.min(pct, 100);
-            const cls = pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red';
-            return `<div style="display:flex;align-items:center;gap:8px;">
-                <div class="progress-bar-container" style="width:80px;">
-                    <div class="progress-bar-fill ${cls}" style="width:${w}%"></div>
+
+        const progressBar = (c) => {
+            const w = Math.min(c.pct_realizacji, 100);
+            const cls = c.pct_realizacji >= 80 ? 'g' : c.pct_realizacji >= 50 ? 'y' : 'r';
+            const expLeft = Math.min(c.expected_pct, 100);
+            return `<div class="prog-wrap">
+                <div class="prog-bar">
+                    <div class="prog-fill ${cls}" style="width:${w}%"></div>
+                    ${c.pct_realizacji < 100 ? `<div class="prog-expected" style="left:calc(${expLeft}% - 7px)"><div class="prog-tip">Oczekiwany postep wg czasu: <strong>${expLeft.toFixed(0)}%</strong><br>Dzien ${c.dni_od_startu} z ${c.total_days} · ${c.dni_do_deadline}d do deadline</div></div>` : ''}
                 </div>
-                <span style="font-weight:600;font-size:12px;">${pct.toFixed(1)}%</span>
+                <span class="prog-pct">${c.pct_realizacji.toFixed(0)}%</span>
             </div>`;
         };
 
-        let html = `<table class="data-table">
-            <thead><tr>
-                <th onclick="dashboard.sort('kampania')">Kampania${arrow('kampania')}</th>
-                <th onclick="dashboard.sort('klient')">Klient${arrow('klient')}</th>
-                <th onclick="dashboard.sort('uu_login')">UU Login${arrow('uu_login')}</th>
-                <th onclick="dashboard.sort('kpi_uu')">KPI${arrow('kpi_uu')}</th>
-                <th onclick="dashboard.sort('pct_realizacji')">Realizacja${arrow('pct_realizacji')}</th>
-                <th onclick="dashboard.sort('pace_index')">Pace${arrow('pace_index')}</th>
-                <th onclick="dashboard.sort('engagement_rate')">Engagement${arrow('engagement_rate')}</th>
-                <th onclick="dashboard.sort('status')">Status${arrow('status')}</th>
-            </tr></thead><tbody>`;
+        const actionHint = (c) => {
+            if (c.pct_realizacji >= 100) return '<span class="action-hint done">Zakonczona</span>';
+            if (c.status === 'Zagrozone') {
+                if (c.dni_do_deadline <= 7) return `<span class="action-hint critical">${c.dni_do_deadline}d! Potrzeba ${Math.ceil(c.wymagane_tempo)}/d</span>`;
+                return `<span class="action-hint critical">Tempo za wolne</span>`;
+            }
+            if (c.status === 'Uwazaj') return '<span class="action-hint warning">Monitoruj</span>';
+            return '<span class="action-hint ok">OK</span>';
+        };
+
+        const rowCls = (c) => {
+            if (c.pct_realizacji >= 100) return 'row-done';
+            if (c.status === 'Zagrozone') return 'row-critical';
+            if (c.status === 'Uwazaj') return 'row-warning';
+            return 'row-ok';
+        };
+
+        let html = `<table class="tbl"><thead><tr>
+            <th onclick="dashboard.sort('material')">Material${arrow('material')}</th>
+            <th onclick="dashboard.sort('klient')">Klient${arrow('klient')}</th>
+            <th onclick="dashboard.sort('uu_login')">UU${arrow('uu_login')}</th>
+            <th onclick="dashboard.sort('kpi_uu')">Cel${arrow('kpi_uu')}</th>
+            <th onclick="dashboard.sort('pct_realizacji')" style="min-width:170px;">Realizacja${arrow('pct_realizacji')}</th>
+            <th onclick="dashboard.sort('dni_do_deadline')">Deadline${arrow('dni_do_deadline')}</th>
+            <th onclick="dashboard.sort('tempo_sr_dzien')">Tempo${arrow('tempo_sr_dzien')}</th>
+            <th onclick="dashboard.sort('status')">Status${arrow('status')}</th>
+            <th onclick="dashboard.sort('urgency')">Akcja${arrow('urgency')}</th>
+        </tr></thead><tbody>`;
 
         d.forEach(c => {
-            html += `<tr onclick="dashboard.showDetail(${c.id})">
-                <td style="font-weight:500;">${c.kampania}</td>
+            const tempoCls = c.pct_realizacji >= 100 ? '' : (c.tempo_sr_dzien >= c.wymagane_tempo ? 'ok' : 'bad');
+            html += `<tr class="${rowCls(c)}" onclick="dashboard.showDetail(${c.id})">
+                <td style="font-weight:700;">${c.material}</td>
                 <td>${c.klient}</td>
                 <td style="font-weight:600;">${c.uu_login.toLocaleString('pl-PL')}</td>
-                <td>${c.kpi_uu.toLocaleString('pl-PL')}</td>
-                <td>${progressBar(c.pct_realizacji)}</td>
-                <td style="font-weight:600;color:${c.pace_index >= 120 ? COLORS.green : c.pace_index >= 80 ? COLORS.orange : COLORS.red}">${Math.min(Math.round(c.pace_index), 999)}</td>
-                <td>${c.engagement_rate.toFixed(1)}%</td>
+                <td>${c.kpi_uu}</td>
+                <td>${progressBar(c)}</td>
+                <td style="font-weight:600;${c.dni_do_deadline <= 7 && c.pct_realizacji < 100 ? 'color:var(--neg);' : ''}">
+                    ${c.dni_do_deadline > 0 ? c.dni_do_deadline + 'd' : '<span style="color:var(--neg);font-weight:700;">Po terminie</span>'}
+                    <div style="font-size:10px;color:var(--text2);font-weight:400;">${c.deadline_end}</div>
+                </td>
+                <td>
+                    <div class="tempo-cell ${tempoCls}">
+                        <span class="tempo-actual">${c.tempo_sr_dzien.toFixed(1)}/d</span>
+                        ${c.pct_realizacji < 100 ? `<span class="tempo-req">potrzeba ${c.wymagane_tempo.toFixed(1)}/d</span>` : ''}
+                    </div>
+                </td>
                 <td>${statusBadge(c.status)}</td>
+                <td>${actionHint(c)}</td>
             </tr>`;
         });
         html += '</tbody></table>';
-        document.getElementById('campaign-table').innerHTML = html;
+        document.getElementById('main-table').innerHTML = html;
     }
 
     sort(col) {
         if (this.sortCol === col) this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
-        else { this.sortCol = col; this.sortDir = 'desc'; }
-        this.renderTable();
+        else { this.sortCol = col; this.sortDir = col === 'urgency' || col === 'brakuje_uu' || col === 'wymagane_tempo' ? 'desc' : 'asc'; }
+        this.renderMainTable();
     }
 
+    // =============================================
+    // CHARTS
+    // =============================================
+    renderCharts() {
+        const active = this.filteredData.filter(c => c.pct_realizacji < 100).sort((a, b) => b.urgency - a.urgency);
+        if (active.length === 0) return;
+
+        // 1. GAP CHART — % realizacji vs expected %, sorted by urgency
+        const gapLabels = active.map(c => {
+            const tag = c.dni_do_deadline <= 7 ? ` [${c.dni_do_deadline}d!]` : ` [${c.dni_do_deadline}d]`;
+            return c.material + tag;
+        });
+        const expectedProgress = active.map(c => Math.min(100, c.expected_pct));
+        const barColors = active.map(c => c.status==='Zagrozone' ? COLORS.red+'cc' : c.status==='Uwazaj' ? COLORS.orange+'cc' : COLORS.green+'cc');
+        const barBorders = active.map(c => c.status==='Zagrozone' ? COLORS.red : c.status==='Uwazaj' ? COLORS.orange : COLORS.green);
+
+        const tempoAnnotation = {
+            id: 'tempoAnnotation',
+            afterDatasetsDraw(chart) {
+                const ctx = chart.ctx;
+                const meta = chart.getDatasetMeta(0);
+                ctx.save();
+                ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textBaseline = 'middle';
+                meta.data.forEach((bar, i) => {
+                    const c = active[i];
+                    const txt = `${c.tempo_sr_dzien.toFixed(1)}/d → potrzeba ${c.wymagane_tempo.toFixed(1)}/d`;
+                    ctx.fillStyle = c.status==='Zagrozone' ? '#dc2626' : c.status==='Uwazaj' ? '#d97706' : '#64748b';
+                    ctx.fillText(txt, bar.x + 8, bar.y);
+                });
+                ctx.restore();
+            }
+        };
+
+        this.charts.gap = new Chart(document.getElementById('chart-gap').getContext('2d'), {
+            type:'bar',
+            data: {
+                labels: gapLabels,
+                datasets: [
+                    { label:'% Realizacji', data:active.map(c=>Math.min(c.pct_realizacji,100)), backgroundColor:barColors, borderColor:barBorders, borderWidth:1, borderRadius:4, barPercentage:0.7, categoryPercentage:0.8 },
+                    { label:'Oczekiwany % (wg czasu)', data:expectedProgress, type:'bar', backgroundColor:'rgba(0,0,0,0)', borderColor:'#1e293b', borderWidth:2, borderSkipped:false, borderRadius:4, barPercentage:0.7, categoryPercentage:0.8 }
+                ]
+            },
+            options: {
+                indexAxis:'y', responsive:true, maintainAspectRatio:false,
+                scales: {
+                    x: { max:120, grid:{color:'#f1f5f9'}, ticks:{callback:v=>v+'%'}, title:{display:true,text:'% realizacji KPI',font:{size:12,weight:'600'}} },
+                    y: { grid:{display:false}, ticks:{font:{size:12,weight:'600'}} }
+                },
+                plugins: {
+                    legend:{position:'top',labels:{usePointStyle:true,padding:16,font:{size:12}}},
+                    tooltip:{callbacks:{
+                        label:ctx=>{const c=active[ctx.dataIndex]; return ctx.datasetIndex===0?`Realizacja: ${c.pct_realizacji.toFixed(1)}% (${c.uu_login}/${c.kpi_uu} UU)`:`Oczekiwany: ${expectedProgress[ctx.dataIndex].toFixed(0)}% (dzien ${c.dni_od_startu} z ${c.total_days})`;},
+                        afterBody:items=>{const c=active[items[0].dataIndex]; return [`Brakuje: ${c.brakuje_uu} UU w ${c.dni_do_deadline} dni`,`Tempo: ${c.tempo_sr_dzien.toFixed(1)}/d → wymagane: ${c.wymagane_tempo.toFixed(1)}/d`];}
+                    }}
+                }
+            },
+            plugins:[tempoAnnotation]
+        });
+
+        // 2. UTM DOUGHNUT
+        const organic = active.reduce((s,c)=>s+c.uu_organic,0);
+        const fb = active.reduce((s,c)=>s+c.uu_facebook,0);
+        const ig = active.reduce((s,c)=>s+c.uu_instagram,0);
+        const other = active.reduce((s,c)=>s+c.uu_login,0) - organic - fb - ig;
+        this.charts.utm = new Chart(document.getElementById('chart-utm').getContext('2d'), {
+            type:'doughnut',
+            data:{labels:['Organic','Facebook','Instagram','Inne'],datasets:[{data:[organic,fb,ig,Math.max(0,other)],backgroundColor:[COLORS.green+'cc',COLORS.blue+'cc',COLORS.pink+'cc',COLORS.slate+'66'],borderWidth:2,borderColor:'#fff'}]},
+            options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:16}},tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t>0?`${ctx.label}: ${ctx.parsed} UU (${((ctx.parsed/t)*100).toFixed(1)}%)`:ctx.label;}}}}}
+        });
+
+        // 3. URGENCY BUBBLE
+        this.charts.urgency = new Chart(document.getElementById('chart-urgency').getContext('2d'), {
+            type:'bubble',
+            data:{datasets:active.map(c=>({label:c.material,data:[{x:c.dni_do_deadline,y:c.brakuje_uu,r:Math.max(8,Math.sqrt(c.kpi_uu)*0.8)}],backgroundColor:c.status==='Zagrozone'?COLORS.red+'88':c.status==='Uwazaj'?COLORS.orange+'88':COLORS.green+'88',borderColor:c.status==='Zagrozone'?COLORS.red:c.status==='Uwazaj'?COLORS.orange:COLORS.green,borderWidth:2}))},
+            options:{responsive:true,maintainAspectRatio:false,scales:{x:{title:{display:true,text:'Dni do deadline',font:{size:12,weight:'600'}},grid:{color:'#f1f5f9'},min:0},y:{title:{display:true,text:'Brakuje UU',font:{size:12,weight:'600'}},grid:{color:'#f1f5f9'},min:0}},plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const c=active[ctx.datasetIndex];return [`${c.material}`,`Dni: ${c.dni_do_deadline}, Brakuje: ${c.brakuje_uu} UU`,`Tempo: ${c.tempo_sr_dzien.toFixed(1)}/d, Wymagane: ${c.wymagane_tempo.toFixed(1)}/d`];}}}}}
+        });
+
+        // 4. ENGAGEMENT + WATCHTIME
+        this.charts.engagement = new Chart(document.getElementById('chart-engagement').getContext('2d'), {
+            type:'bar',
+            data:{labels:active.map(c=>c.material),datasets:[
+                {label:'Engagement %',data:active.map(c=>c.engagement_rate),backgroundColor:COLORS.purple+'cc',borderRadius:4,yAxisID:'y'},
+                {label:'Watchtime (s)',data:active.map(c=>c.avg_watchtime_sec),type:'line',borderColor:COLORS.teal,backgroundColor:COLORS.teal+'20',borderWidth:2,pointRadius:5,pointBackgroundColor:COLORS.teal,yAxisID:'y1',fill:true}
+            ]},
+            options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:16}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{beginAtZero:true,position:'left',title:{display:true,text:'Engagement %'},grid:{color:'#f1f5f9'}},y1:{beginAtZero:true,position:'right',title:{display:true,text:'Watchtime (s)'},grid:{display:false}}}}
+        });
+    }
+
+    // =============================================
     // DETAIL VIEW
+    // =============================================
     showDetail(id) {
         const c = this.rawData.find(x => x.id === id);
         if (!c) return;
 
-        showView('detail');
+        document.getElementById('view-overview').classList.remove('active');
+        document.getElementById('view-detail').classList.add('active');
 
         const statusBadge = (s) => {
-            const cls = s === 'On Track' || s === 'Zrealizowana' ? 'on-track' : s === 'At Risk' ? 'at-risk' : 'behind';
-            return `<span class="status-badge ${cls}">${s}</span>`;
+            const cls = s==='Na kursie'?'on-track':s==='Uwazaj'?'at-risk':s==='Zrealizowana'?'done':'behind';
+            return `<span class="badge ${cls}" style="font-size:13px;padding:5px 14px;">${s}</span>`;
         };
 
+        // Build daily table
+        let dailyHTML = '';
+        if (c.daily.length > 0) {
+            dailyHTML = `
+            <div class="card">
+                <h3>Wyniki dzienne — dynamika kampanii</h3>
+                <canvas id="detail-daily-chart" style="max-height:250px;margin-bottom:20px;"></canvas>
+                <div style="overflow-x:auto;max-height:400px;overflow-y:auto;">
+                <table class="daily-tbl"><thead><tr>
+                    <th>Data</th>
+                    <th>Dzien</th>
+                    <th>UU</th>
+                    <th>PV</th>
+                    <th>Video</th>
+                    <th>UU kumulat.</th>
+                    <th>% KPI</th>
+                    <th>Oczekiwany %</th>
+                    <th>Roznica</th>
+                </tr></thead><tbody>`;
+
+            // Show most recent first
+            const reversed = [...c.daily].reverse();
+            reversed.forEach((day, i) => {
+                const dayNames = ['Nd','Pn','Wt','Sr','Cz','Pt','So'];
+                const dayName = dayNames[day.dow];
+                const isWeekend = day.dow === 0 || day.dow === 6;
+                const diff = day.pct_kpi - day.expected_pct;
+                const diffCls = diff >= 0 ? 'daily-delta-pos' : 'daily-delta-neg';
+                const uuCls = day.uu > c.tempo_sr_dzien * 1.2 ? 'daily-delta-pos' : day.uu < c.tempo_sr_dzien * 0.5 ? 'daily-delta-neg' : '';
+
+                dailyHTML += `<tr class="${day.isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">
+                    <td>${day.date}${day.isToday ? ' (dzis)' : ''}</td>
+                    <td style="text-align:center;">${dayName}</td>
+                    <td class="${uuCls}" style="font-weight:600;">${day.uu}</td>
+                    <td>${day.pv}</td>
+                    <td>${day.vs}</td>
+                    <td style="font-weight:600;">${day.cum_uu}</td>
+                    <td style="font-weight:600;">${day.pct_kpi.toFixed(1)}%</td>
+                    <td>${day.expected_pct.toFixed(1)}%</td>
+                    <td class="${diffCls}">${diff >= 0 ? '+' : ''}${diff.toFixed(1)}pp</td>
+                </tr>`;
+            });
+            dailyHTML += '</tbody></table></div></div>';
+        } else {
+            dailyHTML = '<div class="card"><h3>Wyniki dzienne</h3><div style="padding:20px;text-align:center;color:var(--text2);">Brak danych dziennych (kampania zakonczona lub brak historii)</div></div>';
+        }
+
         let html = `
-        <div class="detail-header">
+        <div class="detail-hdr">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
                 <div>
                     <h2>${c.material}</h2>
-                    <div style="font-size:14px;color:var(--text-secondary);margin-top:2px;">${c.kampania} &middot; ${c.klient}</div>
+                    <div style="font-size:14px;color:var(--text2);margin-top:2px;">${c.kampania} &middot; ${c.klient}</div>
                 </div>
                 ${statusBadge(c.status)}
             </div>
             <div class="detail-meta">
-                <div class="detail-meta-item">Start: <span>${c.deadline_start}</span></div>
-                <div class="detail-meta-item">Deadline: <span>${c.deadline_end}</span></div>
-                <div class="detail-meta-item">Dni od startu: <span>${c.dni_od_startu}</span></div>
-                <div class="detail-meta-item">Dni do deadline: <span>${c.dni_do_deadline}</span></div>
-                <div class="detail-meta-item">Path: <span>${c.path}</span></div>
+                <div>Start: <span>${c.deadline_start}</span></div>
+                <div>Deadline: <span>${c.deadline_end}</span></div>
+                <div>Dzien ${c.dni_od_startu} z ${c.total_days}</div>
+                <div>Dni do deadline: <span style="${c.dni_do_deadline<=7?'color:var(--neg);':''}">${c.dni_do_deadline}</span></div>
             </div>
         </div>
 
         <section class="kpi-row">
-            <div class="kpi-card">
-                <div class="kpi-label">UU Login</div>
-                <div class="kpi-value">${c.uu_login.toLocaleString('pl-PL')}</div>
-                <div class="kpi-sub">Cel: ${c.kpi_uu} | Brakuje: ${c.brakuje_uu}</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Realizacja</div>
-                <div class="kpi-value">${c.pct_realizacji.toFixed(1)}%</div>
-                <div class="kpi-sub ${c.pct_realizacji >= 80 ? 'positive' : c.pct_realizacji >= 50 ? 'warning' : 'negative'}">Prognoza: ${c.prognoza_uu} UU</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Pace Index</div>
-                <div class="kpi-value">${Math.min(Math.round(c.pace_index), 999)}</div>
-                <div class="kpi-sub ${c.pace_index >= 120 ? 'positive' : c.pace_index >= 80 ? 'warning' : 'negative'}">Tempo: ${c.tempo_sr_dzien.toFixed(1)}/dzien (wymagane: ${c.wymagane_tempo.toFixed(1)})</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Engagement Rate</div>
-                <div class="kpi-value">${c.engagement_rate.toFixed(1)}%</div>
-                <div class="kpi-sub">Video started: ${c.video_started_uu} z ${c.uu_login} UU</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Avg Watchtime</div>
-                <div class="kpi-value">${c.avg_watchtime_sec}s</div>
-                <div class="kpi-sub">${c.avg_watchtime_min} min | Pings: ${c.watchtime_pings}</div>
-            </div>
+            <div class="kpi"><div class="kpi-label">UU Login</div><div class="kpi-val">${c.uu_login.toLocaleString('pl-PL')}</div><div class="kpi-sub">Cel: ${c.kpi_uu} | Brakuje: ${c.brakuje_uu}</div></div>
+            <div class="kpi"><div class="kpi-label">Realizacja</div><div class="kpi-val">${c.pct_realizacji.toFixed(1)}%</div><div class="kpi-sub ${c.pct_realizacji>=80?'pos':'neg'}">Prognoza: ${c.prognoza_uu} UU</div></div>
+            <div class="kpi"><div class="kpi-label">Tempo / dzien</div><div class="kpi-val">${c.tempo_sr_dzien.toFixed(1)}</div><div class="kpi-sub ${c.tempo_sr_dzien>=c.wymagane_tempo?'pos':'neg'}">Wymagane: ${c.wymagane_tempo.toFixed(1)}/d</div></div>
+            <div class="kpi"><div class="kpi-label">Engagement</div><div class="kpi-val">${c.engagement_rate.toFixed(0)}%</div><div class="kpi-sub">Video: ${c.video_started_uu} z ${c.uu_login}</div></div>
+            <div class="kpi"><div class="kpi-label">Watchtime</div><div class="kpi-val">${c.avg_watchtime_sec}s</div><div class="kpi-sub">${c.avg_watchtime_min} min</div></div>
         </section>
 
-        <section class="chart-row equal">
-            <div class="chart-container">
-                <h3>Realizacja vs Cel</h3>
-                <canvas id="detail-chart-realization"></canvas>
-            </div>
-            <div class="chart-container">
+        ${dailyHTML}
+
+        <section class="chart-grid eq">
+            <div class="card">
                 <h3>Zrodla ruchu</h3>
                 <canvas id="detail-chart-utm"></canvas>
             </div>
-        </section>
-
-        <section class="chart-row equal">
-            <div class="chart-container">
-                <h3>Metryki kampanii</h3>
+            <div class="card">
+                <h3>Funnel konwersji</h3>
                 <canvas id="detail-chart-funnel"></canvas>
             </div>
-            <div class="chart-container">
-                <h3>Podsumowanie</h3>
-                <div style="padding:12px 0;">
-                    <table class="data-table" style="font-size:13px;">
-                        <tbody>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">PV Login</td><td style="font-weight:600;">${c.pv_login.toLocaleString('pl-PL')}</td></tr>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Login</td><td style="font-weight:600;">${c.uu_login.toLocaleString('pl-PL')}</td></tr>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">Video Started UU</td><td style="font-weight:600;">${c.video_started_uu.toLocaleString('pl-PL')}</td></tr>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">Watchtime UU</td><td style="font-weight:600;">${c.watchtime_uu}</td></tr>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Organic</td><td style="font-weight:600;">${c.uu_organic} (${c.pct_organic.toFixed(1)}%)</td></tr>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Facebook</td><td style="font-weight:600;">${c.uu_facebook} (${c.pct_facebook.toFixed(1)}%)</td></tr>
-                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Instagram</td><td style="font-weight:600;">${c.uu_instagram} (${c.pct_instagram.toFixed(1)}%)</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-        `;
+        </section>`;
 
         document.getElementById('detail-content').innerHTML = html;
 
-        // Detail charts
         setTimeout(() => {
-            // Realization gauge-like chart
-            new Chart(document.getElementById('detail-chart-realization').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['Realizacja'],
-                    datasets: [
-                        { label: 'UU Login', data: [c.uu_login], backgroundColor: COLORS.blue + 'cc', borderRadius: 6 },
-                        { label: 'Brakuje', data: [c.brakuje_uu], backgroundColor: '#e2e8f0', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                    scales: { x: { stacked: true, max: c.kpi_uu, grid: { color: '#f1f5f9' } }, y: { stacked: true, display: false } },
-                    plugins: {
-                        legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } },
-                        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x} UU` } }
+            // Daily chart — cumulative UU vs expected line
+            if (c.daily.length > 0) {
+                new Chart(document.getElementById('detail-daily-chart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: c.daily.map(d => d.date.slice(5)), // MM-DD
+                        datasets: [
+                            { label: 'UU / dzien', data: c.daily.map(d => d.uu), backgroundColor: COLORS.blue + '99', borderRadius: 3, yAxisID: 'y', order: 2 },
+                            { label: 'Kumulatywne UU', data: c.daily.map(d => d.cum_uu), type: 'line', borderColor: COLORS.blue, backgroundColor: COLORS.blue + '15', borderWidth: 2, pointRadius: 2, fill: true, yAxisID: 'y1', order: 1 },
+                            { label: 'Oczekiwane (liniowe)', data: c.daily.map((d, i) => Math.round(c.kpi_uu * (i + 1) / c.total_days)), type: 'line', borderColor: '#94a3b8', borderWidth: 2, borderDash: [6, 4], pointRadius: 0, yAxisID: 'y1', order: 0 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 12, font: { size: 11 } } } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } },
+                            y: { beginAtZero: true, position: 'left', title: { display: true, text: 'UU / dzien', font: { size: 11 } }, grid: { color: '#f1f5f9' } },
+                            y1: { beginAtZero: true, position: 'right', title: { display: true, text: 'UU kumulat.', font: { size: 11 } }, grid: { display: false }, max: Math.round(c.kpi_uu * 1.1) }
+                        }
                     }
-                }
-            });
+                });
+            }
 
             // UTM doughnut
             new Chart(document.getElementById('detail-chart-utm').getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Organic', 'Facebook', 'Instagram'],
-                    datasets: [{ data: [c.uu_organic, c.uu_facebook, c.uu_instagram], backgroundColor: [COLORS.green + 'cc', COLORS.blue + 'cc', COLORS.pink + 'cc'], borderWidth: 2, borderColor: '#fff' }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '60%',
-                    plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, font: { size: 12 } } },
-                        tooltip: { callbacks: { label: ctx => { const t = ctx.dataset.data.reduce((a,b)=>a+b,0); return `${ctx.label}: ${ctx.parsed} (${((ctx.parsed/t)*100).toFixed(1)}%)`; } } }
-                    }
-                }
+                type:'doughnut',
+                data:{labels:['Organic','Facebook','Instagram'],datasets:[{data:[c.uu_organic,c.uu_facebook,c.uu_instagram],backgroundColor:[COLORS.green+'cc',COLORS.blue+'cc',COLORS.pink+'cc'],borderWidth:2,borderColor:'#fff'}]},
+                options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true}},tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t>0?`${ctx.label}: ${ctx.parsed} (${((ctx.parsed/t)*100).toFixed(0)}%)`:ctx.label;}}}}}
             });
 
             // Funnel
-            new Chart(document.getElementById('detail-chart-funnel').getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: ['PV Login', 'UU Login', 'Video Started', 'Watchtime UU'],
-                    datasets: [{ data: [c.pv_login, c.uu_login, c.video_started_uu, c.watchtime_uu], backgroundColor: [COLORS.slate + 'cc', COLORS.blue + 'cc', COLORS.purple + 'cc', COLORS.teal + 'cc'], borderRadius: 4 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#f1f5f9' } } }
-                }
-            });
+            if (c.pv_login > 0) {
+                new Chart(document.getElementById('detail-chart-funnel').getContext('2d'), {
+                    type:'bar',
+                    data:{labels:['PV Login','UU Login','Video Started','Watchtime UU'],datasets:[{data:[c.pv_login,c.uu_login,c.video_started_uu,c.watchtime_uu],backgroundColor:[COLORS.slate+'cc',COLORS.blue+'cc',COLORS.purple+'cc',COLORS.teal+'cc'],borderRadius:4}]},
+                    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:'#f1f5f9'}}}}
+                });
+            }
         }, 100);
     }
-}
 
-// =============================================
-// VIEW SWITCHING
-// =============================================
-function showView(view) {
-    const overview = document.getElementById('overview-view');
-    const detail = document.getElementById('detail-view');
-    const tabs = document.querySelectorAll('.view-tab');
-
-    if (view === 'overview') {
-        overview.classList.remove('hidden');
-        detail.classList.remove('active');
-        tabs[0].classList.add('active');
-        tabs[1].classList.remove('active');
-    } else {
-        overview.classList.add('hidden');
-        detail.classList.add('active');
-        tabs[0].classList.remove('active');
-        tabs[1].classList.add('active');
+    showOverview() {
+        document.getElementById('view-detail').classList.remove('active');
+        document.getElementById('view-overview').classList.add('active');
     }
 }
 
-// =============================================
-// INIT
-// =============================================
 const dashboard = new Dashboard(CAMPAIGNS);
 </script>
 </body>
