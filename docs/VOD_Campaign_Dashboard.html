@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOD Campaign Tracker — Remedium</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-primary: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-header: #0f172a;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-on-dark: #ffffff;
+            --accent: #3b82f6;
+            --accent-light: #eff6ff;
+            --positive: #16a34a;
+            --negative: #dc2626;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --gap: 16px;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--gap);
+        }
+
+        /* HEADER */
+        .dashboard-header {
+            background: var(--bg-header);
+            color: var(--text-on-dark);
+            padding: 20px 28px;
+            border-radius: var(--radius);
+            margin-bottom: var(--gap);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .dashboard-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+        .header-subtitle { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+        .header-left { display: flex; flex-direction: column; }
+
+        .filters { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .filter-group { display: flex; align-items: center; gap: 6px; }
+        .filter-group label { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; }
+        .filter-group select {
+            padding: 7px 12px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+            background: rgba(255,255,255,0.08); color: var(--text-on-dark); font-size: 13px;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .filter-group select:hover { background: rgba(255,255,255,0.14); }
+        .filter-group select option { background: var(--bg-header); color: var(--text-on-dark); }
+
+        /* TABS (Overview / Detail) */
+        .view-tabs {
+            display: flex; gap: 4px; background: rgba(255,255,255,0.08); border-radius: 8px; padding: 3px;
+        }
+        .view-tab {
+            padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;
+            cursor: pointer; color: rgba(255,255,255,0.6); transition: all 0.15s; border: none; background: none;
+        }
+        .view-tab.active { background: rgba(255,255,255,0.15); color: #fff; }
+        .view-tab:hover:not(.active) { color: rgba(255,255,255,0.85); }
+
+        /* KPI ROW */
+        .kpi-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: var(--gap); margin-bottom: var(--gap);
+        }
+        .kpi-card {
+            background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px;
+            box-shadow: var(--shadow); border: 1px solid var(--border); transition: transform 0.15s;
+        }
+        .kpi-card:hover { transform: translateY(-1px); }
+        .kpi-label {
+            font-size: 12px; color: var(--text-secondary); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;
+        }
+        .kpi-value { font-size: 32px; font-weight: 800; color: var(--text-primary); letter-spacing: -1px; }
+        .kpi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+        .kpi-sub.positive { color: var(--positive); }
+        .kpi-sub.negative { color: var(--negative); }
+        .kpi-sub.warning { color: var(--warning); }
+
+        /* CHART ROW */
+        .chart-row {
+            display: grid; grid-template-columns: 2fr 1fr;
+            gap: var(--gap); margin-bottom: var(--gap);
+        }
+        .chart-row.equal { grid-template-columns: 1fr 1fr; }
+        .chart-container {
+            background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
+        .chart-container h3 {
+            font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px;
+        }
+        .chart-container canvas { max-height: 320px; }
+        .chart-container.full-width { grid-column: 1 / -1; }
+
+        /* TABLE SECTION */
+        .table-section {
+            background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px;
+            box-shadow: var(--shadow); border: 1px solid var(--border); overflow-x: auto;
+            margin-bottom: var(--gap);
+        }
+        .table-section h3 {
+            font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px;
+        }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table thead th {
+            text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--border);
+            color: var(--text-secondary); font-weight: 600; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+            user-select: none; cursor: pointer; transition: color 0.15s;
+        }
+        .data-table thead th:hover { color: var(--text-primary); }
+        .data-table tbody td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }
+        .data-table tbody tr { cursor: pointer; transition: background 0.1s; }
+        .data-table tbody tr:hover { background: var(--accent-light); }
+        .data-table tbody tr.selected { background: #dbeafe; }
+
+        /* STATUS BADGES */
+        .status-badge {
+            display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .status-badge.on-track { background: #dcfce7; color: #166534; }
+        .status-badge.at-risk { background: #fef9c3; color: #854d0e; }
+        .status-badge.behind { background: #fee2e2; color: #991b1b; }
+        .status-badge.completed { background: #dbeafe; color: #1e40af; }
+
+        /* PROGRESS BAR */
+        .progress-bar-container {
+            width: 100%; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%; border-radius: 4px; transition: width 0.3s ease;
+        }
+        .progress-bar-fill.green { background: var(--positive); }
+        .progress-bar-fill.yellow { background: var(--warning); }
+        .progress-bar-fill.red { background: var(--negative); }
+
+        /* DETAIL VIEW */
+        .detail-view { display: none; }
+        .detail-view.active { display: block; }
+        .overview-view { display: block; }
+        .overview-view.hidden { display: none; }
+
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+            font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-primary);
+            margin-bottom: var(--gap); transition: all 0.15s;
+        }
+        .back-btn:hover { background: #f8fafc; border-color: var(--accent); color: var(--accent); }
+
+        .detail-header {
+            background: var(--bg-card); border-radius: var(--radius); padding: 24px 28px;
+            box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: var(--gap);
+        }
+        .detail-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .detail-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
+        .detail-meta-item { font-size: 13px; color: var(--text-secondary); }
+        .detail-meta-item span { font-weight: 600; color: var(--text-primary); }
+
+        /* FOOTER */
+        .dashboard-footer {
+            text-align: center; padding: 16px; font-size: 12px; color: var(--text-secondary);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .chart-row, .chart-row.equal { grid-template-columns: 1fr; }
+            .kpi-row { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-header { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media print {
+            body { background: white; }
+            .dashboard-container { max-width: none; }
+            .filters, .view-tabs, .back-btn { display: none; }
+            .kpi-card, .chart-container, .table-section { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+
+    <!-- HEADER -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <h1>VOD Campaign Tracker</h1>
+            <div class="header-subtitle">Remedium.md — 5 minut o leku</div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+            <div class="view-tabs">
+                <button class="view-tab active" onclick="showView('overview')">Przegld</button>
+                <button class="view-tab" onclick="showView('detail')">Szczegoly</button>
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Klient</label>
+                    <select id="filter-client" onchange="dashboard.applyFilters()">
+                        <option value="all">Wszyscy</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="filter-status" onchange="dashboard.applyFilters()">
+                        <option value="all">Wszystkie</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- OVERVIEW VIEW -->
+    <div class="overview-view" id="overview-view">
+
+        <!-- KPI ROW -->
+        <section class="kpi-row" id="kpi-row"></section>
+
+        <!-- CHARTS -->
+        <section class="chart-row">
+            <div class="chart-container">
+                <h3>Realizacja vs Cel (UU) per kampania</h3>
+                <canvas id="chart-realization"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Zrodla ruchu (UTM)</h3>
+                <canvas id="chart-utm"></canvas>
+            </div>
+        </section>
+
+        <section class="chart-row equal">
+            <div class="chart-container">
+                <h3>Pace Index per kampania</h3>
+                <canvas id="chart-pace"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Avg Watchtime (sekundy)</h3>
+                <canvas id="chart-watchtime"></canvas>
+            </div>
+        </section>
+
+        <!-- TABLE -->
+        <section class="table-section">
+            <h3>Lista kampanii</h3>
+            <div id="campaign-table"></div>
+        </section>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div class="detail-view" id="detail-view">
+        <button class="back-btn" onclick="showView('overview')">&#8592; Powrot do listy</button>
+        <div id="detail-content"></div>
+    </div>
+
+    <footer class="dashboard-footer">
+        <span>Dane z: <strong id="data-date"></strong> | Prototyp dashboardu — dane do przeniesienia do Looker Studio</span>
+    </footer>
+</div>
+
+<script>
+// =============================================
+// EMBEDDED DATA — replace with fresh PostHog data
+// =============================================
+const CAMPAIGNS = [
+    {
+        id: 1,
+        kampania: "251-2025 Klosterfrau",
+        klient: "Klosterfrau",
+        material: "Benzydamina",
+        path: "/wideo/5-minut-o-leku-63/benzydamina-798",
+        kpi_uu: 400,
+        deadline_start: "2026-03-13",
+        deadline_end: "2026-03-31",
+        uu_login: 315,
+        pv_login: 462,
+        video_started_uu: 149,
+        watchtime_pings: 977,
+        watchtime_uu: 134,
+        avg_watchtime_sec: 73,
+        uu_organic: 78,
+        uu_facebook: 149,
+        uu_instagram: 0,
+        data_aktualizacji: "2026-03-24"
+    },
+    {
+        id: 2,
+        kampania: "6-2026 Glenmark-Ryaltris",
+        klient: "Glenmark",
+        material: "Mometazon+olopatadyna",
+        path: "/wideo/5-minut-o-leku-63/mometazon-z-olopatadyna-797",
+        kpi_uu: 500,
+        deadline_start: "2026-03-04",
+        deadline_end: "2026-03-31",
+        uu_login: 347,
+        pv_login: 479,
+        video_started_uu: 164,
+        watchtime_pings: 844,
+        watchtime_uu: 143,
+        avg_watchtime_sec: 59,
+        uu_organic: 76,
+        uu_facebook: 168,
+        uu_instagram: 0,
+        data_aktualizacji: "2026-03-24"
+    },
+    {
+        id: 3,
+        kampania: "229-2025 Egis Escitalopram",
+        klient: "Egis",
+        material: "Escitalopram",
+        path: "/wideo/5-minut-o-leku-63/escitalopram-795",
+        kpi_uu: 400,
+        deadline_start: "2026-03-02",
+        deadline_end: "2026-03-31",
+        uu_login: 372,
+        pv_login: 631,
+        video_started_uu: 187,
+        watchtime_pings: 1917,
+        watchtime_uu: 181,
+        avg_watchtime_sec: 106,
+        uu_organic: 98,
+        uu_facebook: 163,
+        uu_instagram: 2,
+        data_aktualizacji: "2026-03-24"
+    },
+    {
+        id: 4,
+        kampania: "25-2026 Egis Xiltess",
+        klient: "Egis",
+        material: "Rivaroxaban",
+        path: "/wideo/5-minut-o-leku-63/rivaroxaban-355",
+        kpi_uu: 300,
+        deadline_start: "2026-02-16",
+        deadline_end: "2026-05-24",
+        uu_login: 150,
+        pv_login: 266,
+        video_started_uu: 99,
+        watchtime_pings: 1412,
+        watchtime_uu: 95,
+        avg_watchtime_sec: 149,
+        uu_organic: 59,
+        uu_facebook: 67,
+        uu_instagram: 15,
+        data_aktualizacji: "2026-03-24"
+    },
+    {
+        id: 5,
+        kampania: "229-2025 Egis Agomelatyna",
+        klient: "Egis",
+        material: "Agomelatyna",
+        path: "/wideo/5-minut-o-leku-63/agomelatyna-823",
+        kpi_uu: 400,
+        deadline_start: "2026-03-17",
+        deadline_end: "2026-04-16",
+        uu_login: 85,
+        pv_login: 128,
+        video_started_uu: 36,
+        watchtime_pings: 184,
+        watchtime_uu: 28,
+        avg_watchtime_sec: 66,
+        uu_organic: 44,
+        uu_facebook: 11,
+        uu_instagram: 0,
+        data_aktualizacji: "2026-03-24"
+    },
+    {
+        id: 6,
+        kampania: "130-2025 Adamed",
+        klient: "Adamed",
+        material: "Bisoprolol+ramipryl",
+        path: "/wideo/5-minut-o-leku-63/bisoprolol-ramipryl-785",
+        kpi_uu: 400,
+        deadline_start: "2026-01-01",
+        deadline_end: "2026-01-31",
+        uu_login: 456,
+        pv_login: 0,
+        video_started_uu: 0,
+        watchtime_pings: 0,
+        watchtime_uu: 0,
+        avg_watchtime_sec: 0,
+        uu_organic: 0,
+        uu_facebook: 0,
+        uu_instagram: 0,
+        data_aktualizacji: "2026-03-24"
+    }
+];
+
+// =============================================
+// COMPUTED FIELDS
+// =============================================
+function enrichCampaign(c) {
+    const today = new Date();
+    const start = new Date(c.deadline_start);
+    const end = new Date(c.deadline_end);
+    const totalDays = Math.max(1, Math.ceil((end - start) / 86400000));
+    const daysElapsed = Math.max(0, Math.ceil((today - start) / 86400000));
+    const daysRemaining = Math.max(0, Math.ceil((end - today) / 86400000));
+
+    c.pct_realizacji = (c.uu_login / c.kpi_uu) * 100;
+    c.brakuje_uu = Math.max(0, c.kpi_uu - c.uu_login);
+    c.dni_od_startu = daysElapsed;
+    c.dni_do_deadline = daysRemaining;
+    c.tempo_sr_dzien = daysElapsed > 0 ? c.uu_login / daysElapsed : 0;
+    c.wymagane_tempo = daysRemaining > 0 ? c.brakuje_uu / daysRemaining : 0;
+    c.pace_index = c.wymagane_tempo > 0 ? (c.tempo_sr_dzien / c.wymagane_tempo) * 100 : 999;
+    c.engagement_rate = c.uu_login > 0 ? (c.video_started_uu / c.uu_login) * 100 : 0;
+    c.avg_watchtime_min = (c.avg_watchtime_sec / 60).toFixed(1);
+    c.pct_facebook = c.uu_login > 0 ? (c.uu_facebook / c.uu_login) * 100 : 0;
+    c.pct_organic = c.uu_login > 0 ? (c.uu_organic / c.uu_login) * 100 : 0;
+    c.pct_instagram = c.uu_login > 0 ? (c.uu_instagram / c.uu_login) * 100 : 0;
+    c.prognoza_uu = Math.round(c.tempo_sr_dzien * totalDays);
+
+    if (c.pct_realizacji >= 100) c.status = "Zrealizowana";
+    else if (c.pace_index >= 120) c.status = "On Track";
+    else if (c.pace_index >= 80) c.status = "At Risk";
+    else c.status = "Behind";
+
+    return c;
+}
+
+CAMPAIGNS.forEach(enrichCampaign);
+
+// =============================================
+// CHART COLORS
+// =============================================
+const COLORS = {
+    blue: '#3b82f6',
+    orange: '#f97316',
+    green: '#22c55e',
+    red: '#ef4444',
+    purple: '#8b5cf6',
+    teal: '#14b8a6',
+    pink: '#ec4899',
+    slate: '#64748b'
+};
+const PALETTE = [COLORS.blue, COLORS.orange, COLORS.green, COLORS.red, COLORS.purple, COLORS.teal];
+
+// =============================================
+// DASHBOARD CLASS
+// =============================================
+class Dashboard {
+    constructor(data) {
+        this.rawData = data;
+        this.filteredData = [...data];
+        this.charts = {};
+        this.sortCol = 'pct_realizacji';
+        this.sortDir = 'desc';
+        this.init();
+    }
+
+    init() {
+        this.populateFilters();
+        this.renderKPIs();
+        this.renderCharts();
+        this.renderTable();
+        document.getElementById('data-date').textContent = this.rawData[0]?.data_aktualizacji || 'N/A';
+    }
+
+    populateFilters() {
+        const clientSelect = document.getElementById('filter-client');
+        const statusSelect = document.getElementById('filter-status');
+        const clients = [...new Set(this.rawData.map(c => c.klient))].sort();
+        const statuses = [...new Set(this.rawData.map(c => c.status))].sort();
+        clients.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; clientSelect.appendChild(o); });
+        statuses.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; statusSelect.appendChild(o); });
+    }
+
+    applyFilters() {
+        const client = document.getElementById('filter-client').value;
+        const status = document.getElementById('filter-status').value;
+        this.filteredData = this.rawData.filter(c => {
+            if (client !== 'all' && c.klient !== client) return false;
+            if (status !== 'all' && c.status !== status) return false;
+            return true;
+        });
+        this.renderKPIs();
+        this.updateCharts();
+        this.renderTable();
+    }
+
+    // KPIs
+    renderKPIs() {
+        const d = this.filteredData;
+        const totalUU = d.reduce((s, c) => s + c.uu_login, 0);
+        const totalKPI = d.reduce((s, c) => s + c.kpi_uu, 0);
+        const avgRealizacja = d.length ? d.reduce((s, c) => s + c.pct_realizacji, 0) / d.length : 0;
+        const avgWatchtime = d.length ? d.reduce((s, c) => s + c.avg_watchtime_sec, 0) / d.length : 0;
+        const onTrack = d.filter(c => c.status === 'On Track' || c.status === 'Zrealizowana').length;
+        const behind = d.filter(c => c.status === 'Behind').length;
+
+        const kpis = [
+            { label: 'UU Login (suma)', value: totalUU.toLocaleString('pl-PL'), sub: `Cel: ${totalKPI.toLocaleString('pl-PL')}`, cls: '' },
+            { label: 'Avg Realizacja', value: avgRealizacja.toFixed(1) + '%', sub: avgRealizacja >= 70 ? 'Dobry poziom' : 'Ponizej 70%', cls: avgRealizacja >= 70 ? 'positive' : 'negative' },
+            { label: 'Avg Watchtime', value: avgWatchtime.toFixed(0) + 's', sub: (avgWatchtime / 60).toFixed(1) + ' min', cls: '' },
+            { label: 'On Track', value: `${onTrack}/${d.length}`, sub: onTrack === d.length ? 'Wszystkie OK' : `${d.length - onTrack} wymaga uwagi`, cls: onTrack === d.length ? 'positive' : 'warning' },
+            { label: 'Behind', value: behind.toString(), sub: behind === 0 ? 'Brak zagrozen' : 'Wymaga interwencji', cls: behind === 0 ? 'positive' : 'negative' },
+        ];
+
+        document.getElementById('kpi-row').innerHTML = kpis.map(k => `
+            <div class="kpi-card">
+                <div class="kpi-label">${k.label}</div>
+                <div class="kpi-value">${k.value}</div>
+                <div class="kpi-sub ${k.cls}">${k.sub}</div>
+            </div>
+        `).join('');
+    }
+
+    // CHARTS
+    renderCharts() {
+        this.renderRealizationChart();
+        this.renderUTMChart();
+        this.renderPaceChart();
+        this.renderWatchtimeChart();
+    }
+
+    renderRealizationChart() {
+        const d = this.filteredData;
+        const labels = d.map(c => c.material.length > 25 ? c.material.substring(0, 25) + '...' : c.material);
+        const ctx = document.getElementById('chart-realization').getContext('2d');
+        this.charts.realization = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'UU Login', data: d.map(c => c.uu_login), backgroundColor: COLORS.blue + 'cc', borderRadius: 4 },
+                    { label: 'KPI UU', data: d.map(c => c.kpi_uu), backgroundColor: COLORS.orange + '55', borderColor: COLORS.orange, borderWidth: 2, borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } }
+                }
+            }
+        });
+    }
+
+    renderUTMChart() {
+        const d = this.filteredData;
+        const organic = d.reduce((s, c) => s + c.uu_organic, 0);
+        const fb = d.reduce((s, c) => s + c.uu_facebook, 0);
+        const ig = d.reduce((s, c) => s + c.uu_instagram, 0);
+        const ctx = document.getElementById('chart-utm').getContext('2d');
+        this.charts.utm = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Organic', 'Facebook', 'Instagram'],
+                datasets: [{ data: [organic, fb, ig], backgroundColor: [COLORS.green + 'cc', COLORS.blue + 'cc', COLORS.pink + 'cc'], borderWidth: 2, borderColor: '#fff' }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '60%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } },
+                    tooltip: {
+                        callbacks: {
+                            label: function(ctx) {
+                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                return `${ctx.label}: ${ctx.parsed} UU (${((ctx.parsed / total) * 100).toFixed(1)}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    renderPaceChart() {
+        const d = this.filteredData.slice().sort((a, b) => b.pace_index - a.pace_index);
+        const labels = d.map(c => c.kampania.length > 22 ? c.kampania.substring(0, 22) + '...' : c.kampania);
+        const colors = d.map(c => c.pace_index >= 120 ? COLORS.green + 'cc' : c.pace_index >= 80 ? COLORS.orange + 'cc' : COLORS.red + 'cc');
+        const ctx = document.getElementById('chart-pace').getContext('2d');
+        this.charts.pace = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{ label: 'Pace Index', data: d.map(c => Math.min(c.pace_index, 500)), backgroundColor: colors, borderRadius: 4 }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: ctx => `Pace: ${ctx.parsed.x}` } }
+                },
+                scales: {
+                    x: { beginAtZero: true, grid: { color: '#f1f5f9' },
+                        ticks: { callback: v => v }
+                    },
+                    y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+                }
+            }
+        });
+        // add 100 line annotation manually via plugin
+    }
+
+    renderWatchtimeChart() {
+        const d = this.filteredData;
+        const labels = d.map(c => c.material.length > 20 ? c.material.substring(0, 20) + '...' : c.material);
+        const ctx = document.getElementById('chart-watchtime').getContext('2d');
+        this.charts.watchtime = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{ label: 'Avg Watchtime (s)', data: d.map(c => c.avg_watchtime_sec), backgroundColor: COLORS.teal + 'cc', borderRadius: 4 }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => v + 's' } }
+                }
+            }
+        });
+    }
+
+    updateCharts() {
+        Object.values(this.charts).forEach(c => c.destroy());
+        this.charts = {};
+        this.renderCharts();
+    }
+
+    // TABLE
+    renderTable() {
+        const d = [...this.filteredData].sort((a, b) => {
+            const av = a[this.sortCol], bv = b[this.sortCol];
+            const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+            return this.sortDir === 'asc' ? cmp : -cmp;
+        });
+
+        const arrow = (col) => this.sortCol === col ? (this.sortDir === 'asc' ? ' &#9650;' : ' &#9660;') : '';
+        const statusBadge = (s) => {
+            const cls = s === 'On Track' || s === 'Zrealizowana' ? 'on-track' : s === 'At Risk' ? 'at-risk' : 'behind';
+            return `<span class="status-badge ${cls}">${s}</span>`;
+        };
+        const progressBar = (pct) => {
+            const w = Math.min(pct, 100);
+            const cls = pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red';
+            return `<div style="display:flex;align-items:center;gap:8px;">
+                <div class="progress-bar-container" style="width:80px;">
+                    <div class="progress-bar-fill ${cls}" style="width:${w}%"></div>
+                </div>
+                <span style="font-weight:600;font-size:12px;">${pct.toFixed(1)}%</span>
+            </div>`;
+        };
+
+        let html = `<table class="data-table">
+            <thead><tr>
+                <th onclick="dashboard.sort('kampania')">Kampania${arrow('kampania')}</th>
+                <th onclick="dashboard.sort('klient')">Klient${arrow('klient')}</th>
+                <th onclick="dashboard.sort('uu_login')">UU Login${arrow('uu_login')}</th>
+                <th onclick="dashboard.sort('kpi_uu')">KPI${arrow('kpi_uu')}</th>
+                <th onclick="dashboard.sort('pct_realizacji')">Realizacja${arrow('pct_realizacji')}</th>
+                <th onclick="dashboard.sort('pace_index')">Pace${arrow('pace_index')}</th>
+                <th onclick="dashboard.sort('engagement_rate')">Engagement${arrow('engagement_rate')}</th>
+                <th onclick="dashboard.sort('status')">Status${arrow('status')}</th>
+            </tr></thead><tbody>`;
+
+        d.forEach(c => {
+            html += `<tr onclick="dashboard.showDetail(${c.id})">
+                <td style="font-weight:500;">${c.kampania}</td>
+                <td>${c.klient}</td>
+                <td style="font-weight:600;">${c.uu_login.toLocaleString('pl-PL')}</td>
+                <td>${c.kpi_uu.toLocaleString('pl-PL')}</td>
+                <td>${progressBar(c.pct_realizacji)}</td>
+                <td style="font-weight:600;color:${c.pace_index >= 120 ? COLORS.green : c.pace_index >= 80 ? COLORS.orange : COLORS.red}">${Math.min(Math.round(c.pace_index), 999)}</td>
+                <td>${c.engagement_rate.toFixed(1)}%</td>
+                <td>${statusBadge(c.status)}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById('campaign-table').innerHTML = html;
+    }
+
+    sort(col) {
+        if (this.sortCol === col) this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+        else { this.sortCol = col; this.sortDir = 'desc'; }
+        this.renderTable();
+    }
+
+    // DETAIL VIEW
+    showDetail(id) {
+        const c = this.rawData.find(x => x.id === id);
+        if (!c) return;
+
+        showView('detail');
+
+        const statusBadge = (s) => {
+            const cls = s === 'On Track' || s === 'Zrealizowana' ? 'on-track' : s === 'At Risk' ? 'at-risk' : 'behind';
+            return `<span class="status-badge ${cls}">${s}</span>`;
+        };
+
+        let html = `
+        <div class="detail-header">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <h2>${c.material}</h2>
+                    <div style="font-size:14px;color:var(--text-secondary);margin-top:2px;">${c.kampania} &middot; ${c.klient}</div>
+                </div>
+                ${statusBadge(c.status)}
+            </div>
+            <div class="detail-meta">
+                <div class="detail-meta-item">Start: <span>${c.deadline_start}</span></div>
+                <div class="detail-meta-item">Deadline: <span>${c.deadline_end}</span></div>
+                <div class="detail-meta-item">Dni od startu: <span>${c.dni_od_startu}</span></div>
+                <div class="detail-meta-item">Dni do deadline: <span>${c.dni_do_deadline}</span></div>
+                <div class="detail-meta-item">Path: <span>${c.path}</span></div>
+            </div>
+        </div>
+
+        <section class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-label">UU Login</div>
+                <div class="kpi-value">${c.uu_login.toLocaleString('pl-PL')}</div>
+                <div class="kpi-sub">Cel: ${c.kpi_uu} | Brakuje: ${c.brakuje_uu}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Realizacja</div>
+                <div class="kpi-value">${c.pct_realizacji.toFixed(1)}%</div>
+                <div class="kpi-sub ${c.pct_realizacji >= 80 ? 'positive' : c.pct_realizacji >= 50 ? 'warning' : 'negative'}">Prognoza: ${c.prognoza_uu} UU</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Pace Index</div>
+                <div class="kpi-value">${Math.min(Math.round(c.pace_index), 999)}</div>
+                <div class="kpi-sub ${c.pace_index >= 120 ? 'positive' : c.pace_index >= 80 ? 'warning' : 'negative'}">Tempo: ${c.tempo_sr_dzien.toFixed(1)}/dzien (wymagane: ${c.wymagane_tempo.toFixed(1)})</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Engagement Rate</div>
+                <div class="kpi-value">${c.engagement_rate.toFixed(1)}%</div>
+                <div class="kpi-sub">Video started: ${c.video_started_uu} z ${c.uu_login} UU</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Avg Watchtime</div>
+                <div class="kpi-value">${c.avg_watchtime_sec}s</div>
+                <div class="kpi-sub">${c.avg_watchtime_min} min | Pings: ${c.watchtime_pings}</div>
+            </div>
+        </section>
+
+        <section class="chart-row equal">
+            <div class="chart-container">
+                <h3>Realizacja vs Cel</h3>
+                <canvas id="detail-chart-realization"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Zrodla ruchu</h3>
+                <canvas id="detail-chart-utm"></canvas>
+            </div>
+        </section>
+
+        <section class="chart-row equal">
+            <div class="chart-container">
+                <h3>Metryki kampanii</h3>
+                <canvas id="detail-chart-funnel"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Podsumowanie</h3>
+                <div style="padding:12px 0;">
+                    <table class="data-table" style="font-size:13px;">
+                        <tbody>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">PV Login</td><td style="font-weight:600;">${c.pv_login.toLocaleString('pl-PL')}</td></tr>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Login</td><td style="font-weight:600;">${c.uu_login.toLocaleString('pl-PL')}</td></tr>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">Video Started UU</td><td style="font-weight:600;">${c.video_started_uu.toLocaleString('pl-PL')}</td></tr>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">Watchtime UU</td><td style="font-weight:600;">${c.watchtime_uu}</td></tr>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Organic</td><td style="font-weight:600;">${c.uu_organic} (${c.pct_organic.toFixed(1)}%)</td></tr>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Facebook</td><td style="font-weight:600;">${c.uu_facebook} (${c.pct_facebook.toFixed(1)}%)</td></tr>
+                            <tr><td style="color:var(--text-secondary);font-weight:500;">UU Instagram</td><td style="font-weight:600;">${c.uu_instagram} (${c.pct_instagram.toFixed(1)}%)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        `;
+
+        document.getElementById('detail-content').innerHTML = html;
+
+        // Detail charts
+        setTimeout(() => {
+            // Realization gauge-like chart
+            new Chart(document.getElementById('detail-chart-realization').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Realizacja'],
+                    datasets: [
+                        { label: 'UU Login', data: [c.uu_login], backgroundColor: COLORS.blue + 'cc', borderRadius: 6 },
+                        { label: 'Brakuje', data: [c.brakuje_uu], backgroundColor: '#e2e8f0', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    scales: { x: { stacked: true, max: c.kpi_uu, grid: { color: '#f1f5f9' } }, y: { stacked: true, display: false } },
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } },
+                        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.x} UU` } }
+                    }
+                }
+            });
+
+            // UTM doughnut
+            new Chart(document.getElementById('detail-chart-utm').getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Organic', 'Facebook', 'Instagram'],
+                    datasets: [{ data: [c.uu_organic, c.uu_facebook, c.uu_instagram], backgroundColor: [COLORS.green + 'cc', COLORS.blue + 'cc', COLORS.pink + 'cc'], borderWidth: 2, borderColor: '#fff' }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 12, font: { size: 12 } } },
+                        tooltip: { callbacks: { label: ctx => { const t = ctx.dataset.data.reduce((a,b)=>a+b,0); return `${ctx.label}: ${ctx.parsed} (${((ctx.parsed/t)*100).toFixed(1)}%)`; } } }
+                    }
+                }
+            });
+
+            // Funnel
+            new Chart(document.getElementById('detail-chart-funnel').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['PV Login', 'UU Login', 'Video Started', 'Watchtime UU'],
+                    datasets: [{ data: [c.pv_login, c.uu_login, c.video_started_uu, c.watchtime_uu], backgroundColor: [COLORS.slate + 'cc', COLORS.blue + 'cc', COLORS.purple + 'cc', COLORS.teal + 'cc'], borderRadius: 4 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#f1f5f9' } } }
+                }
+            });
+        }, 100);
+    }
+}
+
+// =============================================
+// VIEW SWITCHING
+// =============================================
+function showView(view) {
+    const overview = document.getElementById('overview-view');
+    const detail = document.getElementById('detail-view');
+    const tabs = document.querySelectorAll('.view-tab');
+
+    if (view === 'overview') {
+        overview.classList.remove('hidden');
+        detail.classList.remove('active');
+        tabs[0].classList.add('active');
+        tabs[1].classList.remove('active');
+    } else {
+        overview.classList.add('hidden');
+        detail.classList.add('active');
+        tabs[0].classList.remove('active');
+        tabs[1].classList.add('active');
+    }
+}
+
+// =============================================
+// INIT
+// =============================================
+const dashboard = new Dashboard(CAMPAIGNS);
+</script>
+</body>
+</html>
