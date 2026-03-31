@@ -1,0 +1,156 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-ok: var(--ok);
+  --color-ok-foreground: var(--ok-foreground);
+  --color-caution: var(--caution);
+  --color-caution-foreground: var(--caution-foreground);
+  --color-remedium: var(--remedium);
+  --color-remedium-foreground: var(--remedium-foreground);
+}
+
+:root {
+  --background: #faf6f0;
+  --foreground: #2d2a26;
+  --card: #fefcf8;
+  --card-foreground: #2d2a26;
+  --popover: #fefcf8;
+  --popover-foreground: #2d2a26;
+  --primary: #2d2a26;
+  --primary-foreground: #faf6f0;
+  --secondary: #f0eae0;
+  --secondary-foreground: #2d2a26;
+  --muted: #f0eae0;
+  --muted-foreground: #6b6560;
+  --accent: #d4e420;
+  --accent-foreground: #2d2a26;
+  --destructive: #c93b3b;
+  --border: #e4ded4;
+  --input: #e4ded4;
+  --ring: #2d2a26;
+  --chart-1: #2d2a26;
+  --chart-2: #059669;
+  --chart-3: #6b6560;
+  --chart-4: #404040;
+  --chart-5: #2d2a26;
+  --radius: 0.25rem;
+  --ok: #059669;
+  --ok-foreground: #ffffff;
+  --caution: #d97706;
+  --caution-foreground: #2d2a26;
+  --remedium: #2d2a26;
+  --remedium-foreground: #faf6f0;
+  --sidebar: #f3ede4;
+  --sidebar-foreground: #2d2a26;
+  --sidebar-primary: #2d2a26;
+  --sidebar-primary-foreground: #faf6f0;
+  --sidebar-accent: #ebe4d9;
+  --sidebar-accent-foreground: #2d2a26;
+  --sidebar-border: #e4ded4;
+  --sidebar-ring: #2d2a26;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ─── Panel chrome ─── */
+.panel-sidebar {
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+}
+
+/* ─── Skeleton sweep ─── */
+@keyframes skeleton-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+  border-radius: 2px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.04) 50%, transparent 100%);
+  animation: skeleton-sweep 1.6s ease-in-out infinite;
+}
+
+/* ─── Status dot pulse ─── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.2s ease-in-out infinite;
+}
+
+/* ─── Shimmer text ─── */
+@keyframes shimmer-text {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #6b6560 0%, #2d2a26 40%, #6b6560 50%, #2d2a26 60%, #6b6560 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-text 2.5s ease-in-out infinite;
+}
