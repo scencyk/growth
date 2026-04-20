@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth 2026-2027 · Remedium.md</title>
+<style>
+* { box-sizing: border-box; }
+:root {
+  --bg: #FFFFFF;
+  --bg-2: #F7F6F2;
+  --bg-3: #F1EFE8;
+  --text: #1A1A1A;
+  --text-2: #5F5E5A;
+  --text-3: #888780;
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.22);
+  --dn: #1D9E75;
+  --dn-dark: #0F6E56;
+  --dn-light: #5DCAA5;
+  --dn-pale: #E1F5EE;
+  --age: #BA7517;
+  --age-dark: #854F0B;
+  --age-pale: #FAEEDA;
+  --nil: #888780;
+  --accent: #1A1A1A;
+  --line-width: 720px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --bg-2: #1C1C1B;
+    --bg-3: #262624;
+    --text: #F0EFEB;
+    --text-2: #A8A6A0;
+    --text-3: #767570;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.24);
+    --dn: #5DCAA5;
+    --dn-dark: #9FE1CB;
+    --dn-light: #1D9E75;
+    --dn-pale: #0F3A2C;
+    --age: #EF9F27;
+    --age-dark: #FAC775;
+    --age-pale: #2A2118;
+    --accent: #F0EFEB;
+  }
+}
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.wrap { max-width: var(--line-width); margin: 0 auto; padding: 0 1.5rem; }
+
+nav {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 0;
+  backdrop-filter: blur(8px);
+}
+nav .inner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+nav .brand { font-size: 13px; font-weight: 500; letter-spacing: 0.5px; }
+nav .brand .dot { color: var(--dn); }
+nav ul { display: flex; gap: 1rem; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; }
+nav a { font-size: 11px; color: var(--text-2); text-decoration: none; transition: color 0.15s; }
+nav a:hover { color: var(--text); }
+@media (max-width: 900px) { nav ul { display: none; } }
+
+section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+section:last-of-type { border-bottom: none; }
+section.hero { padding: 5rem 0 4rem; }
+
+.eyebrow {
+  display: block;
+  font-size: 11px; font-weight: 500;
+  color: var(--dn-dark);
+  letter-spacing: 2.5px; text-transform: uppercase;
+  margin: 0 0 1rem;
+}
+.eyebrow.muted { color: var(--text-3); }
+.eyebrow.age { color: var(--age-dark); }
+.eyebrow .num { color: var(--text-3); margin-right: 6px; }
+
+h1 { font-size: 44px; font-weight: 500; letter-spacing: -0.8px; line-height: 1.1; margin: 0 0 1.25rem; }
+h2 { font-size: 32px; font-weight: 500; letter-spacing: -0.4px; line-height: 1.15; margin: 0 0 0.75rem; }
+h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; margin: 0 0 0.5rem; }
+.lede { font-size: 19px; color: var(--text-2); line-height: 1.55; max-width: 620px; margin: 0 0 2rem; }
+.subhead { font-size: 16px; color: var(--text-2); margin: 0 0 2.5rem; max-width: 640px; }
+p { margin: 0 0 1rem; max-width: 640px; }
+p:last-child { margin-bottom: 0; }
+
+.hero-quote {
+  border-left: 3px solid var(--dn);
+  padding-left: 1.25rem;
+  margin: 2.5rem 0 0;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-2);
+  max-width: 600px;
+}
+
+.callout {
+  background: var(--bg-3);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.callout strong { font-weight: 500; }
+.callout.dn { background: var(--dn-pale); }
+.callout.dn strong { color: var(--dn-dark); }
+.callout.age { background: var(--age-pale); }
+.callout.age strong { color: var(--age-dark); }
+
+.definition-box {
+  background: var(--dn-pale);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  margin: 0 0 2rem;
+}
+.definition-box .label { font-size: 11px; font-weight: 500; color: var(--dn-dark); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+.definition-box .term { font-size: 22px; font-weight: 500; letter-spacing: -0.3px; margin-bottom: 8px; }
+.definition-box .desc { font-size: 14px; color: var(--text-2); line-height: 1.6; max-width: 100%; }
+
+.metric-card {
+  background: var(--bg-2);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 1rem 0;
+}
+.metric-card .label { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+.metric-card .num { font-size: 36px; font-weight: 500; letter-spacing: -0.5px; line-height: 1; color: var(--text); }
+.metric-card .formula { font-size: 13px; color: var(--text-2); margin-top: 6px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.metric-card .desc { font-size: 13px; color: var(--text-2); margin-top: 10px; }
+
+.metrics-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.metrics-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.metrics-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+@media (max-width: 720px) {
+  .metrics-grid-2, .metrics-grid-3, .metrics-grid-4 { grid-template-columns: 1fr; }
+}
+
+.mini-card {
+  background: var(--bg-2);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+}
+.mini-card .label { font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
+.mini-card .num { font-size: 24px; font-weight: 500; letter-spacing: -0.3px; line-height: 1.1; }
+.mini-card .num.dn { color: var(--dn-dark); }
+.mini-card .num.age { color: var(--age-dark); }
+.mini-card .sub { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+.target-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 14px; margin: 1.5rem 0;
+}
+.target-table th {
+  text-align: left; padding: 12px 14px;
+  font-weight: 500; color: var(--text-2);
+  border-bottom: 1px solid var(--border-strong);
+  font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.target-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.target-table tr:last-child td { border-bottom: none; }
+.target-table td:first-child { font-weight: 500; }
+.target-table .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+.target-table .now-cell { color: var(--text-3); }
+.target-table .target-cell { color: var(--dn-dark); font-weight: 500; }
+.target-table .northstar td { background: var(--dn-pale); }
+.target-table .row-sub { font-size: 11px; color: var(--text-3); font-weight: 400; margin-top: 2px; }
+
+.chart-frame { margin: 2rem 0; }
+.chart-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.chart-sub { font-size: 12px; color: var(--text-3); margin-bottom: 1rem; }
+.chart-container { position: relative; width: 100%; height: 280px; }
+.chart-container.tall { height: 340px; }
+
+.reject-list { display: grid; gap: 0; margin: 1.5rem 0; }
+.reject-item {
+  display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem;
+  padding: 1rem 0; border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+.reject-item:last-child { border-bottom: 1px solid var(--border); }
+.reject-item .name { font-weight: 500; color: var(--text); }
+.reject-item .name .strike { text-decoration: line-through; color: var(--text-3); font-weight: 400; }
+.reject-item .reason { color: var(--text-2); }
+@media (max-width: 640px) { .reject-item { grid-template-columns: 1fr; gap: 4px; } }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px; outline: none; flex: 1;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg); border: 1.5px solid var(--accent);
+  cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg); border: 1.5px solid var(--accent); cursor: pointer;
+}
+
+.wave-controls {
+  display: flex; align-items: center; gap: 12px;
+  margin: 1rem 0 1.5rem;
+}
+.wave-controls .btn-play {
+  background: var(--accent); color: var(--bg);
+  border: none; padding: 0 16px; height: 32px; border-radius: 6px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+.wave-controls .btn-play:hover { opacity: 0.85; }
+.wave-controls .btn-play .icon { font-size: 10px; }
+.wave-year { font-size: 18px; font-weight: 500; min-width: 50px; }
+.wave-input { flex: 1; }
+
+.cohort-wave-svg { width: 100%; height: 320px; }
+.stage-label { font-size: 11px; fill: var(--text-3); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+.stage-meta { font-size: 10px; fill: var(--text-3); }
+.cohort-circle { transition: cx 0.35s ease, cy 0.35s ease, r 0.35s ease, opacity 0.25s; }
+.cohort-circle-label { font-size: 10px; fill: var(--text); font-weight: 500; transition: x 0.35s ease, y 0.35s ease, opacity 0.25s; pointer-events: none; }
+.stage-divider { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 3 3; }
+.wave-narrative { font-size: 13px; color: var(--text-2); font-style: italic; margin-top: 1rem; padding: 1rem; background: var(--bg-2); border-radius: 8px; }
+.wave-narrative strong { color: var(--text); font-weight: 500; }
+
+.history-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 1.5rem 0;
+}
+.history-table th {
+  text-align: left; padding: 10px 12px;
+  font-weight: 500; color: var(--text-2);
+  border-bottom: 1px solid var(--border-strong);
+  font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.history-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.history-table tr:last-child td { border-bottom: none; }
+.history-table tr.peak td { background: var(--dn-pale); font-weight: 500; }
+.history-table .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+
+.opp-list { margin: 1.5rem 0; display: grid; gap: 4px; }
+.opp-item {
+  display: grid; grid-template-columns: 240px 1fr 80px; gap: 1rem;
+  align-items: center;
+  padding: 14px 0; font-size: 13px;
+}
+.opp-item .opp-label { font-weight: 500; }
+.opp-item .opp-sub { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.opp-item .bar-bg {
+  position: relative; height: 32px;
+  background: var(--bg-2); border-radius: 6px;
+  overflow: hidden;
+}
+.opp-item .bar-have {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  background: var(--dn-light); border-radius: 6px 0 0 6px;
+}
+.opp-item .bar-gap {
+  position: absolute; top: 0; bottom: 0;
+  background: var(--dn);
+  border-radius: 0 6px 6px 0;
+}
+.opp-item .bar-gap.pipeline { background: var(--dn); opacity: 0.6; }
+.opp-item .bar-have.pipeline { background: var(--dn-light); opacity: 0.6; }
+.opp-item .bar-label-inside {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--text); padding-left: 10px;
+}
+.opp-item .gap-num { font-weight: 500; text-align: right; color: var(--dn-dark); }
+@media (max-width: 720px) {
+  .opp-item { grid-template-columns: 1fr; gap: 6px; }
+  .opp-item .gap-num { text-align: left; }
+}
+.opp-section-label {
+  font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1.5px;
+  font-weight: 500; margin: 1.5rem 0 0.5rem;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.opp-section-label.pipeline { color: var(--text-3); margin-top: 2.5rem; }
+.opp-legend { display: flex; gap: 1.25rem; font-size: 11px; color: var(--text-2); margin-top: 0.5rem; flex-wrap: wrap; }
+.opp-legend .swatch { display: inline-block; width: 12px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+
+.cost-scale {
+  margin: 1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-2);
+  border-radius: 12px;
+}
+.cost-scale .label { font-size: 11px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+.cost-scale-row {
+  display: grid; grid-template-columns: 200px 1fr 60px;
+  gap: 12px; align-items: center;
+  padding: 8px 0; font-size: 13px;
+}
+.cost-scale-row .seg-name { font-weight: 500; }
+.cost-scale-row .scale-bar {
+  height: 8px; background: var(--bg-3); border-radius: 4px; position: relative; overflow: hidden;
+}
+.cost-scale-row .scale-fill {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  border-radius: 4px;
+}
+.cost-scale-row .scale-val { font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .cost-scale-row { grid-template-columns: 1fr; gap: 4px; }
+  .cost-scale-row .scale-val { text-align: left; }
+}
+
+.simulator {
+  background: var(--bg-2);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+@media (max-width: 640px) { .simulator { padding: 1.25rem; border-radius: 12px; } }
+
+.toggle-group {
+  display: flex; gap: 0;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 4px;
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--border);
+}
+.toggle-btn {
+  flex: 1; padding: 14px 20px;
+  border: none; background: transparent;
+  border-radius: 7px; cursor: pointer;
+  font-size: 14px; font-weight: 500;
+  color: var(--text-2);
+  transition: all 0.18s;
+  text-align: center;
+  font-family: inherit;
+}
+.toggle-btn:hover { color: var(--text); }
+.toggle-btn.active {
+  background: var(--accent); color: var(--bg);
+}
+.toggle-btn .toggle-sub {
+  display: block;
+  font-size: 11px; font-weight: 400;
+  margin-top: 3px; opacity: 0.75;
+}
+
+.slider-group { margin: 0 0 1rem; }
+.slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.slider-eyebrow { font-size: 11px; color: var(--text-2); font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; }
+.slider-year-label { font-size: 20px; font-weight: 500; letter-spacing: -0.3px; }
+.slider-side-label { font-size: 11px; color: var(--text-2); font-weight: 500; width: 34px; }
+.slider-indicator { font-size: 11px; color: var(--text-3); }
+.slider-row { display: flex; align-items: center; gap: 12px; }
+.shape-note { text-align: center; font-size: 12px; color: var(--text-3); margin-top: 8px; font-style: italic; min-height: 16px; }
+
+.pyramid-wrap { margin: 1.5rem 0 1.25rem; }
+rect.bar { transition: width 0.25s ease-out; }
+text.value-label { transition: x 0.25s ease-out; }
+.cohort-label, .value-label { font-size: 13px; fill: var(--text); font-weight: 500; }
+.axis-tick { font-size: 11px; fill: var(--text-3); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 1rem; }
+@media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card { background: var(--bg); border-radius: 8px; padding: 12px 14px; }
+.stat-label-xs { font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
+.stat-value-lg { font-size: 20px; font-weight: 500; letter-spacing: -0.3px; }
+.stat-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+.cost-card { background: var(--bg); border-radius: 8px; padding: 12px 14px; }
+.cost-card-label { font-size: 11px; color: var(--text-2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1.5px; }
+.cost-card-row { display: flex; align-items: baseline; gap: 16px; margin-top: 6px; }
+.cost-card-value { font-size: 20px; font-weight: 500; letter-spacing: -0.3px; }
+.cost-card-unit { font-size: 12px; color: var(--text-2); margin-left: 6px; }
+.cost-card-note { font-size: 12px; color: var(--text-3); flex: 1; text-align: right; font-style: italic; }
+@media (max-width: 640px) { .cost-card-row { flex-direction: column; align-items: flex-start; gap: 8px; } .cost-card-note { text-align: left; } }
+
+.firma-comparison {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  margin: 2rem 0;
+}
+@media (max-width: 720px) { .firma-comparison { grid-template-columns: 1fr; } }
+.firma-card {
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid var(--border);
+}
+.firma-card.dn { border: 2px solid var(--dn); background: var(--dn-pale); }
+.firma-card.nil { background: var(--bg-2); }
+.firma-card .firma-label { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+.firma-card.dn .firma-label { color: var(--dn-dark); }
+.firma-card.nil .firma-label { color: var(--text-3); }
+.firma-card .firma-name { font-size: 20px; font-weight: 500; letter-spacing: -0.3px; margin-bottom: 12px; }
+.firma-card p { font-size: 14px; color: var(--text-2); line-height: 1.6; margin: 0 0 12px; max-width: 100%; }
+.firma-card p:last-child { margin-bottom: 0; }
+.firma-card strong { color: var(--text); font-weight: 500; }
+
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 1.5rem 0;
+}
+.compare-table th {
+  text-align: left; padding: 10px 12px;
+  font-weight: 500; color: var(--text-2);
+  border-bottom: 1px solid var(--border-strong);
+  font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.compare-table th.dn { color: var(--dn-dark); }
+.compare-table th.nil { color: var(--text-3); }
+.compare-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td:first-child { font-weight: 500; width: 38%; color: var(--text); }
+.compare-table .dn-cell { background: var(--dn-pale); color: var(--text); }
+.compare-table .nil-cell { color: var(--text-2); }
+
+.plateau-layers { display: grid; gap: 1rem; margin: 1.5rem 0; }
+.layer-card {
+  display: grid; grid-template-columns: 32px 1fr; gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-2);
+  border-radius: 12px;
+  align-items: start;
+}
+.layer-num {
+  font-size: 14px; font-weight: 500;
+  color: var(--age-dark);
+  background: var(--age-pale);
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.layer-card h3 { font-size: 15px; margin-bottom: 6px; }
+.layer-card .dn-counter { font-size: 13px; color: var(--text-2); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+.layer-card .dn-counter strong { color: var(--dn-dark); font-weight: 500; }
+.layer-card p { font-size: 13px; color: var(--text-2); margin: 0; }
+
+.scope-card {
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.5rem;
+  border-left: 3px solid var(--dn);
+  border-radius: 0 12px 12px 0;
+  margin: 1.5rem 0;
+}
+.scope-card h3 { font-size: 14px; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--dn-dark); }
+.scope-card ul { margin: 0; padding-left: 1.1rem; font-size: 14px; }
+.scope-card li { margin-bottom: 8px; color: var(--text-2); line-height: 1.55; }
+.scope-card li strong { color: var(--text); font-weight: 500; }
+
+.roadmap { margin: 2rem 0; display: grid; gap: 0; }
+.quarter {
+  display: grid; grid-template-columns: 130px 1fr; gap: 1.5rem;
+  padding: 1.25rem 0; border-top: 1px solid var(--border);
+}
+.quarter:last-child { border-bottom: 1px solid var(--border); }
+.quarter-when { font-size: 13px; font-weight: 500; color: var(--dn-dark); }
+.quarter-phase { font-size: 11px; color: var(--text-3); margin-top: 2px; text-transform: uppercase; letter-spacing: 1.5px; }
+.quarter-body h3 { font-size: 15px; margin-bottom: 6px; }
+.quarter-body p { font-size: 13.5px; color: var(--text-2); margin: 0; }
+@media (max-width: 640px) { .quarter { grid-template-columns: 1fr; gap: 6px; padding: 1rem 0; } }
+
+.footer {
+  padding: 3rem 0 4rem;
+  background: var(--bg-2);
+  font-size: 12px; color: var(--text-3);
+  line-height: 1.7;
+}
+.footer strong { color: var(--text-2); font-weight: 500; }
+.footer .row { display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  h1 { font-size: 30px; }
+  h2 { font-size: 22px; }
+  .lede { font-size: 16px; }
+  .metric-card .num { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap inner">
+    <div class="brand"><span class="dot">●</span>  Remedium.md  ·  Growth 2026-2027</div>
+    <ul>
+      <li><a href="#cel">1. Cel</a></li>
+      <li><a href="#metryka">2. Metryka</a></li>
+      <li><a href="#dynamika">3. Dynamika</a></li>
+      <li><a href="#statystyki">4. Statystyki</a></li>
+      <li><a href="#obszary">5. Obszary</a></li>
+      <li><a href="#perspektywa">6. 5 lat</a></li>
+      <li><a href="#plateau">7. Plateau</a></li>
+      <li><a href="#zakres">8. Zakres</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Strategia · Kwiecień 2026</p>
+    <h1>Growth 2026-2027</h1>
+    <p class="lede">Cel działu, metryka, której pilnujemy, i plan na dwa najbliższe lata. Cała narracja oparta na danych z PostHog, NIL, MZ i MNiSW.</p>
+    <div class="hero-quote">Growth mierzy pokrycie Remedium w segmencie Digital Native — kohorcie, która za 10 lat będzie polską medycyną.</div>
+  </div>
+</section>
+
+<section id="cel">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">01</span>Cel Growth jako działu</p>
+    <h2>Growth odpowiada za jedno pytanie: jaki procent polskich lekarzy z PWZ &lt;40 lat jest zarejestrowany w Remedium.</h2>
+    <p class="subhead">Pojedyncza metryka, którą Growth w pełni kontroluje, która nie wchodzi w konflikt z Produktem i która bezpośrednio napędza przychód — bo pharma kupuje dotarcie do lekarzy z prawem wykonywania zawodu, którzy piszą recepty. Studenci są pipeline'm pod przyszłe revenue, ale dziś-revenue to PWZ.</p>
+
+    <div class="metric-card">
+      <div class="label">North star · pokrycie DN-PWZ</div>
+      <div class="num">~70%</div>
+      <div class="formula">zarejestrowani lekarze z PWZ &lt;40 lat (zweryfikowani przez NIL) / pool DN praktykujących w PL</div>
+      <div class="desc">~36 500 lekarzy DN-PWZ w bazie z ~49 000 praktykujących lekarzy &lt;40 w PL. Liczymy zarejestrowanych — bo pozyskanie jest jedynym wymiarem, który Growth kontroluje. Aktywność (MAU/DAU) i retencja są metrykami Produktu, prowadzonymi w osobnej ścieżce.</div>
+    </div>
+
+    <h3 style="margin-top: 2rem; margin-bottom: 0.5rem;">Cele liczbowe Growth na 2026-2027</h3>
+    <p style="font-size: 14.5px; color: var(--text-2);">Twarde KPI rozliczeniowe. Pokrycie DN-PWZ (revenue today) to north star — pozostałe to leading indicators i pipeline metrics.</p>
+
+    <table class="target-table">
+      <thead>
+        <tr>
+          <th style="width: 40%;">Metryka</th>
+          <th class="num-cell" style="width: 20%;">Dziś</th>
+          <th class="num-cell" style="width: 20%;">Cel 2026</th>
+          <th class="num-cell" style="width: 20%;">Cel 2027</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="northstar">
+          <td>Pokrycie DN-PWZ <span class="row-sub">(north star · revenue today)</span></td>
+          <td class="num-cell now-cell">~70%</td>
+          <td class="num-cell target-cell">≥72%</td>
+          <td class="num-cell target-cell">≥75%</td>
+        </tr>
+        <tr>
+          <td>Liczba absolutna DN-PWZ w bazie <span class="row-sub">(rośnie nawet przy stałym %)</span></td>
+          <td class="num-cell now-cell">~36 500</td>
+          <td class="num-cell target-cell">≥40 000</td>
+          <td class="num-cell target-cell">≥44 000</td>
+        </tr>
+        <tr>
+          <td>Pokrycie świeży PWZ 25-29 <span class="row-sub">(monetyzacja w 2-letnim horyzoncie)</span></td>
+          <td class="num-cell now-cell">~58%</td>
+          <td class="num-cell target-cell">≥70%</td>
+          <td class="num-cell target-cell">≥80%</td>
+        </tr>
+        <tr>
+          <td>Pokrycie studentów medycyny <span class="row-sub">(pipeline na 4-8 lat, leading indicator)</span></td>
+          <td class="num-cell now-cell">54%</td>
+          <td class="num-cell target-cell">≥62%</td>
+          <td class="num-cell target-cell">≥70%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout dn">
+      <strong>Dlaczego pokrycie DN, a nie pokrycie 130k NIL:</strong> mianownik 130 000 zawiera ~30-40k lekarzy 55+, którzy w 5-10 lat odejdą z systemu, mają ugruntowane workflow bez narzędzi cyfrowych i są strukturalnie poza propozycją wartości Remedium. Mierząc się względem 130k, fiksujemy rachunek tak, że zawsze wyglądamy na pretendenta — mimo że w segmencie z product-market fit jesteśmy liderem z ~70% udziału.
+    </div>
+
+    <h3 style="margin-top: 2.5rem; margin-bottom: 0.5rem;">Dwa mandaty Growth</h3>
+    <p style="font-size: 14.5px; color: var(--text-2);">Growth ma dwie równoległe odpowiedzialności — strategiczną i operacyjną. Każda mierzona inaczej, raportowana w innej kadencji.</p>
+
+    <div class="metrics-grid-2" style="margin-top: 1rem;">
+      <div class="mini-card">
+        <div class="label">Mandat strategiczny</div>
+        <div class="num dn">Pokrycie DN-PWZ</div>
+        <div class="sub">Raportowanie kwartalne dla zarządu. Jedna liczba.</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Mandat operacyjny</div>
+        <div class="num dn">Wsparcie sprzedaży + infra</div>
+        <div class="sub">Raporty kampanijne, kanały akwizycji, segmentacja, walidacja CAC.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="metryka" style="background: var(--bg-2);">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">02</span>Dlaczego ta a nie inna metryka</p>
+    <h2>Cztery alternatywy odrzucone. Pokrycie DN-PWZ jest jedyną metryką, która spełnia wszystkie warunki.</h2>
+    <p class="subhead">Growth musi mieć metrykę, którą (a) w pełni kontroluje, (b) nie wchodzi w konflikt z innymi działami, (c) bezpośrednio napędza przychód, (d) jest output'em a nie input'em.</p>
+
+    <div class="reject-list">
+      <div class="reject-item">
+        <div class="name"><span class="strike">Pokrycie rynku NIL (130k)</span></div>
+        <div class="reason">Mianownik 130 000 zawiera segmenty (lekarze 55+, część POZ z papierowym workflow), w których Remedium nie ma i nie będzie miało product-market fit. Mierząc się względem nich, zawsze wyglądamy na pretendenta. <strong>Zostaje jako metryka operacyjna drugiego mandatu</strong> — przydatna dla sprzedaży, ale nie strategiczna.</div>
+      </div>
+      <div class="reject-item">
+        <div class="name"><span class="strike">Realizacja kampanii (fulfillment)</span></div>
+        <div class="reason">Wskaźnik opóźniony. Zależy od sprzedaży, kreacji i contentu. Growth nie ma pełnej kontroli — fulfillment może spaść z powodów leżących poza działem.</div>
+      </div>
+      <div class="reject-item">
+        <div class="name"><span class="strike">Aktywni lekarze (MAU/DAU)</span></div>
+        <div class="reason">To metryka Produktu, nie Growth. Aktywność jest pochodną akwizycji × retencji — Growth dostarcza pierwsze, Produkt drugie. Dwa zespoły mierzące to samo = nikt nie odpowiada za rezultat.</div>
+      </div>
+      <div class="reject-item">
+        <div class="name"><span class="strike">Koszt pozyskania (CAC)</span></div>
+        <div class="reason">Wskaźnik wejściowy, nie wyjściowy. Mierzy koszt akwizycji, nie efekt. Można nim zarządzać manipulując miksem kanałów (więcej studentów = niższy CAC), ale to nic nie mówi o tym, czy budujemy wartość. <strong>Pełni rolę metryki operacyjnej drugiego mandatu</strong> — walidujemy ją w Q2 2026, nie strategiczna.</div>
+      </div>
+    </div>
+
+    <div class="chart-frame">
+      <div class="chart-title">Ten sam licznik (45 236 lekarzy w PostHog), cztery różne historie</div>
+      <div class="chart-sub">W zależności od mianownika, ten sam fakt brzmi jak porażka albo jak dominacja segmentu.</div>
+      <div class="chart-container">
+        <canvas id="denomChart" role="img" aria-label="Wykres pokazujący cztery wskaźniki pokrycia Remedium dla różnych mianowników"></canvas>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: var(--text-2); margin-top: 1rem;">Wybór mianownika nie jest neutralną decyzją analityczną — to wybór strategiczny. Mówiąc „pokrycie DN ~70%" mówimy zarządowi i inwestorom: <em>jesteśmy liderem segmentu, w którym mamy product-market fit</em>. Mówiąc „pokrycie 35%" mówimy: <em>mamy jeszcze 2/3 do zrobienia</em>. Pierwsza narracja przyciąga kapitał i talent. Druga — nie.</p>
+  </div>
+</section>
+
+<section id="dynamika">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">03</span>Dynamika rynku DN w Polsce</p>
+    <h2>Polski rynek lekarski rośnie od dołu. Sufit Remedium sam się podnosi.</h2>
+    <p class="subhead">Liczba studentów medycyny w Polsce wzrosła o 67% w 10 lat. Te same osoby za 6-10 lat wejdą do systemu jako lekarze DN-PWZ — czyli jako revenue dla Remedium. Demografia pracuje na nas.</p>
+
+    <div class="definition-box">
+      <div class="label">Definicja</div>
+      <div class="term">Digital Native</div>
+      <div class="desc">Lekarze poniżej 40. roku życia — pokolenie wychowane z internetem, dla którego cyfrowa adopcja narzędzi (od wyszukiwarki, przez bazy leków, po AI) jest naturalnym pierwszym odruchem, nie wyborem. W Polsce jest ich dziś ~52,6 tys. z PWZ (35,5% wszystkich lekarzy), ale liczba ta rośnie strukturalnie z każdym rokiem — bo roczniki, które właśnie zaczynają studia medyczne, są o 30-40% większe od historycznych.</div>
+    </div>
+
+    <h3 style="margin-top: 2.5rem;">Dynamika w ostatnich 10 latach — dane GUS/MNiSW</h3>
+    <p style="font-size: 14.5px; color: var(--text-2);">Liczba studentów medycyny w Polsce wzrosła z 22 810 (2015/16) do <strong style="color: var(--text);">38 108 (2024/25)</strong>. To <strong style="color: var(--text);">+67% w 10 lat</strong> — średni wzrost ~5,9% rocznie. Wskaźnik na 100 tys. ludności podskoczył z 59,3 do 101,7 (+71%), bo rośnie liczbowo i jednocześnie kurczy się populacja PL.</p>
+
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Rok akademicki</th>
+          <th class="num-cell">Liczba studentów</th>
+          <th class="num-cell">na 100 tys. ludności</th>
+          <th class="num-cell">Wzrost rok-do-roku</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2015/16</td><td class="num-cell">22 810</td><td class="num-cell">59,34</td><td class="num-cell" style="color: var(--text-3);">—</td></tr>
+        <tr><td>2016/17</td><td class="num-cell">24 548</td><td class="num-cell">63,87</td><td class="num-cell">+7,6%</td></tr>
+        <tr><td>2017/18</td><td class="num-cell">25 888</td><td class="num-cell">67,36</td><td class="num-cell">+5,5%</td></tr>
+        <tr><td>2018/19</td><td class="num-cell">27 456</td><td class="num-cell">71,48</td><td class="num-cell">+6,1%</td></tr>
+        <tr><td>2019/20</td><td class="num-cell">28 832</td><td class="num-cell">75,12</td><td class="num-cell">+5,0%</td></tr>
+        <tr><td>2020/21</td><td class="num-cell">30 510</td><td class="num-cell">79,73</td><td class="num-cell">+5,8%</td></tr>
+        <tr><td>2021/22</td><td class="num-cell">32 635</td><td class="num-cell">85,70</td><td class="num-cell">+7,0%</td></tr>
+        <tr><td>2022/23</td><td class="num-cell">34 013</td><td class="num-cell">90,06</td><td class="num-cell">+4,2%</td></tr>
+        <tr><td>2023/24</td><td class="num-cell">36 432</td><td class="num-cell">96,80</td><td class="num-cell">+7,1%</td></tr>
+        <tr class="peak"><td>2024/25</td><td class="num-cell">38 108</td><td class="num-cell">101,65</td><td class="num-cell">+4,6%</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size: 12px; color: var(--text-3);">Źródło: GUS / MNiSW, dane na początek roku akademickiego.</p>
+
+    <h3 style="margin-top: 2.5rem;">Fala demograficzna — animacja przesuwania się kohort w prawo</h3>
+    <p style="font-size: 14.5px; color: var(--text-2);">Każda kohorta studencka, która dziś rozpoczyna studia, za 6 lat trafia do stażu, za 8 — w rezydenturę, za 14 — do DN core (30-39). Naciśnij play, żeby zobaczyć, jak duże roczniki 2020+ przesuwają się przez kolejne etapy kariery i zasilają DN core (revenue dla pharmy) w drugiej połowie dekady.</p>
+
+    <div class="wave-controls">
+      <button class="btn-play" id="wavePlay"><span class="icon">▶</span><span id="waveBtnLabel">Play</span></button>
+      <input type="range" min="2018" max="2040" value="2026" step="1" id="waveSlider" class="wave-input">
+      <span class="wave-year" id="waveYear">2026</span>
+    </div>
+
+    <svg class="cohort-wave-svg" id="cohortWave" viewBox="0 0 680 320" role="img" aria-label="Animowana wizualizacja przesuwania się kohort studenckich przez etapy kariery medycznej"></svg>
+
+    <div class="wave-narrative" id="waveNarrative"><strong>2026:</strong> Cohorty 2020-2025 są w studiach. Pierwsze duże roczniki (2023+) zaczynają wchodzić w fazę kliniczną. Cohort 2018 (27,5k osób) jest świeżym PWZ.</div>
+
+    <h3 style="margin-top: 3rem;">Ten sam ruch widziany jako stacked area</h3>
+    <p style="font-size: 14.5px; color: var(--text-2);">Wykres pokazuje liczbę osób w każdym etapie kariery medycznej w PL z roku na rok. Bulge dużych roczników 2024+ przesuwa się od dołu do góry — najpierw rośnie warstwa „Studia" (2024-2030), potem „Staż/PWZ" (2030-2032), potem „Rezydent" (2032-2037), wreszcie „DN core" (2037+). Linia pionowa = rok wybrany powyżej.</p>
+
+    <div class="chart-frame">
+      <div class="chart-container tall">
+        <canvas id="stackedArea" role="img" aria-label="Stacked area chart pokazujący przesuwanie się kohort między etapami kariery medycznej w Polsce 2018-2040"></canvas>
+      </div>
+    </div>
+
+    <div class="callout dn">
+      <strong>Ważny niuans: liczby absolutne rosną nawet przy stałym pokryciu.</strong> Pool DN-PWZ w Polsce rośnie z ~52,6k (2024) do ~67k (2033). Utrzymanie pokrycia na poziomie 70% oznacza w liczbach absolutnych: <strong>~36,5k dziś → ~45-47k w 2031</strong>. To <strong>+9-10k bezwzględnych użytkowników w 5 lat bez zmiany jednego punktu procentowego</strong>. Procent statyczny, masa rośnie. Dla pharmy, która kupuje zasięg w segmencie, to jest historia o 25% większej audiencji w 5 lat.
+    </div>
+  </div>
+</section>
+
+<section id="statystyki" style="background: var(--bg-2);">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">04</span>Najważniejsze statystyki</p>
+    <h2>Liczby, które definiują pokrycie Remedium dziś.</h2>
+    <p class="subhead">Wszystkie dane z PostHog (stan 19.04.2026), liczone po zarejestrowanych użytkownikach z rolą doctor lub student. Mierzymy pozyskanie, nie aktywność — to są dwie różne rzeczy, prowadzone przez dwa różne działy.</p>
+
+    <h3 style="margin-top: 1.5rem;">Skala bazy</h3>
+    <div class="metrics-grid-3">
+      <div class="mini-card">
+        <div class="label">Doktorzy w bazie</div>
+        <div class="num">45 236</div>
+        <div class="sub">zweryfikowani przez NIL</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Studenci w bazie</div>
+        <div class="num">20 541</div>
+        <div class="sub">54% polskiego rynku studentów medycyny</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Razem zarejestrowanych</div>
+        <div class="num dn">65 777</div>
+        <div class="sub">doktorzy + studenci</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 2rem;">Struktura statusu doktorów — 73% bazy to osoby przed lub w trakcie specjalizacji</h3>
+    <div class="metrics-grid-4">
+      <div class="mini-card">
+        <div class="label">Stażyści</div>
+        <div class="num dn">4 362</div>
+        <div class="sub">~25-26 lat</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Rezydenci</div>
+        <div class="num dn">9 261</div>
+        <div class="sub">~27-32 lat</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Bez specjalizacji</div>
+        <div class="num dn">19 419</div>
+        <div class="sub">~25-35 lat</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Specjaliści</div>
+        <div class="num age">11 709</div>
+        <div class="sub">~32+ lat</div>
+      </div>
+    </div>
+    <p style="font-size: 13px; color: var(--text-3); margin-top: 12px;">Status rejestracji jest twardym proxy wieku. <strong style="color: var(--text-2); font-weight: 500;">Łącznie 33 042 doktorów (73% bazy) to osoby w segmencie DN-PWZ.</strong> Wszyscy mają PWZ — czyli są dziś-revenue dla pharmy.</p>
+
+    <h3 style="margin-top: 2.5rem;">Pokrycie per segment</h3>
+    <div class="metrics-grid-3">
+      <div class="mini-card">
+        <div class="label">DN-PWZ vs PL <span style="color: var(--dn-dark); font-weight: 500;">(north star)</span></div>
+        <div class="num dn">~70%</div>
+        <div class="sub">~36,5k z ~49k praktykujących</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Studenci vs PL <span style="color: var(--text-3);">(pipeline)</span></div>
+        <div class="num dn">54%</div>
+        <div class="sub">20 541 z 38 108</div>
+      </div>
+      <div class="mini-card">
+        <div class="label">Wszystkie role vs 130k NIL</div>
+        <div class="num">35%</div>
+        <div class="sub">45 236 z 130 000</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 2.5rem;">Dynamika rejestracji studentów — pipeline kompounduje</h3>
+    <p style="font-size: 14.5px; color: var(--text-2); margin-bottom: 1rem;">Rejestracje studentów wzrosły z ~600 rocznie (2020-2023) do ponad <strong style="color: var(--text);">7 300 w 2025</strong>. To 12-krotny wzrost rocznego napływu w ciągu 5 lat. Ten strumień zasili pokrycie DN-PWZ za 4-8 lat, gdy roczniki 2024+ skończą studia i staż.</p>
+
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Rocznik rejestracji</th>
+          <th class="num-cell">Nowi zarejestrowani studenci</th>
+          <th class="num-cell">Wzrost vs poprzedni</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2020</td><td class="num-cell">636</td><td class="num-cell" style="color: var(--text-3);">—</td></tr>
+        <tr><td>2021</td><td class="num-cell">1 559</td><td class="num-cell">+145%</td></tr>
+        <tr><td>2022</td><td class="num-cell">949</td><td class="num-cell">−39%</td></tr>
+        <tr><td>2023</td><td class="num-cell">1 938</td><td class="num-cell">+104%</td></tr>
+        <tr><td>2024</td><td class="num-cell">6 185</td><td class="num-cell">+219%</td></tr>
+        <tr class="peak"><td>2025</td><td class="num-cell">7 343</td><td class="num-cell">+19%</td></tr>
+        <tr><td>2026 (do 19.04)</td><td class="num-cell">1 931</td><td class="num-cell" style="color: var(--text-3);">w trakcie</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="obszary">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">05</span>Obszary i wielkość potencjalnej akwizycji</p>
+    <h2>Najpierw lekarze z PWZ — to oni są dziś-revenue. Studenci jako pipeline.</h2>
+    <p class="subhead">Pharma kupuje dotarcie do osób piszących recepty. Każdy lekarz z PWZ pozyskany dziś jest monetyzowalny od razu. Każdy student pozyskany dziś staje się monetyzowalny za 4-8 lat. Oba mają sens — ale są różnymi ekonomiami i tak je traktujemy.</p>
+
+    <div class="opp-section-label">Lekarze z PWZ · revenue today</div>
+    <div class="opp-list">
+
+      <div class="opp-item">
+        <div>
+          <div class="opp-label">Świeży PWZ + rezydenci 25-29</div>
+          <div class="opp-sub">Naturalna konwersja ze studentów + nowi PWZ z LEK · ~2,5× droższy niż student</div>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-have" style="width: 58%;"></div>
+          <div class="bar-gap" style="left: 58%; width: 42%;"></div>
+          <div class="bar-label-inside" style="left: 29%; transform: translate(-50%, -50%);">~11k mamy</div>
+          <div class="bar-label-inside" style="left: 65%; color: white;">8k do wzięcia</div>
+        </div>
+        <div class="gap-num">+8k</div>
+      </div>
+
+      <div class="opp-item">
+        <div>
+          <div class="opp-label">DN core 30-39 (bez spec + młodzi specjaliści)</div>
+          <div class="opp-sub">Trzon dzisiejszej monetyzacji pharma · ~5× droższy niż student</div>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-have" style="width: 76%;"></div>
+          <div class="bar-gap" style="left: 76%; width: 24%;"></div>
+          <div class="bar-label-inside" style="left: 38%; transform: translate(-50%, -50%); color: white;">~25k mamy</div>
+          <div class="bar-label-inside" style="left: 84%; color: white;">~8k</div>
+        </div>
+        <div class="gap-num">+8k</div>
+      </div>
+
+      <div class="opp-item">
+        <div>
+          <div class="opp-label">Specjalizacje referencyjne (DN white space)</div>
+          <div class="opp-sub">Ortopedia, Okulistyka, Dermatologia, Anestezjologia · ~3× droższy niż student</div>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-have" style="width: 5%;"></div>
+          <div class="bar-gap" style="left: 5%; width: 25%;"></div>
+          <div class="bar-label-inside" style="left: 18%; color: white;">~2,4k DN do wzięcia</div>
+        </div>
+        <div class="gap-num">+2,4k</div>
+      </div>
+
+    </div>
+
+    <div class="callout dn" style="margin-top: 1.25rem;">
+      <strong>Lekarze z PWZ do wzięcia: ~18k zarejestrowanych w 2 lata.</strong> To bezpośrednia ekspansja monetyzowalnej audiencji pharmy. Każdy z tych użytkowników wchodzi do bazy reklamowej od razu.
+    </div>
+
+    <div class="opp-section-label pipeline">Studenci medycyny · pipeline na 4-8 lat</div>
+    <div class="opp-list">
+
+      <div class="opp-item">
+        <div>
+          <div class="opp-label">Studenci medycyny (rejestracja gap)</div>
+          <div class="opp-sub">Pre-PWZ pipeline · najtańszy CAC w portfelu (1×)</div>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-have pipeline" style="width: 54%;"></div>
+          <div class="bar-gap pipeline" style="left: 54%; width: 46%;"></div>
+          <div class="bar-label-inside" style="left: 27%; transform: translate(-50%, -50%);">20,5k mamy</div>
+          <div class="bar-label-inside" style="left: 60%; color: white;">17,6k do wzięcia</div>
+        </div>
+        <div class="gap-num">+17,6k</div>
+      </div>
+
+    </div>
+
+    <p style="font-size: 13px; color: var(--text-3); margin-top: 0.75rem;">Studenci nie są dziś monetyzowalni przez pharma — są zerowym revenue today. Ale rocznik 2024 (~7 500 osób) wchodzi jako PWZ w 2030-2031. Każdy student pozyskany w 2026 to z dużym prawdopodobieństwem PWZ-revenue w 2031-2032.</p>
+
+    <div class="opp-legend" style="margin-top: 1rem;">
+      <div><span class="swatch" style="background: var(--dn-light);"></span>Mamy dziś (zarejestrowani)</div>
+      <div><span class="swatch" style="background: var(--dn);"></span>Adresowalne w 2026-2027</div>
+    </div>
+
+    <div class="cost-scale">
+      <div class="label">Indeks kosztu pozyskania per segment · baseline = student</div>
+      <div class="cost-scale-row">
+        <div class="seg-name" style="color: var(--dn-dark);">Studenci medycyny</div>
+        <div class="scale-bar"><div class="scale-fill" style="width: 3%; background: var(--dn);"></div></div>
+        <div class="scale-val" style="color: var(--dn-dark);">1×</div>
+      </div>
+      <div class="cost-scale-row">
+        <div class="seg-name">Świeży PWZ (25-29)</div>
+        <div class="scale-bar"><div class="scale-fill" style="width: 8%; background: var(--dn-light);"></div></div>
+        <div class="scale-val">~2,5×</div>
+      </div>
+      <div class="cost-scale-row">
+        <div class="seg-name">DN core (30-39)</div>
+        <div class="scale-bar"><div class="scale-fill" style="width: 17%; background: var(--dn-light);"></div></div>
+        <div class="scale-val">~5×</div>
+      </div>
+      <div class="cost-scale-row">
+        <div class="seg-name">Lekarze 40-55</div>
+        <div class="scale-bar"><div class="scale-fill" style="width: 33%; background: var(--age);"></div></div>
+        <div class="scale-val" style="color: var(--age-dark);">~10×</div>
+      </div>
+      <div class="cost-scale-row">
+        <div class="seg-name">Lekarze 55+</div>
+        <div class="scale-bar"><div class="scale-fill" style="width: 100%; background: var(--age);"></div></div>
+        <div class="scale-val" style="color: var(--age-dark);">~30×</div>
+      </div>
+      <p style="font-size: 11px; color: var(--text-3); margin-top: 12px; margin-bottom: 0;">Wartości względne (baseline: student = 1×). Bezwzględne wartości CAC w PLN walidujemy empirycznie w Q2 2026.</p>
+    </div>
+  </div>
+</section>
+
+<section id="perspektywa" style="background: var(--bg-2);">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">06</span>Jak ta taktyka działa na 5 lat do przodu</p>
+    <h2>Symulator ścieżek + odpowiedź jaką firmę dostajemy w 2031.</h2>
+    <p class="subhead">Najpierw eksploracja: przełącznik strategii i suwak roku. Potem synteza: dwie karty pokazujące, jaka firma wychodzi za 5 lat z każdej ścieżki.</p>
+
+    <div class="simulator">
+      <div class="toggle-group" role="tablist">
+        <button class="toggle-btn" id="btnNil" role="tab" aria-selected="false">
+          NIL coverage
+          <span class="toggle-sub">% rynku 130k NIL</span>
+        </button>
+        <button class="toggle-btn active" id="btnDn" role="tab" aria-selected="true">
+          DN focus
+          <span class="toggle-sub">pokrycie &lt;40 + pipeline studencki</span>
+        </button>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-eyebrow">Rok</span>
+          <span id="yearLabel" class="slider-year-label">2031</span>
+          <span id="yearOffset" class="slider-indicator">+5 lat od dziś</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-side-label" style="text-align: right;">2026</span>
+          <input type="range" min="2026" max="2035" value="2031" step="1" id="yearSlider">
+          <span class="slider-side-label">2035</span>
+        </div>
+        <div id="shapeNote" class="shape-note">healthy pyramid — pipeline kompounduje, moat w &lt;40</div>
+      </div>
+
+      <div class="pyramid-wrap">
+      <svg id="pyramid" width="100%" viewBox="0 0 680 290" role="img" aria-label="Piramida wiekowa kohort Remedium">
+        <text class="cohort-label" x="150" y="36" text-anchor="end">Studenci medycyny</text>
+        <rect class="bar" id="bar-studenci" x="160" y="22" width="210" height="28" rx="3" fill="#1D9E75"/>
+        <text class="value-label" id="val-studenci" x="378" y="40" text-anchor="start">14k</text>
+        <text class="cohort-label" x="150" y="86" text-anchor="end">Świeży PWZ (25-29)</text>
+        <rect class="bar" id="bar-mlodzi" x="160" y="72" width="180" height="28" rx="3" fill="#1D9E75"/>
+        <text class="value-label" id="val-mlodzi" x="348" y="90" text-anchor="start">12k</text>
+        <text class="cohort-label" x="150" y="136" text-anchor="end">DN core (30-39)</text>
+        <rect class="bar" id="bar-core" x="160" y="122" width="450" height="28" rx="3" fill="#1D9E75"/>
+        <text class="value-label" id="val-core" x="618" y="140" text-anchor="start">30k</text>
+        <text class="cohort-label" x="150" y="186" text-anchor="end">40-55 lat</text>
+        <rect class="bar" id="bar-4055" x="160" y="172" width="225" height="28" rx="3" fill="#BA7517"/>
+        <text class="value-label" id="val-4055" x="393" y="190" text-anchor="start">15k</text>
+        <text class="cohort-label" x="150" y="236" text-anchor="end">55+ lat</text>
+        <rect class="bar" id="bar-55plus" x="160" y="222" width="45" height="28" rx="3" fill="#BA7517"/>
+        <text class="value-label" id="val-55plus" x="213" y="240" text-anchor="start">3k</text>
+        <line x1="160" y1="270" x2="640" y2="270" stroke="var(--border-strong)" stroke-width="0.5"/>
+        <text class="axis-tick" x="160" y="285">0</text>
+        <text class="axis-tick" x="640" y="285" text-anchor="end">32k zarejestrowanych</text>
+      </svg>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label-xs">Total zarejestrowanych</div>
+          <div id="stat-total" class="stat-value-lg">74k</div>
+          <div id="stat-total-delta" class="stat-sub">+51% vs 2026 · druga: 72k</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label-xs">Pipeline (&lt;30)</div>
+          <div id="stat-pipeline" class="stat-value-lg" style="color: var(--dn-dark);">35%</div>
+          <div id="stat-pipeline-delta" class="stat-sub">druga strategia: 18%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label-xs">Core (30-39)</div>
+          <div id="stat-core" class="stat-value-lg" style="color: var(--dn-dark);">41%</div>
+          <div id="stat-core-delta" class="stat-sub">druga strategia: 31%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label-xs">Aging (40+)</div>
+          <div id="stat-aging" class="stat-value-lg" style="color: var(--age-dark);">24%</div>
+          <div id="stat-aging-delta" class="stat-sub">druga strategia: 51%</div>
+        </div>
+      </div>
+
+      <div class="cost-card">
+        <div class="cost-card-label">Indeks kosztu względem strategii referencyjnej (DN = 1,0×)</div>
+        <div class="cost-card-row">
+          <div>
+            <span id="stat-cost" class="cost-card-value">1,0×</span>
+            <span class="cost-card-unit">budżet pozyskania kumulatywnie 2026 → wybrany rok</span>
+          </div>
+          <div id="stat-cost-note" class="cost-card-note">DN: niski koszt na pipeline studencki</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 3rem;">Synteza: jaką firmę dostajemy w 2031</h3>
+    <p style="font-size: 14.5px; color: var(--text-2);">Te same liczby co w symulatorze, ale ułożone jako profile dwóch różnych firm. To, co wybieramy dziś, zdecyduje o tym, kim jesteśmy za 5 lat — przed inwestorami, partnerami pharma, konkurencją.</p>
+
+    <div class="firma-comparison">
+      <div class="firma-card nil">
+        <div class="firma-label">Gdyby strategia NIL</div>
+        <div class="firma-name">Remedium 2031 · maszyna wolumenowa</div>
+        <p><strong>~72 tys. aktywnych użytkowników.</strong> Większość bazy (51%) w segmencie 40-55 i 55+, pozyskanych przez performance marketing po wysokim CAC.</p>
+        <p>Pharma dostaje większy zasięg liczbowo, ale skoncentrowany w starszych specjalistach o niższej skłonności do prescribingu nowych leków i krótszym horyzoncie kariery.</p>
+        <p>Pipeline studencki słaby — ~7-8 tys. zarejestrowanych. Konkurencja UpToDate/OpenEvidence ma czyste pole w segmencie &lt;40, gdzie traciliśmy share przez ostatnie 5 lat.</p>
+        <p><strong>Indeks kosztu kumulatywnego: 2,5× względem DN.</strong> Wycena jako acquisition target: rozmywa się — „mamy bazę X tysięcy", ale bez kategorialnej pozycji.</p>
+      </div>
+      <div class="firma-card dn">
+        <div class="firma-label">Strategia DN · wybrana ścieżka</div>
+        <div class="firma-name">Remedium 2031 · kategoryjny lider DN</div>
+        <p><strong>~74 tys. aktywnych użytkowników.</strong> 76% bazy w segmencie DN+pipeline. Dominacja w młodych specjalistach i rezydentach, którzy są decision-makers w 5-letnim horyzoncie pharma.</p>
+        <p>Pipeline studencki kompounduje — 14 tys. zarejestrowanych studentów = 14 tys. przyszłych PWZ za 4-8 lat. Każdy rok dorzuca kolejne 7-8 tys.</p>
+        <p>Kategorialna pozycja „default platform polskiej medycyny &lt;40" obroniona przed UpToDate/OpenEvidence — bo zaczęliśmy ich łapać, gdy byli jeszcze studentami.</p>
+        <p><strong>Indeks kosztu kumulatywnego: 1,0× (referencja).</strong> Wycena jako acquisition target: jasna kategoria — „polski lider DN", premium pharma pricing tier.</p>
+      </div>
+    </div>
+
+    <table class="compare-table" style="margin-top: 2rem;">
+      <thead>
+        <tr>
+          <th>Wymiar</th>
+          <th class="nil">Remedium 2031 NIL</th>
+          <th class="dn">Remedium 2031 DN</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Total zarejestrowanych</td>
+          <td class="nil-cell">~72k</td>
+          <td class="dn-cell">~74k</td>
+        </tr>
+        <tr>
+          <td>Mix DN+pipeline (&lt;40)</td>
+          <td class="nil-cell">49%</td>
+          <td class="dn-cell">76%</td>
+        </tr>
+        <tr>
+          <td>Pokrycie DN-PWZ (revenue today)</td>
+          <td class="nil-cell">spada do ~58%</td>
+          <td class="dn-cell">rośnie do ~75%</td>
+        </tr>
+        <tr>
+          <td>Pipeline studencki</td>
+          <td class="nil-cell">~7-8k</td>
+          <td class="dn-cell">~14k</td>
+        </tr>
+        <tr>
+          <td>Indeks kosztu kumulatywnego</td>
+          <td class="nil-cell">2,5×</td>
+          <td class="dn-cell">1,0× (referencja)</td>
+        </tr>
+        <tr>
+          <td>Pozycja konkurencyjna w &lt;40</td>
+          <td class="nil-cell">tracona na rzecz UpToDate/OpenEvidence</td>
+          <td class="dn-cell">obroniona, kategorialny lider</td>
+        </tr>
+        <tr>
+          <td>Profil revenue pharma</td>
+          <td class="nil-cell">reklama wolumenowa, niższy CPM</td>
+          <td class="dn-cell">premium DN tier, wyższy CPM</td>
+        </tr>
+        <tr>
+          <td>Atrakcyjność jako acquisition target</td>
+          <td class="nil-cell">niezróżnicowana baza</td>
+          <td class="dn-cell">jasna kategoria, premium wycena</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="plateau">
+  <div class="wrap">
+    <p class="eyebrow age"><span class="num">07</span>Efekt plateau</p>
+    <h2>Plateau jest realne. Strategia DN częściowo go obchodzi — nie zaprzecza mu.</h2>
+    <p class="subhead">Spadek tempa rejestracji to po części naturalne zjawisko, nie porażka. Przy obecnym pokryciu DN każdy kolejny punkt jest trudniejszy od poprzedniego. Zarząd powinien to rozumieć — i wyciągać z tego właściwe wnioski.</p>
+
+    <div class="plateau-layers">
+      <div class="layer-card">
+        <div class="layer-num">1</div>
+        <div>
+          <h3>Wyczerpanie łatwego segmentu</h3>
+          <p>Pierwsze ~70% pokrycia DN to lekarze cyfrowo aktywni, w dużych miastach, z silnym word-of-mouth. Większość już mamy. Pozostałe ~30% to lekarze trudniej osiągalni — w mniejszych ośrodkach, mniej online, z innymi nawykami.</p>
+          <div class="dn-counter">
+            <strong>Odpowiedź DN strategii:</strong> nie próbujemy tego dorabiać kosztem 5× wyższego CAC. Zamiast tego budujemy nowy strumień — pipeline studencki — który dostarcza kompoundujące się 54% rynku co rok.
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-card">
+        <div class="layer-num">2</div>
+        <div>
+          <h3>Stała pula nowych lekarzy — która jednak rośnie</h3>
+          <p>Co roku do zawodu wchodzi ~5 tys. nowych PWZ (po LEK/LDEK). To naturalny dopływ, który generuje szczyty rejestracji w lutym-marcu i wrześniu.</p>
+          <div class="dn-counter">
+            <strong>Odpowiedź DN strategii:</strong> ta pula rośnie z 5k (2026) do ~6k (2031) i ~6,5k (2033) — bo kohorty studenckie rocznika 2024+ są o 30-40% większe od historycznych. Sam tailwind demograficzny zapewnia +20% napływu do końca dekady.
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-card">
+        <div class="layer-num">3</div>
+        <div>
+          <h3>Rosnący koszt pozyskania</h3>
+          <p>Lekarz, który sam przyszedł z Google, kosztuje praktycznie zero. Lekarz, który nie szuka aktywnie nowych narzędzi, wymaga marki, rekomendacji, czasem bezpośredniego kontaktu. Efektywny CAC rośnie z każdym punktem pokrycia.</p>
+          <div class="dn-counter">
+            <strong>Odpowiedź DN strategii:</strong> studenci to najtańszy CAC w portfelu (~30× tańszy niż lekarz 55+). Inwestując w pipeline studencki, częściowo neutralizujemy efekt rosnącego CAC w core DN.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Co z tego wynika operacyjnie.</strong> Plateau nie znika, ale zmienia kształt. Bez interwencji rejestracje lekarzy spadają z 7,4k (2024) do ~4,3k (2026 proj). Ale jednocześnie rejestracje studentów rosną z 6,2k (2024) do 7,3k+ (2025) i utrzymują tempo. <strong>To nie jest spadek bazy — to jest rotacja kohorty</strong>, której metryka oparta na 130k NIL nie widzi, bo wyklucza studentów. Plus: pamiętajmy, że nawet przy stałym % pokrycia, liczba absolutna rośnie razem z poolem (sekcja 3).
+    </div>
+  </div>
+</section>
+
+<section id="zakres" style="background: var(--bg-2);">
+  <div class="wrap">
+    <p class="eyebrow"><span class="num">08</span>Zakres działań Growth</p>
+    <h2>Co Growth robi w 2026-2027.</h2>
+    <p class="subhead">Jasne granice mandatu i konkretny plan kwartalny z twardymi KPI.</p>
+
+    <div class="scope-card">
+      <h3>Growth decyduje</h3>
+      <ul>
+        <li><strong>Kanały akwizycji</strong> — wybór, budżet, optymalizacja (paid, content, partnerstwa uczelniane, referral)</li>
+        <li><strong>Segmentacja bazy</strong> — definicje cohort, kryteria ICP, priorytety segmentów</li>
+        <li><strong>Reaktywacja niedokończonych rejestracji</strong> — domykanie acquisition flow dla osób, które zaczęły rejestrację, ale jej nie ukończyły</li>
+        <li><strong>Walidacja CAC</strong> — pomiar i optymalizacja kosztu pozyskania per segment (mandat operacyjny)</li>
+      </ul>
+    </div>
+
+    <h3 style="margin-top: 2.5rem;">Plan kwartalny 2026-2027</h3>
+    <p style="font-size: 14px; color: var(--text-2);">Growth jest w fazie budowy. KPI rozliczeniowe rosną w miarę dojrzewania maszyny akwizycyjnej.</p>
+
+    <div class="roadmap">
+      <div class="quarter">
+        <div>
+          <div class="quarter-when">Q2 2026</div>
+          <div class="quarter-phase">Fundamenty</div>
+        </div>
+        <div class="quarter-body">
+          <h3>Audyt, segmentacja, walidacja CAC</h3>
+          <p>Audyt pokrycia DN-PWZ per specjalizacja — gdzie mamy white space. Segmentacja bazy na DN/40-55/55+. Empiryczna walidacja CAC per segment przez pilotażowe kampanie. Onboarding-track student → PWZ. <strong style="color: var(--text); font-weight: 500;">KPI: pokrycie DN-PWZ nie spada poniżej 70%, baza absolutna ≥37k.</strong></p>
+        </div>
+      </div>
+      <div class="quarter">
+        <div>
+          <div class="quarter-when">Q3 2026</div>
+          <div class="quarter-phase">Uruchomienie</div>
+        </div>
+        <div class="quarter-body">
+          <h3>Cztery kanały akwizycji w produkcji</h3>
+          <p>Partnerstwa z 5+ uczelniami medycznymi. Referral program DN→DN. Reaktywacja niedokończonych rejestracji. Content magnety pod bottleneck specjalizacje (Pulmono, Alergo, Diabeto). <strong style="color: var(--text); font-weight: 500;">KPI: rejestracje studentów ≥ 600/miesiąc, lekarzy ≥ 450/miesiąc.</strong></p>
+        </div>
+      </div>
+      <div class="quarter">
+        <div>
+          <div class="quarter-when">Q4 2026</div>
+          <div class="quarter-phase">Skalowanie</div>
+        </div>
+        <div class="quarter-body">
+          <h3>Pakiety „DN-only" + ekspansja specjalizacji referencyjnych</h3>
+          <p>Pharma pricing tier „Digital Native" jako premium offer. Ekspansja na Ortopedia/Okulistyka/Dermatologia/Anestezjologia. Pierwsze pomiary konwersji student → PWZ. <strong style="color: var(--text); font-weight: 500;">KPI: pokrycie DN-PWZ ≥72%, baza absolutna ≥40k, pokrycie studentów ≥62%.</strong></p>
+        </div>
+      </div>
+      <div class="quarter">
+        <div>
+          <div class="quarter-when">2027</div>
+          <div class="quarter-phase">Positioning</div>
+        </div>
+        <div class="quarter-body">
+          <h3>Kategoryjna pozycja „medycyna &lt;40 w Polsce"</h3>
+          <p>Pokrycie DN-PWZ ≥75%, baza absolutna ≥44k, pokrycie studentów ≥70%. Konwersja student→PWZ ≥60%. Pozycjonowanie „default platform polskiej medycyny &lt;40" — komunikacja do pharmy, inwestorów, uczelni. Gotowość obronna na ekspansję UpToDate/OpenEvidence na rynek polski.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <div class="wrap">
+    <div class="row">
+      <div>
+        <strong>Remedium.md · Growth 2026-2027</strong><br>
+        Sebastian Cencyk · Kwiecień 2026
+      </div>
+      <div style="text-align: right;">
+        Dokument żywy · Dane PostHog z 19.04.2026
+      </div>
+    </div>
+    <p style="margin-top: 1.5rem; max-width: 680px; font-size: 11px;">Źródła: MZ BASIW — Mapa Potrzeb Zdrowotnych 2022-2026, plik lekarz_2024_Polska.csv; NIL — rejestr lekarzy PWZ; GUS / MNiSW — statystyki studentów medycyny w Polsce; dane PostHog Remedium (stan: 19.04.2026, 45 236 doctors, 20 541 students). Indeksy kosztu (sekcja 5, 6) oparte na typowych ekonomikach kanałów akwizycji w polskim rynku B2B healthcare — bezwzględne wartości CAC w PLN walidujemy empirycznie w Q2 2026.</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const IS_DARK = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const COL = {
+  dn: IS_DARK ? '#5DCAA5' : '#1D9E75',
+  dnDark: IS_DARK ? '#9FE1CB' : '#0F6E56',
+  dnLight: IS_DARK ? '#1D9E75' : '#5DCAA5',
+  dnPale: IS_DARK ? '#0F3A2C' : '#E1F5EE',
+  age: IS_DARK ? '#EF9F27' : '#BA7517',
+  ageDark: IS_DARK ? '#FAC775' : '#854F0B',
+  nil: '#888780',
+  text: IS_DARK ? '#F0EFEB' : '#1A1A1A',
+  text2: IS_DARK ? '#A8A6A0' : '#5F5E5A',
+  text3: IS_DARK ? '#767570' : '#888780',
+  grid: IS_DARK ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'
+};
+
+new Chart(document.getElementById('denomChart'), {
+  type: 'bar',
+  data: {
+    labels: ['vs 130k\n(NIL całość)', 'vs 90,7k\n(DN + studenci)', 'vs 52,6k\n(DN <40 PWZ)', 'vs 49k\n(praktykujący DN)'],
+    datasets: [{
+      data: [34.8, 61.5, 67.0, 71.9],
+      backgroundColor: [COL.nil, COL.dnLight, COL.dn, COL.dnDark],
+      borderWidth: 0,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + '%' } }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: COL.text2, font: { size: 10 }, callback: function(v) { return this.getLabelForValue(v).split('\n'); } } },
+      y: { beginAtZero: true, max: 80, ticks: { color: COL.text3, font: { size: 11 }, callback: v => v + '%' }, grid: { color: COL.grid } }
+    }
+  }
+});
+
+const COHORTS_WAVE = [
+  { startYear: 2015, size: 4100 },
+  { startYear: 2017, size: 4500 },
+  { startYear: 2019, size: 5100 },
+  { startYear: 2021, size: 5800 },
+  { startYear: 2023, size: 6800 },
+  { startYear: 2025, size: 7500 },
+  { startYear: 2027, size: 7800 },
+  { startYear: 2029, size: 8000 },
+  { startYear: 2031, size: 8200 }
+];
+
+const STAGES = [
+  { name: 'Studia I-VI', sub: '19-24 lat', minOffset: 0, maxOffset: 5 },
+  { name: 'Staż / PWZ', sub: '25-26 lat', minOffset: 6, maxOffset: 7 },
+  { name: 'Rezydent', sub: '27-31 lat', minOffset: 8, maxOffset: 12 },
+  { name: 'DN core', sub: '32-39 lat', minOffset: 13, maxOffset: 21 },
+  { name: '40+ lat', sub: 'exit DN', minOffset: 22, maxOffset: 99 }
+];
+
+function getStageIdx(yearOffset) {
+  if (yearOffset < 0) return -1;
+  for (let i = 0; i < STAGES.length; i++) {
+    if (yearOffset >= STAGES[i].minOffset && yearOffset <= STAGES[i].maxOffset) return i;
+  }
+  return -1;
+}
+
+function renderWave(year) {
+  const svg = document.getElementById('cohortWave');
+  const W = 680, H = 320;
+  const stageW = W / STAGES.length;
+  const headerH = 50;
+  let html = '';
+  for (let i = 0; i < STAGES.length; i++) {
+    const x = i * stageW + stageW / 2;
+    html += `<text class="stage-label" x="${x}" y="20" text-anchor="middle">${STAGES[i].name}</text>`;
+    html += `<text class="stage-meta" x="${x}" y="36" text-anchor="middle">${STAGES[i].sub}</text>`;
+  }
+  for (let i = 1; i < STAGES.length; i++) {
+    html += `<line class="stage-divider" x1="${i * stageW}" y1="${headerH}" x2="${i * stageW}" y2="${H - 20}"/>`;
+  }
+  html += `<line x1="0" y1="${headerH + 4}" x2="${W}" y2="${headerH + 4}" stroke="${COL.text3}" stroke-width="0.5" opacity="0.3"/>`;
+  const stageBuckets = STAGES.map(() => []);
+  for (const c of COHORTS_WAVE) {
+    const offset = year - c.startYear;
+    const stageIdx = getStageIdx(offset);
+    if (stageIdx >= 0) stageBuckets[stageIdx].push({ ...c, offset });
+  }
+  for (let s = 0; s < STAGES.length; s++) {
+    const bucket = stageBuckets[s];
+    if (bucket.length === 0) continue;
+    const cx = s * stageW + stageW / 2;
+    const availableH = H - headerH - 30;
+    const slotH = availableH / Math.max(bucket.length, 1);
+    bucket.forEach((c, idx) => {
+      const r = Math.max(14, Math.min(34, Math.sqrt(c.size) * 0.45));
+      const cy = headerH + 30 + idx * slotH + slotH / 2;
+      const isExit = s === 4;
+      const fill = isExit ? COL.age : (s === 0 ? COL.dnLight : COL.dn);
+      const opacity = isExit ? 0.4 : 1;
+      const sizeK = (c.size / 1000).toFixed(1).replace('.0', '');
+      html += `<circle class="cohort-circle" cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${opacity}" stroke="${COL.dnDark}" stroke-width="${c.startYear >= 2024 ? 1.5 : 0}"/>`;
+      html += `<text class="cohort-circle-label" x="${cx}" y="${cy - r - 6}" text-anchor="middle">'${String(c.startYear).slice(2)} · ${sizeK}k</text>`;
+    });
+  }
+  svg.innerHTML = html;
+}
+
+const WAVE_NARRATIVES = {
+  2018: '<strong>2018:</strong> Cohort 2015 jest na IV roku. Kolejne roczniki idą za nimi. Pool DN nie urósł jeszcze znacząco.',
+  2020: '<strong>2020:</strong> Cohort 2015 dyplomuje. Pierwszy duży rocznik 2020 (30,5k osób w studiach łącznie) startuje studia.',
+  2022: '<strong>2022:</strong> Cohort 2015 jest rezydentem. Cohorty 2021-2022 (32-34k) płyną przez studia.',
+  2024: '<strong>2024:</strong> Cohort 2015 wchodzi w DN core. Pierwsze duże roczniki 2024 (38,1k łącznie w studiach) wystartowały — fala dotrze do PWZ w 2030.',
+  2026: '<strong>2026:</strong> Cohort 2017 jest świeżym PWZ. Cohorty 2020-2025 są w studiach. Pierwsze duże roczniki (2023+) w fazie klinicznej.',
+  2028: '<strong>2028:</strong> Cohort 2019 jest rezydentem. Roczniki 2024+ zbliżają się do końca studiów. Akceleracja zaczyna się w 2030.',
+  2030: '<strong>2030:</strong> Pierwsze duże roczniki (2024) na VI roku / staż. Pool DN przekracza 63k. Rocznik 2024 (~7,5k) dyplomuje za 1-2 lata.',
+  2032: '<strong>2032:</strong> Cohort 2024 jest świeżym PWZ — największy pojedynczy napływ w historii. Pool DN-PWZ rośnie organicznie.',
+  2034: '<strong>2034:</strong> Roczniki 2020-2025 są w DN core (30-39 lat). To pokolenie zostanie z nami przez kolejne 6-10 lat. Compound zmaterializowany.',
+  2036: '<strong>2036:</strong> Pierwsze cohorty 2015-2017 zaczynają opuszczać DN (40+). Ale za nimi płyną 3× większe roczniki 2024+. Sufit się utrzymuje.',
+  2038: '<strong>2038:</strong> Pełna rotacja: małe cohorty 2015-2018 są już w 40+, ich miejsce zajęli ich młodsi koledzy z dużych roczników 2024+.',
+  2040: '<strong>2040:</strong> Pool DN w PL osiągnął nową równowagę — większą o ~30% niż w 2024. To jest długoterminowy moat strategii DN.'
+};
+
+function getNarrative(year) {
+  const keys = Object.keys(WAVE_NARRATIVES).map(Number).sort((a, b) => a - b);
+  let bestKey = keys[0];
+  for (const k of keys) { if (k <= year) bestKey = k; }
+  return WAVE_NARRATIVES[bestKey];
+}
+
+const STACKED_DATA_YEARS = [2018,2020,2022,2024,2026,2028,2030,2032,2034,2036,2038,2040];
+const STACKED_DATA = {
+  studia:    [27456, 30510, 34013, 38108, 39500, 42500, 45000, 47000, 47800, 48200, 48500, 48800],
+  staz:      [4200, 4400, 4600, 4500, 4800, 5000, 5800, 6200, 6500, 6800, 7000, 7200],
+  rezydent:  [19000, 20000, 21000, 22000, 23000, 24500, 26000, 28500, 31000, 33000, 34000, 35000],
+  dnCore:    [28000, 29000, 29000, 30000, 31000, 32000, 33500, 34500, 36000, 38000, 41000, 44000]
+};
+
+let stackedAreaChart = null;
+function makeStackedArea() {
+  const ctx = document.getElementById('stackedArea');
+  stackedAreaChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: STACKED_DATA_YEARS,
+      datasets: [
+        { label: 'Studia I-VI', data: STACKED_DATA.studia, borderColor: COL.dnLight, backgroundColor: COL.dnLight + 'AA', borderWidth: 1, fill: true, tension: 0.25, pointRadius: 0 },
+        { label: 'Staż / świeży PWZ', data: STACKED_DATA.staz, borderColor: COL.dn, backgroundColor: COL.dn + '99', borderWidth: 1, fill: true, tension: 0.25, pointRadius: 0 },
+        { label: 'Rezydent', data: STACKED_DATA.rezydent, borderColor: COL.dnDark, backgroundColor: COL.dnDark + '99', borderWidth: 1, fill: true, tension: 0.25, pointRadius: 0 },
+        { label: 'DN core (32-39)', data: STACKED_DATA.dnCore, borderColor: COL.dnDark, backgroundColor: COL.dnDark + 'CC', borderWidth: 1, fill: true, tension: 0.25, pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', align: 'start', labels: { color: COL.text2, font: { size: 11 }, boxWidth: 14, boxHeight: 8, padding: 12, usePointStyle: true } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString('pl-PL') } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: COL.text3, font: { size: 11 } } },
+        y: { stacked: true, beginAtZero: true, ticks: { color: COL.text3, font: { size: 11 }, callback: v => (v/1000)+'k' }, grid: { color: COL.grid } }
+      }
+    },
+    plugins: [{
+      id: 'yearMarkerStacked',
+      afterDraw: chart => {
+        const year = +document.getElementById('waveSlider').value;
+        const yearIdx = STACKED_DATA_YEARS.findIndex(y => y >= year);
+        if (yearIdx < 0) return;
+        let xPos;
+        if (yearIdx === 0) xPos = chart.scales.x.getPixelForValue(0);
+        else {
+          const yearBefore = STACKED_DATA_YEARS[yearIdx - 1];
+          const yearAfter = STACKED_DATA_YEARS[yearIdx];
+          const t = (year - yearBefore) / (yearAfter - yearBefore);
+          const xBefore = chart.scales.x.getPixelForValue(yearIdx - 1);
+          const xAfter = chart.scales.x.getPixelForValue(yearIdx);
+          xPos = xBefore + (xAfter - xBefore) * t;
+        }
+        const c = chart.ctx;
+        c.save();
+        c.beginPath();
+        c.setLineDash([4, 4]);
+        c.strokeStyle = COL.text;
+        c.lineWidth = 1.5;
+        c.moveTo(xPos, chart.chartArea.top);
+        c.lineTo(xPos, chart.chartArea.bottom);
+        c.stroke();
+        c.fillStyle = COL.text;
+        c.font = '11px sans-serif';
+        c.textAlign = 'center';
+        c.fillText(year, xPos, chart.chartArea.top - 4);
+        c.restore();
+      }
+    }]
+  });
+}
+makeStackedArea();
+
+function updateWave() {
+  const year = +document.getElementById('waveSlider').value;
+  document.getElementById('waveYear').textContent = year;
+  document.getElementById('waveNarrative').innerHTML = getNarrative(year);
+  renderWave(year);
+  if (stackedAreaChart) stackedAreaChart.update('none');
+}
+
+let waveTimer = null;
+let wavePlaying = false;
+function toggleWavePlay() {
+  const btn = document.getElementById('wavePlay');
+  const lbl = document.getElementById('waveBtnLabel');
+  const icon = btn.querySelector('.icon');
+  if (wavePlaying) {
+    clearInterval(waveTimer);
+    waveTimer = null;
+    wavePlaying = false;
+    icon.textContent = '▶';
+    lbl.textContent = 'Play';
+  } else {
+    wavePlaying = true;
+    icon.textContent = '❚❚';
+    lbl.textContent = 'Pause';
+    const slider = document.getElementById('waveSlider');
+    if (+slider.value >= 2040) slider.value = 2018;
+    waveTimer = setInterval(() => {
+      const cur = +slider.value;
+      if (cur >= 2040) {
+        clearInterval(waveTimer);
+        wavePlaying = false;
+        icon.textContent = '▶';
+        lbl.textContent = 'Play';
+        return;
+      }
+      slider.value = cur + 1;
+      updateWave();
+    }, 700);
+  }
+}
+document.getElementById('wavePlay').addEventListener('click', toggleWavePlay);
+document.getElementById('waveSlider').addEventListener('input', updateWave);
+updateWave();
+
+const STRATEGY_DATA = {
+  nil: {
+    2026: { studenci: 9000, mlodzi: 6000, core: 24000, age4055: 8000, age55plus: 2000 },
+    2031: { studenci: 8000, mlodzi: 7000, core: 22000, age4055: 25000, age55plus: 12000 },
+    2035: { studenci: 7000, mlodzi: 8000, core: 20000, age4055: 28000, age55plus: 14000 }
+  },
+  dn: {
+    2026: { studenci: 9000, mlodzi: 6000, core: 24000, age4055: 8000, age55plus: 2000 },
+    2031: { studenci: 14000, mlodzi: 12000, core: 30000, age4055: 15000, age55plus: 3000 },
+    2035: { studenci: 16000, mlodzi: 14000, core: 32000, age4055: 22000, age55plus: 5000 }
+  }
+};
+const CAC_INDEX = { studenci: 1, mlodzi: 2.5, core: 5, age4055: 10, age55plus: 30 };
+const COHORTS = ['studenci', 'mlodzi', 'core', 'age4055', 'age55plus'];
+const COHORT_TO_BAR = { studenci: 'studenci', mlodzi: 'mlodzi', core: 'core', age4055: '4055', age55plus: '55plus' };
+const COHORT_GROUP = { studenci: 'pipeline', mlodzi: 'pipeline', core: 'core', age4055: 'aging', age55plus: 'aging' };
+const SCALE = 0.015;
+const BAR_X = 160;
+const BASELINE_2026 = 49000;
+
+let currentStrategy = 'dn';
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function getValueAt(strategy, cohort, year) {
+  const d = STRATEGY_DATA[strategy];
+  if (year <= 2031) { const t = (year - 2026) / 5; return lerp(d[2026][cohort], d[2031][cohort], t); }
+  const t = (year - 2031) / 4; return lerp(d[2031][cohort], d[2035][cohort], t);
+}
+function fmt(n) { return n >= 1000 ? Math.round(n/1000) + 'k' : Math.round(n).toString(); }
+
+function calcStrategyState(strategy, year) {
+  let total = 0, pipeline = 0, core = 0, aging = 0, costUnits = 0;
+  const baseline = STRATEGY_DATA[strategy][2026];
+  let baselineTotal = 0;
+  COHORTS.forEach(c => {
+    const val = Math.round(getValueAt(strategy, c, year));
+    total += val;
+    baselineTotal += baseline[c];
+    const g = COHORT_GROUP[c];
+    if (g === 'pipeline') pipeline += val;
+    else if (g === 'core') core += val;
+    else aging += val;
+    costUnits += Math.max(0, val - baseline[c]) * CAC_INDEX[c];
+  });
+  return { total, pipeline, core, aging, costUnits, baselineTotal };
+}
+
+function update() {
+  const year = +document.getElementById('yearSlider').value;
+  const dnState = calcStrategyState('dn', year);
+  const nilState = calcStrategyState('nil', year);
+  const active = currentStrategy === 'dn' ? dnState : nilState;
+  const other = currentStrategy === 'dn' ? nilState : dnState;
+
+  COHORTS.forEach(c => {
+    const val = Math.round(getValueAt(currentStrategy, c, year));
+    const w = val * SCALE;
+    document.getElementById('bar-' + COHORT_TO_BAR[c]).setAttribute('width', w);
+    const lbl = document.getElementById('val-' + COHORT_TO_BAR[c]);
+    lbl.setAttribute('x', BAR_X + w + 8);
+    lbl.textContent = fmt(val);
+  });
+
+  document.getElementById('stat-total').textContent = fmt(active.total);
+  const dpct = Math.round((active.total - active.baselineTotal) / active.baselineTotal * 100);
+  document.getElementById('stat-total-delta').textContent = (dpct >= 0 ? '+' : '') + dpct + '% vs 2026 · druga: ' + fmt(other.total);
+
+  const pPct = Math.round(active.pipeline/active.total*100);
+  const pPctOther = Math.round(other.pipeline/other.total*100);
+  document.getElementById('stat-pipeline').textContent = pPct + '%';
+  document.getElementById('stat-pipeline-delta').textContent = 'druga strategia: ' + pPctOther + '%';
+
+  const cPct = Math.round(active.core/active.total*100);
+  const cPctOther = Math.round(other.core/other.total*100);
+  document.getElementById('stat-core').textContent = cPct + '%';
+  document.getElementById('stat-core-delta').textContent = 'druga strategia: ' + cPctOther + '%';
+
+  const aPct = Math.round(active.aging/active.total*100);
+  const aPctOther = Math.round(other.aging/other.total*100);
+  document.getElementById('stat-aging').textContent = aPct + '%';
+  document.getElementById('stat-aging-delta').textContent = 'druga strategia: ' + aPctOther + '%';
+
+  const costRatio = active.costUnits === 0 ? 0 : (other.costUnits / active.costUnits);
+  if (active.costUnits === 0) {
+    document.getElementById('stat-cost').textContent = '—';
+    document.getElementById('stat-cost-note').textContent = 'rok bazowy — brak akwizycji';
+  } else {
+    document.getElementById('stat-cost').textContent = '1,0×';
+    if (other.costUnits === 0) {
+      document.getElementById('stat-cost-note').textContent = 'druga strategia: rok bazowy';
+    } else {
+      const note = currentStrategy === 'dn'
+        ? 'NIL kosztowałby ' + costRatio.toFixed(1).replace('.', ',') + '× więcej budżetowo'
+        : 'DN kosztowałby ' + (1/costRatio).toFixed(1).replace('.', ',') + '× mniej budżetowo';
+      document.getElementById('stat-cost-note').textContent = note;
+    }
+  }
+
+  document.getElementById('yearLabel').textContent = year;
+  const yfn = year - 2026;
+  document.getElementById('yearOffset').textContent = yfn === 0 ? 'dziś' : '+' + yfn + (yfn === 1 ? ' rok' : yfn < 5 ? ' lata' : ' lat') + ' od dziś';
+
+  let note;
+  if (year === 2026) note = 'dziś — strategie startują z tego samego miejsca';
+  else if (currentStrategy === 'nil') {
+    if (year < 2030) note = 'NIL pcha wolumen w 40+ — wczesna inwestycja w drogie segmenty';
+    else if (year < 2033) note = 'top-heavy — broniony 40+, studenci na plateau';
+    else note = 'NIL plateauje — exhausted 40+ pool, brak compoundu z dołu';
+  } else {
+    if (year < 2030) note = 'DN buduje pipeline — kompoundowanie startuje';
+    else if (year < 2033) note = 'healthy pyramid — pipeline z 2026 staje się core';
+    else note = 'DN compounds — wzrost z organicznego cyklu pipeline'+'a';
+  }
+  document.getElementById('shapeNote').textContent = note;
+}
+
+document.getElementById('btnNil').addEventListener('click', () => {
+  currentStrategy = 'nil';
+  document.getElementById('btnNil').classList.add('active');
+  document.getElementById('btnDn').classList.remove('active');
+  document.getElementById('btnNil').setAttribute('aria-selected', 'true');
+  document.getElementById('btnDn').setAttribute('aria-selected', 'false');
+  update();
+});
+document.getElementById('btnDn').addEventListener('click', () => {
+  currentStrategy = 'dn';
+  document.getElementById('btnDn').classList.add('active');
+  document.getElementById('btnNil').classList.remove('active');
+  document.getElementById('btnDn').setAttribute('aria-selected', 'true');
+  document.getElementById('btnNil').setAttribute('aria-selected', 'false');
+  update();
+});
+document.getElementById('yearSlider').addEventListener('input', update);
+update();
+
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
