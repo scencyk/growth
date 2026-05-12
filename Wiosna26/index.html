@@ -1,0 +1,2192 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POZ 26 WIOSNA — Darmowe konferencje dla lekarzy | Remedium</title>
+  <meta name="description" content="Cztery darmowe konferencje online dla lekarzy w maju i czerwcu 2026. Dermatologia, pediatria, medycyna rodzinna, psychiatria. Dołącz na Remedium." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <noscript>
+    <style>
+      [data-motion], [data-motion-word] {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    </style>
+  </noscript>
+
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+      --color-lime: #e5ff44;
+      --color-violet: #5e37ef;
+      --color-pink: #fc3e84;
+      --color-ink: #1e1926;
+    }
+
+    @layer base {
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: var(--font-sans);
+        color: white;
+        background: #fc3e84;
+        min-height: 100vh;
+      }
+      @media (max-width: 767px) {
+        body { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+      }
+    }
+  </style>
+
+  <style>
+    /* Preloader — full-screen Remedium sygnet, fades out on load */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #5e37ef;
+      transition: opacity 480ms cubic-bezier(0.23, 1, 0.32, 1), visibility 0s 480ms;
+    }
+    .preloader.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .preloader__sygnet {
+      width: 72px;
+      height: 72px;
+      overflow: visible;
+    }
+    .preloader__sygnet path {
+      stroke-dasharray: 100;
+      stroke-dashoffset: 100;
+      animation: sygnetDraw 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    }
+    @keyframes sygnetDraw {
+      0%, 100% { stroke-dashoffset: 100; }
+      50%      { stroke-dashoffset: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .preloader__sygnet path { animation: none; stroke-dashoffset: 0; }
+    }
+
+    .skew-tiny { transform: skewX(-0.12deg); }
+    .tracking-display { letter-spacing: -0.04em; }
+    .tracking-pill { letter-spacing: -0.02em; }
+
+    /* Motion primitives — initial state for staggered reveal */
+    [data-motion-word] {
+      display: inline-block;
+      white-space: pre;
+    }
+    [data-motion],
+    [data-motion-word] {
+      opacity: 0;
+      transform: translateY(12px);
+      filter: blur(12px);
+      will-change: opacity, transform, filter;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-motion],
+      [data-motion-word] {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+
+    /* Hero — radial gradient + tiled background spheres */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      background:
+        radial-gradient(140% 110% at -5% 130%,
+          #fb864c 0%,
+          #fc6268 28%,
+          #fc3e84 60%,
+          #fc3e84 100%);
+      overflow: hidden;
+    }
+    .hero-spheres {
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      width: 2523px;            /* 3 spheres × 841 */
+      height: 841px;
+      pointer-events: none;
+      z-index: 0;
+      background: url('assets/hero-spheres.svg') 0 0 repeat-x;
+      background-size: 841px 841px;
+      opacity: 1;
+      --cursor-x: 0px;
+      --cursor-y: 0px;
+      transform: translate(calc(-50% + var(--cursor-x)), var(--cursor-y));
+      animation:
+        spheresDrawIn 2.2s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both,
+        spheresFloat 10s ease-in-out 2.2s infinite,
+        spheresShimmer 18s ease-in-out 2.2s infinite;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity, filter;
+    }
+    @keyframes spheresDrawIn {
+      0% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--cursor-x)), calc(16px + var(--cursor-y))) scale(0.94);
+        filter: blur(14px) saturate(0.6);
+      }
+      60% {
+        opacity: 0.9;
+        filter: blur(4px) saturate(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(calc(-50% + var(--cursor-x)), var(--cursor-y)) scale(1);
+        filter: blur(0) saturate(1);
+      }
+    }
+    @keyframes spheresFloat {
+      0%, 100% {
+        transform: translate(calc(-50% + var(--cursor-x)), var(--cursor-y)) scale(1);
+        opacity: 1;
+      }
+      25% {
+        transform: translate(calc(-50% + 18px + var(--cursor-x)), calc(-32px + var(--cursor-y))) scale(1.05);
+        opacity: 0.86;
+      }
+      50% {
+        transform: translate(calc(-50% + var(--cursor-x)), calc(-48px + var(--cursor-y))) scale(1.07);
+        opacity: 0.78;
+      }
+      75% {
+        transform: translate(calc(-50% - 18px + var(--cursor-x)), calc(-32px + var(--cursor-y))) scale(1.05);
+        opacity: 0.86;
+      }
+    }
+    @keyframes spheresShimmer {
+      0%, 100% { filter: saturate(1) brightness(1) hue-rotate(0deg); }
+      50%      { filter: saturate(1.18) brightness(1.06) hue-rotate(-6deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-spheres { animation: none; filter: none; }
+    }
+
+    /* In-view reveal — ported from motion-primitives/in-view, tuned to Emil Kowalski's animation philosophy */
+    [data-in-view] {
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(4px);
+      transition:
+        opacity 600ms cubic-bezier(0.23, 1, 0.32, 1),
+        transform 600ms cubic-bezier(0.23, 1, 0.32, 1),
+        filter 600ms cubic-bezier(0.23, 1, 0.32, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+      will-change: opacity, transform, filter;
+    }
+    [data-in-view].is-revealed {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      [data-in-view] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
+    /* Marquee — ported from motion-primitives/infinite-slider, JS-driven for smooth hover slowdown */
+    .marquee {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      align-items: center;
+      gap: 72px;
+      will-change: transform;
+    }
+    /* CSS fallback for users without JS / reduced-motion */
+    .marquee-track:not(.is-js) {
+      animation: marqueeScroll 50s linear infinite;
+    }
+    @keyframes marqueeScroll {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-50%, 0, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-track { animation: none !important; transform: none !important; }
+    }
+
+    /* Dialog — ported from motion-primitives/dialog (native <dialog> + transitions) */
+    .app-dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      max-width: min(480px, calc(100vw - 32px));
+      max-height: 90vh;
+      width: 100%;
+      height: max-content;
+      overflow: visible;
+    }
+    .app-dialog:not([open]) { display: none; }
+    .app-dialog::backdrop {
+      background-color: rgba(30, 25, 38, 0);
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+      transition:
+        background-color 220ms cubic-bezier(0.23, 1, 0.32, 1),
+        backdrop-filter 220ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .app-dialog.is-open::backdrop {
+      background-color: rgba(30, 25, 38, 0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .dialog-card {
+      position: relative;
+      background: white;
+      color: #18181b;
+      border-radius: 28px;
+      padding: 28px;
+      opacity: 0;
+      transform: scale(0.94) translateY(6px);
+      transition:
+        opacity 220ms cubic-bezier(0.23, 1, 0.32, 1),
+        transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      /* Subtle scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+    }
+    .dialog-card::-webkit-scrollbar { width: 6px; }
+    .dialog-card::-webkit-scrollbar-track { background: transparent; }
+    .dialog-card::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.18);
+      border-radius: 9999px;
+    }
+    .dialog-card::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.32);
+    }
+    .app-dialog.is-open .dialog-card {
+      opacity: 1;
+      transform: none;
+    }
+    .dialog-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.04);
+      color: #52525b;
+      border: 0;
+      cursor: pointer;
+      transition: background-color 150ms ease-out, color 150ms ease-out;
+    }
+    .dialog-close:hover { background: rgba(0, 0, 0, 0.08); color: #18181b; }
+    .dialog-close:active { transform: scale(0.94); }
+    /* When dialog has hero image, close button needs to sit above it with backdrop */
+    .dialog-close.is-over-image {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #18181b;
+      z-index: 10;
+    }
+    .dialog-close.is-over-image:hover { background: rgba(255, 255, 255, 0.95); }
+
+    .dialog-hero {
+      position: relative;
+      aspect-ratio: 7 / 5;
+      overflow: hidden;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      background: #e4e4e7;
+    }
+    .dialog-hero img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .dialog-card.has-hero { padding: 0; }
+    .dialog-card.has-hero .dialog-body { padding: 24px 28px 28px; }
+
+    /* Success icon — bounce-in circle + drawn checkmark */
+    .success-icon-circle {
+      transform: scale(0.4);
+      opacity: 0;
+      transition:
+        transform 520ms cubic-bezier(0.16, 1.4, 0.5, 1),
+        opacity 280ms ease-out;
+      transition-delay: 120ms;
+    }
+    .app-dialog.is-open .success-icon-circle {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .success-icon-check polyline {
+      stroke-dasharray: 36;
+      stroke-dashoffset: 36;
+      transition: stroke-dashoffset 480ms cubic-bezier(0.23, 1, 0.32, 1);
+      transition-delay: 520ms;
+    }
+    .app-dialog.is-open .success-icon-check polyline {
+      stroke-dashoffset: 0;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .success-icon-circle,
+      .success-icon-check polyline {
+        transform: none !important;
+        opacity: 1 !important;
+        transition: none !important;
+        stroke-dashoffset: 0 !important;
+      }
+    }
+
+    /* Sticky top nav (desktop) */
+    #sticky-top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      transform: translateY(-100%);
+      opacity: 0;
+      transition:
+        transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 240ms ease-out;
+      pointer-events: none;
+    }
+    #sticky-top.is-visible {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Sticky-top marquee — conferences scroll between logo and CTA */
+    .sticky-marquee .marquee-track {
+      gap: 56px;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+    }
+    .sticky-marquee .marquee-track:not(.is-js) {
+      animation: marqueeScroll 35s linear infinite;
+    }
+    .sticky-marquee .marquee-track li { display: inline-flex; }
+    .sticky-marquee .marquee-track button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      margin: -6px -10px;
+      border: 0;
+      border-radius: 9999px;
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      color: inherit;
+      transition: background-color 180ms;
+    }
+    .sticky-marquee .marquee-track button:hover {
+      background: rgba(255, 255, 255, 0.10);
+    }
+    .sticky-marquee .marquee-track button:focus-visible {
+      outline: 2px solid #e5ff44;
+      outline-offset: 2px;
+    }
+    .sticky-marquee .marquee-track .date { color: rgba(255, 255, 255, 0.55); font-weight: 500; }
+    .sticky-marquee .marquee-track .name { color: white; font-weight: 600; }
+    .sticky-marquee:hover .marquee-track:not(.is-js) { animation-play-state: paused; }
+
+    /* Hero date chips */
+    .hero-date-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: white;
+      background: rgba(255, 255, 255, 0.14);
+      transition: background-color 180ms, transform 180ms;
+      white-space: nowrap;
+      border: 0;
+      cursor: pointer;
+    }
+    .hero-date-chip:hover {
+      background: rgba(255, 255, 255, 0.26);
+    }
+    .hero-date-chip:active { transform: scale(0.96); }
+    .hero-date-chip .hero-date { font-weight: 500; opacity: 0.75; }
+
+    /* Speaker card hover */
+    .speaker-card { transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1); }
+    .speaker-card:hover { transform: translateY(-4px); }
+    .speaker-card:hover .speaker-photo { transform: scale(1.03); }
+    .speaker-photo {
+      transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- PRELOADER -->
+  <div id="preloader" class="preloader" aria-hidden="true">
+    <svg class="preloader__sygnet" viewBox="0 0 159 159" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M158.439 66.7049C121.653 66.7049 91.7315 36.7842 91.7315 0H66.7073C66.7073 36.7842 36.7856 66.7049 0 66.7049V91.7282C36.7856 91.7282 66.7073 121.649 66.7073 158.433H91.7315C91.7315 121.649 121.653 91.7282 158.439 91.7282V66.7049ZM79.2194 112.283C71.2474 98.6274 59.8078 87.1882 46.1518 79.2165C59.8078 71.2091 71.2117 59.8056 79.2194 46.1501C87.2272 59.8056 98.6311 71.2091 112.287 79.2165C98.6311 87.224 87.2272 98.6274 79.2194 112.283Z"
+        fill="none"
+        stroke="white"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        pathLength="100"
+      />
+    </svg>
+  </div>
+
+  <!-- STICKY TOP NAV (desktop only) -->
+  <div id="sticky-top" class="hidden md:block" aria-label="Nawigacja po konferencjach">
+    <div class="bg-[#1e1926]/95 backdrop-blur-md border-b border-white/15">
+      <div class="mx-auto flex max-w-[1280px] items-center gap-6 px-6 py-3 md:px-10">
+        <a href="#" class="shrink-0" aria-label="POZ 26 WIOSNA — góra strony">
+          <img src="assets/logo-poz-wiosna.svg" alt="POZ 26 WIOSNA" class="block h-9 w-auto" />
+        </a>
+        <div class="sticky-marquee marquee min-w-0 flex-1" aria-label="Konferencje cyklu">
+          <ul class="marquee-track">
+            <!-- run #1 -->
+            <li><button type="button" data-dialog="dermatologia-alergologia"><span class="date">21.05</span><span class="name">Dermatologia i alergologia</span></button></li>
+            <li><button type="button" data-dialog="pediatria"><span class="date">27.05</span><span class="name">Pediatria</span></button></li>
+            <li><button type="button" data-dialog="medycyna-rodzinna"><span class="date">02.06</span><span class="name">Medycyna rodzinna</span></button></li>
+            <li><button type="button" data-dialog="psychiatria-neurologia-bol"><span class="date">10.06</span><span class="name">Psychiatria, neurologia, ból</span></button></li>
+            <!-- run #2 (duplicate for seamless loop) -->
+            <li aria-hidden="true"><button type="button" data-dialog="dermatologia-alergologia" tabindex="-1"><span class="date">21.05</span><span class="name">Dermatologia i alergologia</span></button></li>
+            <li aria-hidden="true"><button type="button" data-dialog="pediatria" tabindex="-1"><span class="date">27.05</span><span class="name">Pediatria</span></button></li>
+            <li aria-hidden="true"><button type="button" data-dialog="medycyna-rodzinna" tabindex="-1"><span class="date">02.06</span><span class="name">Medycyna rodzinna</span></button></li>
+            <li aria-hidden="true"><button type="button" data-dialog="psychiatria-neurologia-bol" tabindex="-1"><span class="date">10.06</span><span class="name">Psychiatria, neurologia, ból</span></button></li>
+          </ul>
+        </div>
+        <a id="sticky-top-cta" href="#" data-bigmarker="all-series"
+           class="shrink-0 inline-flex h-10 items-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-white">
+          <span>Zapisz się</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+  <header class="hero">
+    <video class="hero-video pointer-events-none absolute inset-0 hidden h-full w-full object-cover opacity-[0.22] mix-blend-soft-light motion-reduce:hidden md:block"
+           autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+      <source src="assets/bg-psychiatria.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-spheres" aria-hidden="true" hidden></div>
+
+    <div class="relative z-10 mx-auto flex max-w-[1640px] items-center justify-between gap-4 px-6 pt-6 md:grid md:grid-cols-[1fr_auto_1fr] md:px-12 md:pt-8">
+      <a href="#" aria-label="POZ 26 WIOSNA — strona główna" class="md:justify-self-start">
+        <img src="assets/logo-poz-wiosna.svg" alt="POZ 26 WIOSNA" width="363" height="174" class="block h-auto w-[95px] md:w-[120px]" />
+      </a>
+      <a href="https://remedium.pl" aria-label="Remedium" class="hidden md:block md:justify-self-center">
+        <img src="assets/logo-remedium.svg" alt="Remedium" width="148" height="26" class="block h-auto w-[120px]" />
+      </a>
+      <a href="#" data-bigmarker="all-series" data-dialog="all-series"
+         class="inline-flex h-[40px] items-center gap-2 rounded-full bg-[#e5ff44] px-4 text-[12px] md:text-[13px] font-semibold leading-none tracking-pill text-black shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)] transition-[transform,background-color] duration-150 ease-out hover:bg-white active:scale-[0.97] md:justify-self-end">
+        <span>Zapisz się</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <!-- HERO CENTER COPY -->
+    <div class="relative z-10 mx-auto flex max-w-[860px] flex-col items-center px-6 pt-20 pb-24 text-center md:pt-28 md:pb-36">
+      <span data-motion class="inline-flex items-center rounded-full bg-white px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#fc3e84]">
+        Wiosenna ramówka
+      </span>
+
+      <h1 class="mt-3 leading-[1.2] tracking-display text-white text-[28px] md:mt-4 md:text-[40px]">
+        <span class="block font-normal"><span data-motion-word>Świeża</span> <span data-motion-word>dawka</span> <span data-motion-word>wiedzy.</span></span>
+        <span class="block font-bold"><span data-motion-word>A</span> <span data-motion-word>właściwie</span> <span data-motion-word>cztery.</span></span>
+      </h1>
+
+      <p data-motion class="mt-5 max-w-[560px] text-[15px] leading-snug text-white/85 md:mt-6 md:text-base">
+        Stworzyliśmy serię wiosennych wydarzeń dla lekarzy POZ.<br />
+        <span class="font-semibold text-white">Wiedza od najlepszych praktyków.</span>
+      </p>
+
+      <!-- 4 KONFERENCJE — DATY -->
+      <div data-motion class="mt-6 flex flex-col items-center gap-3 md:mt-7">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/65">
+          Maj–czerwiec 2026 · 4 konferencje online
+        </p>
+        <ul class="flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
+          <li>
+            <button type="button" data-dialog="dermatologia-alergologia" class="hero-date-chip">
+              <span class="hero-date">21.05</span><span>Dermatologia</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" data-dialog="pediatria" class="hero-date-chip">
+              <span class="hero-date">27.05</span><span>Pediatria</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" data-dialog="medycyna-rodzinna" class="hero-date-chip">
+              <span class="hero-date">02.06</span><span>Medycyna rodzinna</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" data-dialog="psychiatria-neurologia-bol" class="hero-date-chip">
+              <span class="hero-date">10.06</span><span>Psychiatria</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- HERO PRIMARY CTA (shadcn-sized lg) -->
+      <a data-motion href="#" data-bigmarker="all-series" data-dialog="all-series"
+         class="group mt-7 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-6 text-sm md:text-[15px] font-semibold tracking-pill text-black shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)] transition-[transform,background-color] duration-150 ease-out hover:bg-white active:scale-[0.97] md:mt-9 md:h-12 md:px-7">
+        <span>Zapisz się</span>
+        <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+      </a>
+      <p data-motion class="mt-3 text-sm text-white/85">
+        Jeden zapis · cała seria · certyfikat za każdą · bezpłatnie
+      </p>
+    </div>
+  </header>
+
+  <!-- PURPLE BAND — PRELEGENCI / DATY -->
+  <section id="agenda" class="relative z-10 bg-[#5e37ef]">
+    <div class="mx-auto max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+
+      <div data-in-view class="mb-10 flex flex-col items-center text-center md:mb-12">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-white">
+          Wiosenny komplet
+        </span>
+        <p class="mt-4 max-w-[640px] text-lg font-semibold leading-snug text-white md:text-xl">
+          Jeden zapis, pewne miejsce<br />
+          na wszystkich konferencjach.
+        </p>
+      </div>
+
+      <ul data-in-view-stagger="70" class="mx-auto grid max-w-[1080px] grid-cols-1 justify-items-center gap-5 sm:grid-cols-2 lg:grid-cols-4 md:gap-6 [&>li]:w-full [&>li]:max-w-[300px] sm:[&>li]:max-w-[240px]">
+
+        <!-- 1 · DERMATOLOGIA -->
+        <li class="relative">
+          <a href="#card-dermatologia-alergologia" data-bigmarker="dermatologia-alergologia" data-dialog="dermatologia-alergologia"
+             class="speaker-card group block">
+            <div class="overflow-hidden rounded-3xl">
+              <img src="assets/speaker-walecka-mazurek.png"
+                   srcset="assets/speaker-walecka-mazurek.png 1x, assets/speaker-walecka-mazurek@2x.png 2x"
+                   width="286" height="321"
+                   alt="prof. Walecka i prof. Mazurek"
+                   class="speaker-photo block h-auto w-full" />
+            </div>
+            <div class="mt-4 text-white">
+              <p class="text-sm">21.05.2026</p>
+              <p class="mt-0.5 text-[18px] font-bold leading-snug tracking-pill">Dermatologia i alergologia</p>
+              <p class="mt-1 text-sm leading-snug text-white/90">
+                prof. nadzw. dr n. med. <span class="font-bold">Irena Walecka</span><br />
+                prof. dr hab. n. med. <span class="font-bold">Henryk Mazurek</span>
+              </p>
+            </div>
+          </a>
+        </li>
+
+        <!-- 2 · PEDIATRIA -->
+        <li>
+          <a href="#card-pediatria" data-bigmarker="pediatria" data-dialog="pediatria"
+             class="speaker-card group block">
+            <div class="overflow-hidden rounded-3xl">
+              <img src="assets/speaker-kuchar.png"
+                   srcset="assets/speaker-kuchar.png 1x, assets/speaker-kuchar@2x.png 2x"
+                   width="286" height="321"
+                   alt="prof. Ernest Kuchar"
+                   class="speaker-photo block h-auto w-full" />
+            </div>
+            <div class="mt-4 text-white">
+              <p class="text-sm">27.05.2026</p>
+              <p class="mt-0.5 text-[18px] font-bold leading-snug tracking-pill">Pediatria</p>
+              <p class="mt-1 text-sm leading-snug text-white/90">
+                prof. dr hab. n. med. <span class="font-bold">Ernest Kuchar</span>
+              </p>
+            </div>
+          </a>
+        </li>
+
+        <!-- 3 · MEDYCYNA RODZINNA -->
+        <li>
+          <a href="#card-medycyna-rodzinna" data-bigmarker="medycyna-rodzinna" data-dialog="medycyna-rodzinna"
+             class="speaker-card group block">
+            <div class="overflow-hidden rounded-3xl">
+              <img src="assets/speaker-biesiada.png"
+                   srcset="assets/speaker-biesiada.png 1x, assets/speaker-biesiada@2x.png 2x"
+                   width="286" height="321"
+                   alt="dr Aleksander Biesiada"
+                   class="speaker-photo block h-auto w-full" />
+            </div>
+            <div class="mt-4 text-white">
+              <p class="text-sm">02.06.2026</p>
+              <p class="mt-0.5 text-[18px] font-bold leading-snug tracking-pill">Medycyna rodzinna</p>
+              <p class="mt-1 text-sm leading-snug text-white/90">
+                dr n. med. <span class="font-bold">Aleksander Biesiada</span>
+              </p>
+            </div>
+          </a>
+        </li>
+
+        <!-- 4 · PSYCHIATRIA, NEUROLOGIA, BÓL -->
+        <li>
+          <a href="#card-psychiatria-neurologia-bol" data-bigmarker="psychiatria-neurologia-bol" data-dialog="psychiatria-neurologia-bol"
+             class="speaker-card group block">
+            <div class="overflow-hidden rounded-3xl">
+              <img src="assets/speaker-siwek.png"
+                   srcset="assets/speaker-siwek.png 1x, assets/speaker-siwek@2x.png 2x"
+                   width="286" height="321"
+                   alt="dr hab. Marcin Siwek, prof. UJ"
+                   class="speaker-photo block h-auto w-full" />
+            </div>
+            <div class="mt-4 text-white">
+              <p class="text-sm">10.06.2026</p>
+              <p class="mt-0.5 text-[18px] font-bold leading-snug tracking-pill">Psychiatria, neurologia, ból</p>
+              <p class="mt-1 text-sm leading-snug text-white/90">
+                dr hab. n. med. <span class="font-bold">Marcin Siwek</span>, prof. UJ
+              </p>
+            </div>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <!-- PARTNERS MARQUEE -->
+  <section data-in-view class="relative z-10 border-y border-white/10 bg-[#1e1926]">
+    <p class="pt-7 text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">Partnerzy serii</p>
+    <div class="marquee py-8">
+      <ul class="marquee-track" aria-label="Partnerzy konferencji">
+        <!-- run #1 -->
+        <li><img src="assets/partner-magnapharm.png" alt="Magna Pharm" class="block h-10 w-auto opacity-90" /></li>
+        <li><img src="assets/partner-aurovitas.png" alt="Aurovitas" class="block h-9 w-auto opacity-90" /></li>
+        <li><img src="assets/partner-bayer.png" alt="Bayer" class="block h-12 w-auto opacity-90" /></li>
+        <li><img src="assets/partner-opella.png" alt="Opella" class="block h-10 w-auto opacity-90" /></li>
+        <li><img src="assets/partner-egis.png" alt="Egis" class="block h-9 w-auto opacity-90" /></li>
+        <li><img src="assets/partner-angelini.png" alt="Angelini Pharma" class="block h-11 w-auto opacity-90" /></li>
+        <li><img src="assets/partner-adamed.png" alt="Adamed 40 lat" class="block h-12 w-auto opacity-90" /></li>
+        <!-- run #2 (duplicate for seamless loop) -->
+        <li aria-hidden="true"><img src="assets/partner-magnapharm.png" alt="" class="block h-10 w-auto opacity-90" /></li>
+        <li aria-hidden="true"><img src="assets/partner-aurovitas.png" alt="" class="block h-9 w-auto opacity-90" /></li>
+        <li aria-hidden="true"><img src="assets/partner-bayer.png" alt="" class="block h-12 w-auto opacity-90" /></li>
+        <li aria-hidden="true"><img src="assets/partner-opella.png" alt="" class="block h-10 w-auto opacity-90" /></li>
+        <li aria-hidden="true"><img src="assets/partner-egis.png" alt="" class="block h-9 w-auto opacity-90" /></li>
+        <li aria-hidden="true"><img src="assets/partner-angelini.png" alt="" class="block h-11 w-auto opacity-90" /></li>
+        <li aria-hidden="true"><img src="assets/partner-adamed.png" alt="" class="block h-12 w-auto opacity-90" /></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DETAILED CARDS — gradient body -->
+  <section class="relative z-10 overflow-hidden pt-14 md:pt-20"
+           style="background:
+             radial-gradient(120% 80% at 50% 0%,
+               #fb864c 0%,
+               #fc6268 50%,
+               #fc3e84 100%);">
+    <video class="pointer-events-none absolute inset-0 hidden h-full w-full object-cover opacity-[0.38] mix-blend-soft-light motion-reduce:hidden md:block"
+           autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+      <source src="assets/bg-psychiatria.mp4" type="video/mp4" />
+    </video>
+    <div class="relative z-[1] mx-auto max-w-[1080px] px-6 md:px-10">
+
+      <p data-in-view class="mb-8 text-center text-sm font-medium uppercase tracking-[0.18em] text-white/85 md:mb-10">
+        Cykl wydarzeń
+      </p>
+
+      <ul data-in-view-stagger="60" class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+
+        <!-- 1 · DERMATOLOGIA + ALERGOLOGIA -->
+        <li id="card-dermatologia-alergologia">
+          <button type="button" data-dialog="dermatologia-alergologia"
+                  class="group flex w-full items-center gap-4 rounded-2xl bg-white p-4 text-left shadow-[0_6px_24px_-12px_rgba(30,25,38,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(30,25,38,0.45)]">
+            <span class="inline-flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-black leading-none text-white">
+              <span class="text-[10px] uppercase tracking-[0.12em] text-white/60">maj</span>
+              <span class="mt-0.5 text-[20px] font-semibold">21</span>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[15px] font-semibold leading-tight text-black">Dermatologia i alergologia</span>
+              <span class="mt-0.5 block truncate text-xs text-zinc-500">prof. Walecka, prof. Mazurek + 6 ekspertów</span>
+              <span class="mt-1 block text-[11px] text-zinc-400">12:00–18:00 · 4 sesje · certyfikat</span>
+            </span>
+            <span aria-hidden="true" class="shrink-0 text-zinc-300 transition group-hover:translate-x-0.5 group-hover:text-zinc-700">→</span>
+          </button>
+        </li>
+
+        <!-- 2 · PEDIATRIA -->
+        <li id="card-pediatria">
+          <button type="button" data-dialog="pediatria"
+                  class="group flex w-full items-center gap-4 rounded-2xl bg-white p-4 text-left shadow-[0_6px_24px_-12px_rgba(30,25,38,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(30,25,38,0.45)]">
+            <span class="inline-flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-black leading-none text-white">
+              <span class="text-[10px] uppercase tracking-[0.12em] text-white/60">maj</span>
+              <span class="mt-0.5 text-[20px] font-semibold">27</span>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[15px] font-semibold leading-tight text-black">Pediatria</span>
+              <span class="mt-0.5 block truncate text-xs text-zinc-500">prof. Ernest Kuchar + 5 ekspertów</span>
+              <span class="mt-1 block text-[11px] text-zinc-400">12:00–18:00 · 4 sesje · certyfikat</span>
+            </span>
+            <span aria-hidden="true" class="shrink-0 text-zinc-300 transition group-hover:translate-x-0.5 group-hover:text-zinc-700">→</span>
+          </button>
+        </li>
+
+        <!-- 3 · MEDYCYNA RODZINNA -->
+        <li id="card-medycyna-rodzinna">
+          <button type="button" data-dialog="medycyna-rodzinna"
+                  class="group flex w-full items-center gap-4 rounded-2xl bg-white p-4 text-left shadow-[0_6px_24px_-12px_rgba(30,25,38,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(30,25,38,0.45)]">
+            <span class="inline-flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-black leading-none text-white">
+              <span class="text-[10px] uppercase tracking-[0.12em] text-white/60">cze</span>
+              <span class="mt-0.5 text-[20px] font-semibold">02</span>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[15px] font-semibold leading-tight text-black">Medycyna rodzinna</span>
+              <span class="mt-0.5 block truncate text-xs text-zinc-500">dr Aleksander Biesiada + 10 ekspertów</span>
+              <span class="mt-1 block text-[11px] text-zinc-400">12:00–18:00 · 4 sesje · certyfikat</span>
+            </span>
+            <span aria-hidden="true" class="shrink-0 text-zinc-300 transition group-hover:translate-x-0.5 group-hover:text-zinc-700">→</span>
+          </button>
+        </li>
+
+        <!-- 4 · PSYCHIATRIA, NEUROLOGIA, BÓL -->
+        <li id="card-psychiatria-neurologia-bol">
+          <button type="button" data-dialog="psychiatria-neurologia-bol"
+                  class="group flex w-full items-center gap-4 rounded-2xl bg-white p-4 text-left shadow-[0_6px_24px_-12px_rgba(30,25,38,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(30,25,38,0.45)]">
+            <span class="inline-flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-2xl bg-black leading-none text-white">
+              <span class="text-[10px] uppercase tracking-[0.12em] text-white/60">cze</span>
+              <span class="mt-0.5 text-[20px] font-semibold">10</span>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[15px] font-semibold leading-tight text-black">Psychiatria, neurologia, ból</span>
+              <span class="mt-0.5 block truncate text-xs text-zinc-500">prof. Marcin Siwek + 5 ekspertów</span>
+              <span class="mt-1 block text-[11px] text-zinc-400">12:00–18:00 · 4 sesje · certyfikat</span>
+            </span>
+            <span aria-hidden="true" class="shrink-0 text-zinc-300 transition group-hover:translate-x-0.5 group-hover:text-zinc-700">→</span>
+          </button>
+        </li>
+
+      </ul>
+
+      <!-- MASTER CTA -->
+      <div data-in-view class="mt-14 pb-20 md:mt-20 md:pb-28" id="zapis">
+        <p class="mb-4 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white/85">
+          Wiosenny komplet · jeden zapis
+        </p>
+        <a id="master-cta" href="#" data-bigmarker="all-series" data-dialog="all-series"
+           class="group mx-auto flex h-11 w-fit items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-6 text-sm font-semibold uppercase tracking-[0.08em] text-black shadow-[0_8px_24px_-12px_rgba(0,0,0,0.4)] transition-[transform,background-color] duration-150 ease-out hover:bg-black hover:text-[#e5ff44] active:scale-[0.97] md:h-12 md:px-7">
+          <span>Zapisz się</span>
+          <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+        </a>
+        <p class="mt-5 text-center text-sm text-white/85">
+          1 zapis · cała seria · certyfikat za każdą · bezpłatnie · 30 sek
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 bg-[#1e1926] text-white/85">
+    <div class="mx-auto max-w-[1200px] px-6 pt-14 pb-8 md:px-10 md:pt-16">
+      <div class="grid grid-cols-2 gap-10 md:grid-cols-5 md:gap-8">
+        <!-- Col 1: brand -->
+        <div class="col-span-2 md:col-span-1">
+          <a href="https://remedium.md" aria-label="Remedium" class="inline-block">
+            <img src="assets/logo-remedium.svg" alt="Remedium" class="block h-7 w-auto" />
+          </a>
+          <p class="mt-3 text-sm text-white/65">Lekarska strona internetu</p>
+        </div>
+
+        <!-- Col 2: apps -->
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">Aplikacja</p>
+          <ul class="mt-4 flex flex-col gap-2">
+            <li>
+              <a href="https://apps.apple.com/pl/app/remedium/id1666340112?l=pl" target="_blank" rel="noopener" aria-label="Pobierz w App Store" class="inline-flex transition hover:opacity-80">
+                <img src="assets/badge-app-store.png" alt="Pobierz w App Store" width="111" height="36" class="block h-9 w-auto" />
+              </a>
+            </li>
+            <li>
+              <a href="https://play.google.com/store/apps/details?id=md.remedium.app" target="_blank" rel="noopener" aria-label="Pobierz w Google Play" class="inline-flex transition hover:opacity-80">
+                <img src="assets/badge-google-play.png" alt="Pobierz w Google Play" width="122" height="36" class="block h-9 w-auto" />
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Remedium -->
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">Remedium</p>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a href="https://remedium.md/kontakt" class="text-white/85 transition hover:text-white">Kontakt</a></li>
+            <li><a href="https://remedium.md/zostan-autorem" class="text-white/85 transition hover:text-white">Zostań autorem</a></li>
+            <li><a href="https://remedium.md/reklama" class="text-white/85 transition hover:text-white">Reklama</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Legal -->
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">Informacje prawne</p>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a href="https://remedium.md/polityka-prywatnosci" class="text-white/85 transition hover:text-white">Polityka prywatności</a></li>
+            <li><a href="https://remedium.md/regulamin" class="text-white/85 transition hover:text-white">Regulamin</a></li>
+            <li><a href="https://remedium.md/polityka-cookies" class="text-white/85 transition hover:text-white">Polityka cookies</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 5: Social -->
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/55">Społeczność</p>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li>
+              <a href="https://instagram.com/remedium.md" class="inline-flex items-center gap-2 text-white/85 transition hover:text-white">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2" y="2" width="12" height="12" rx="3.5"/><circle cx="8" cy="8" r="2.7"/><circle cx="11.5" cy="4.5" r="0.7" fill="currentColor"/></svg>
+                Instagram
+              </a>
+            </li>
+            <li>
+              <a href="https://facebook.com/remedium.md" class="inline-flex items-center gap-2 text-white/85 transition hover:text-white">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M9.667 14.667V8.333h2.111L12 6h-2.333V4.667c0-.667.222-1.111 1.111-1.111H12V1.444c-.222 0-1-.111-1.889-.111-1.889 0-3.111 1.111-3.111 3.222V6H4.667v2.333H7v6.334h2.667z"/></svg>
+                Facebook
+              </a>
+            </li>
+            <li>
+              <a href="https://x.com/remedium_md" class="inline-flex items-center gap-2 text-white/85 transition hover:text-white">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M9.524 6.97L14.78 1h-1.245L8.97 6.183 5.32 1H1.11l5.512 7.825L1.11 15h1.246l4.819-5.464L11.025 15h4.21L9.523 6.97zm-1.706 1.935l-.558-.787L2.804 1.91h1.913l3.585 5.057.559.787 4.66 6.578H11.61L7.818 8.906z"/></svg>
+                X
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/55 md:flex-row md:items-center md:justify-between">
+        <span>Copyright © brandmed 2026. Wszelkie prawa zastrzeżone.</span>
+        <span>POZ 26 WIOSNA · seria konferencji online</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ALL-SERIES CONFIRMATION DIALOG -->
+  <dialog id="dialog-all-series" class="app-dialog" aria-labelledby="dialog-all-series-title">
+    <div class="dialog-card" style="max-width: 520px;">
+      <button type="button" class="dialog-close" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <span class="inline-flex items-center gap-2 rounded-full bg-[#e5ff44] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-black">
+        Wiosenny komplet
+      </span>
+      <h2 id="dialog-all-series-title" class="mt-4 text-[26px] font-semibold leading-tight tracking-display text-black">
+        Zapisz się raz — masz miejsce na wszystkich czterech.
+      </h2>
+
+      <ul class="mt-5 space-y-2.5">
+        <li class="flex items-center gap-3 text-sm text-zinc-700">
+          <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">21.05</span>
+          <span class="font-medium text-zinc-900">Dermatologia i alergologia</span>
+        </li>
+        <li class="flex items-center gap-3 text-sm text-zinc-700">
+          <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">27.05</span>
+          <span class="font-medium text-zinc-900">Pediatria</span>
+        </li>
+        <li class="flex items-center gap-3 text-sm text-zinc-700">
+          <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">02.06</span>
+          <span class="font-medium text-zinc-900">Medycyna rodzinna</span>
+        </li>
+        <li class="flex items-center gap-3 text-sm text-zinc-700">
+          <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">10.06</span>
+          <span class="font-medium text-zinc-900">Psychiatria, neurologia, ból</span>
+        </li>
+      </ul>
+
+      <div class="mt-6 rounded-2xl bg-zinc-50 p-4">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">Co dostajesz</p>
+        <ul class="mt-3 space-y-2 text-sm text-zinc-800">
+          <li class="flex items-start gap-2.5">
+            <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#fc3e84]" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 7 12 13 4"/></svg>
+            <span>4 wydarzenia live online, każde od 12:00 do 18:00, 4 sesje po 80 min</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#fc3e84]" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 7 12 13 4"/></svg>
+            <span>Certyfikat za obecność ≥80% — osobno za każde wydarzenie</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg class="mt-0.5 h-4 w-4 shrink-0 text-[#fc3e84]" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8 7 12 13 4"/></svg>
+            <span>Powiadomienia mailowe na dzień i godzinę przed startem — żeby nie przegapić</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="mt-4 flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-3">
+        <img src="assets/infarma.png" alt="INFARMA" class="h-7 w-auto shrink-0" />
+        <p class="text-xs leading-snug text-zinc-600">
+          Certyfikacja <strong class="font-semibold text-zinc-900">INFARMA</strong> — wystawiamy certyfikat za obecność ≥80% każdej konferencji.
+        </p>
+      </div>
+
+      <button type="button" data-dialog-next="success"
+         class="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-6 text-base font-semibold tracking-pill text-black transition-[transform,background-color] duration-150 ease-out hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+        Tak, zapisuję się
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- SUCCESS DIALOG -->
+  <dialog id="dialog-success" class="app-dialog" aria-labelledby="dialog-success-title">
+    <div class="dialog-card" style="max-width: 460px; text-align: center;">
+      <button type="button" class="dialog-close" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <div class="success-icon-circle mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+           style="background: radial-gradient(circle at 30% 30%, #fdf2ff 0%, #fcbca6 40%, #fc3e84 100%);">
+        <svg class="success-icon-check" width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="5 14 12 21 23 8"/>
+        </svg>
+      </div>
+      <h2 id="dialog-success-title" class="mt-5 text-[26px] font-semibold leading-tight tracking-display text-black">
+        Świetny wybór.
+      </h2>
+      <p class="mt-2 text-base font-semibold text-black">
+        Czeka nas wspólny czas nauki.
+      </p>
+      <p class="mt-3 text-sm leading-relaxed text-zinc-600">
+        Cieszymy się, że jesteś z nami. Czekamy na Ciebie na wszystkich czterech:
+      </p>
+
+      <ul class="mt-4 space-y-1.5 text-left">
+        <li>
+          <button type="button" data-dialog-next="agenda-dermatologia-alergologia"
+                  class="group flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-sm transition hover:bg-zinc-100">
+            <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">21.05</span>
+            <span class="flex-1 font-medium text-zinc-900">Dermatologia i alergologia</span>
+            <span class="text-[11px] font-medium text-zinc-400 transition group-hover:text-zinc-700">agenda →</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" data-dialog-next="agenda-pediatria"
+                  class="group flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-sm transition hover:bg-zinc-100">
+            <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">27.05</span>
+            <span class="flex-1 font-medium text-zinc-900">Pediatria</span>
+            <span class="text-[11px] font-medium text-zinc-400 transition group-hover:text-zinc-700">agenda →</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" data-dialog-next="agenda-medycyna-rodzinna"
+                  class="group flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-sm transition hover:bg-zinc-100">
+            <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">02.06</span>
+            <span class="flex-1 font-medium text-zinc-900">Medycyna rodzinna</span>
+            <span class="text-[11px] font-medium text-zinc-400 transition group-hover:text-zinc-700">agenda →</span>
+          </button>
+        </li>
+        <li>
+          <button type="button" data-dialog-next="agenda-psychiatria-neurologia-bol"
+                  class="group flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-sm transition hover:bg-zinc-100">
+            <span class="inline-flex h-7 w-14 shrink-0 items-center justify-center rounded-full bg-black text-[12px] font-medium tracking-tight text-white">10.06</span>
+            <span class="flex-1 font-medium text-zinc-900">Psychiatria, neurologia, ból</span>
+            <span class="text-[11px] font-medium text-zinc-400 transition group-hover:text-zinc-700">agenda →</span>
+          </button>
+        </li>
+      </ul>
+
+      <p class="mt-5 text-sm leading-relaxed text-zinc-600">
+        Potwierdzenie i przypomnienia mailowe wysłaliśmy na Twój adres. Do zobaczenia!
+      </p>
+
+      <button type="button" data-add-to-calendar
+              class="group mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white px-5 text-sm font-semibold text-zinc-800 transition hover:border-black hover:bg-black hover:text-white active:scale-[0.98]">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/>
+          <path d="M2.5 6.5h11"/>
+          <path d="M5.5 2v3"/>
+          <path d="M10.5 2v3"/>
+        </svg>
+        Dodaj do kalendarza
+      </button>
+    </div>
+  </dialog>
+
+  <!-- AGENDA DIALOG — Pediatria -->
+  <dialog id="dialog-agenda-pediatria" class="app-dialog" aria-labelledby="dialog-agenda-pediatria-title">
+    <div class="dialog-card" style="max-width: 560px;">
+      <button type="button" class="dialog-close" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Agenda · 27.05.2026 · 12:00–18:00</p>
+      <h2 id="dialog-agenda-pediatria-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">
+        Pediatria
+      </h2>
+
+      <div class="mt-5 space-y-6">
+        <!-- SESJA I -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja I</span>
+            <span class="text-xs font-medium text-zinc-500">12:00–13:20</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:00–12:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">„Kaszel 100-dniowy w 2026 roku" – krztusiec u dziecka, nastolatka i lekarza. Algorytm diagnostyczny przy przewlekłym kaszlu</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Ernest Kuchar</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:20–12:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">„To już nie tylko katar" – kiedy zapalenie zatok wymaga antybiotyku, a kiedy sterydu donosowego? Praktyczne różnicowanie w gabinecie POZ</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Anna Piwowarczyk</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:40–13:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Wykład sponsorowany (Bayer) — tytuł wkrótce</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Ernest Kuchar</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:00–13:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Pacjent żłobkowy: „Czy to wirus, czy bakteria, czy alergia?" – szybka ścieżka decyzyjna dla „wiecznie chorego dziecka"</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Kuchar, dr Piwowarczyk</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA II -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja II</span>
+            <span class="text-xs font-medium text-zinc-500">13:30–14:50</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:30–13:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Kalendarz szczepień 2026 – co nowego? HPV dla wszystkich, nowe preparaty przeciwko pneumokokom i meningokokom</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Ernest Kuchar</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:50–14:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">„Doktorze, czy to odrobaczać?" Fakty i mity o pasożytach. Jak rozmawiać z rodzicem, który żąda leczenia „w ciemno"</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Monika Wanke-Rytt</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:10–14:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Magnez i witamina B6 w pediatrii: duet wart uwagi (Opella)</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Ernest Kuchar</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:30–14:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Trudne rozmowy w gabinecie szczepień. Aspekty prawne i psychologiczne odmów szczepień</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Wanke-Rytt, prof. Kuchar</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA III -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja III</span>
+            <span class="text-xs font-medium text-zinc-500">15:10–16:30</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:10–15:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Gorączka bez źródła u niemowlęcia – protokół postępowania w POZ. Kiedy badania, kiedy szpital, kiedy obserwacja?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Magdalena Mierzewska-Schmidt</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:30–15:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Wysypki wirusowe vs. polekowe – galeria przypadków z gabinetu POZ. „Co podać, a co odstawić?"</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr hab. Magdalena Okarska-Napierała</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:50–16:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł i wykładowca — wkrótce</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:10–16:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">„Sygnalizacja świetlna" w POZ – jak nie przeoczyć sepsy i ZOMR, mając 15 minut na pacjenta?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Kuchar, dr Okarska-Napierała, dr Mierzewska-Schmidt</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA IV -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja IV</span>
+            <span class="text-xs font-medium text-zinc-500">16:40–18:05</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:40–17:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Borelioza i kleszczowe zapalenie mózgu. Przygotowanie do sezonu 2026. Interpretacja Western Blot vs ELISA</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Joanna Zajkowska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:00–17:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Bóle wzrostowe czy nowotwór? Diagnostyka różnicowa bólów kończyn u dzieci. Kiedy morfologia i CRP to za mało?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Anna Piwowarczyk</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:20–17:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł i wykładowca — wkrótce</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:40–18:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Q&A – przypadki własne uczestników</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Kuchar, dr Piwowarczyk, prof. Zajkowska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">18:00–18:05</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Zakończenie konferencji</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Ernest Kuchar</p>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-2 border-t border-zinc-100 pt-5">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="pediatria" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- AGENDA DIALOG — Medycyna rodzinna -->
+  <dialog id="dialog-agenda-medycyna-rodzinna" class="app-dialog" aria-labelledby="dialog-agenda-medycyna-rodzinna-title">
+    <div class="dialog-card" style="max-width: 560px;">
+      <button type="button" class="dialog-close" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Agenda · 02.06.2026 · 12:00–18:00</p>
+      <h2 id="dialog-agenda-medycyna-rodzinna-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">
+        Medycyna rodzinna
+      </h2>
+
+      <div class="mt-5 space-y-6">
+        <!-- SESJA I -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja I</span>
+            <span class="text-xs font-medium text-zinc-500">12:00–13:20</span>
+          </div>
+          <p class="mt-1 text-xs font-medium text-zinc-700">Dorośli od 20 r.ż. · Profilaktyka okiem praktyka</p>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:00–12:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Program Moje Zdrowie – co wiemy po roku realizacji. Praktyczne wskazówki dla POZ i IPZ 2.0</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Aleksander Biesiada</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:20–12:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Choroby tarczycy w programie profilaktycznym. Jak wykorzystać MZ, by rozpoznawać?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Justyna Ledwoch</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:40–13:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Niedobór żelaza u pacjenta onkologicznego – standardy postępowania</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Anna Pietrzak</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:00–13:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Pietrzak, dr Biesiada, lek. Ledwoch</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA II -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja II</span>
+            <span class="text-xs font-medium text-zinc-500">13:30–14:50</span>
+          </div>
+          <p class="mt-1 text-xs font-medium text-zinc-700">Wszyscy nasi pacjenci · Szczepienia całej rodziny</p>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:30–13:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Nowości w szczepieniach – rzut oka w przyszłość</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Aleksander Biesiada</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:50–14:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">KZM. Czy to jedyne, co nas czeka w zakresie chorób odkleszczowych?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Mateusz Babicki</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:10–14:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Polekowe uszkodzenia przełyku – kliniczne wskazówki gastroenterologa dla lekarza POZ</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Anna Pietrzak</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:30–14:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Biesiada, dr Pietrzak, dr Babicki</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA III -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja III</span>
+            <span class="text-xs font-medium text-zinc-500">15:10–16:50</span>
+          </div>
+          <p class="mt-1 text-xs font-medium text-zinc-700">Co czwarty nasz pacjent · Ból w praktyce POZ</p>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:10–15:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Diagnostyka dolegliwości bólowych stawów (kręgosłupa) – praktyczne testy w 5 minut</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr hab. Marcin Straburzyński</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:30–15:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Tapentadol – rola lekarza rodzinnego w inicjacji terapii</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Agnieszka Matusiak-Jońska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:50–16:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">IBS w POZ – jak nie zgubić się w bólu, którego nie widać</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr hab. Jarosław Woroń</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:10–16:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">RZS – jak unikać nadmiernej terapii NLPZ w POZ?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Adam Boruch</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:30–16:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr hab. Woroń, dr Biesiada, dr hab. Straburzyński, lek. Matusiak-Jońska, lek. Boruch</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA IV -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja IV</span>
+            <span class="text-xs font-medium text-zinc-500">17:00–18:25</span>
+          </div>
+          <p class="mt-1 text-xs font-medium text-zinc-700">4 mln pacjentów i komplikacje · Optymalizacja terapii zaburzeń metabolicznych</p>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:00–17:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Wątroba – zapomniane powikłania metaboliczne</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Karolina Kłoda</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:20–17:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">CGM w praktyce POZ – jak wykorzystać?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Joanna Iskra-Trifunović</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:40–18:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Hiperkaliemia w leczeniu PChN. Wyzwanie w praktyce – odstawiać leki czy nie?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Filip Krzyżanowski</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">18:00–18:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Biesiada, prof. Kłoda, dr Iskra-Trifunović, lek. Krzyżanowski</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">18:20–18:25</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Zakończenie konferencji</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Aleksander Biesiada</p>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-2 border-t border-zinc-100 pt-5">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="medycyna-rodzinna" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- AGENDA DIALOG — Psychiatria, neurologia, ból -->
+  <dialog id="dialog-agenda-psychiatria-neurologia-bol" class="app-dialog" aria-labelledby="dialog-agenda-psychiatria-title">
+    <div class="dialog-card" style="max-width: 560px;">
+      <button type="button" class="dialog-close" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Agenda · 10.06.2026 · 12:00–18:00</p>
+      <h2 id="dialog-agenda-psychiatria-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">
+        Psychiatria, neurologia, ból
+      </h2>
+
+      <div class="mt-5 space-y-6">
+        <!-- SESJA I -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja I</span>
+            <span class="text-xs font-medium text-zinc-500">12:00–13:20</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:00–12:02</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Powitanie kierownika naukowego konferencji</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marcin Siwek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:02–12:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Myśli i tendencje samobójcze w gabinecie POZ</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Dominika Dudek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:20–12:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Przedmiesiączkowe zaburzenia nastroju – charakterystyka i leczenie</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marcin Siwek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:40–13:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł zostanie ogłoszony wkrótce</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marcin Siwek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:00–13:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Siwek, prof. Dudek</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA II -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja II</span>
+            <span class="text-xs font-medium text-zinc-500">13:30–14:50</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:30–13:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Preparaty roślinne i suplementy w POZ – które należy wykluczyć, a o których można pamiętać?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr hab. Jarosław Woroń</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:50–14:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Nastrój po porodzie pod lupą – różnicowanie i postępowanie</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marcin Siwek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:10–14:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Dopasowanie leku przeciwdepresyjnego do profilu pacjenta</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marcin Siwek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:30–14:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Siwek, dr hab. Woroń</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA III -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja III</span>
+            <span class="text-xs font-medium text-zinc-500">15:10–16:30</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:10–15:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Drżenia w POZ – jak diagnozować i różnicować?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Katarzyna Sawczyńska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:30–15:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Padaczka w POZ – jak nie przeoczyć pierwszego napadu?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Kamil Wężyk</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:50–16:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł i wykładowca — wkrótce</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:10–16:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Siwek, dr Sawczyńska, lek. Wężyk</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA IV -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja IV</span>
+            <span class="text-xs font-medium text-zinc-500">16:40–18:00</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:40–17:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Drabina analgetyczna w POZ – co, kiedy i dla kogo?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Magdalena Kocot-Kępska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:00–17:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Niefarmakologiczne metody leczenia bólu – co lekarz POZ wiedzieć powinien?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Magdalena Kocot-Kępska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:20–17:35</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł i wykładowca — wkrótce</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:35–17:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Siwek, dr Kocot-Kępska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:50–18:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Zakończenie konferencji</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marcin Siwek</p>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-2 border-t border-zinc-100 pt-5">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="psychiatria-neurologia-bol" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- AGENDA DIALOG — Dermatologia i alergologia -->
+  <dialog id="dialog-agenda-dermatologia-alergologia" class="app-dialog" aria-labelledby="dialog-agenda-dermatologia-title">
+    <div class="dialog-card" style="max-width: 560px;">
+      <button type="button" class="dialog-close" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">Agenda · 21.05.2026 · 12:00–18:00</p>
+      <h2 id="dialog-agenda-dermatologia-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">
+        Dermatologia i alergologia
+      </h2>
+
+      <div class="mt-5 space-y-6">
+        <!-- SESJA I -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja I</span>
+            <span class="text-xs font-medium text-zinc-500">12:00–13:20</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:00–12:05</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Rozpoczęcie konferencji</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Mazurek, prof. Walecka</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:05–12:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Łysienie plackowate – dermatolog na ratunek</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Irena Walecka</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:20–12:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Choroby SOG – naprawdę, aż tak wiele</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Anna Czaplicka</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">12:40–13:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Zastosowanie sterydów w zmianach skórnych</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Irena Walecka</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:00–13:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">lek. Czaplicka, prof. Walecka</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA II -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja II</span>
+            <span class="text-xs font-medium text-zinc-500">13:30–14:50</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:30–13:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">To nie alergia – najczęstsze objawy ze strony układu oddechowego u niemowląt</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Wojciech Durlak</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">13:50–14:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Stany nagłe w alergologii – postępowanie w POZ</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Marek Kulus</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:10–14:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł i wykładowca — wkrótce</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">14:30–14:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Mazurek, prof. Kulus, dr Durlak</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA III -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja III</span>
+            <span class="text-xs font-medium text-zinc-500">15:10–16:30</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:10–15:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">HS – co lekarz rodzinny wiedzieć powinien</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Irena Walecka</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:30–15:50</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Zmiany skórne okolicy krocza u juniorów i seniorów – ratunku!</p>
+              <p class="mt-0.5 text-xs text-zinc-500">dr Klaudia Dopytalska</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">15:50–16:10</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Trądzik i trądzik różowaty – co lekarz rodzinny powinien wiedzieć</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Witold Owczarek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:10–16:30</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Walecka, prof. Owczarek, dr Dopytalska</p>
+            </li>
+          </ul>
+        </section>
+
+        <!-- SESJA IV -->
+        <section>
+          <div class="flex items-baseline gap-2">
+            <span class="inline-flex h-5 items-center rounded-full bg-black px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sesja IV</span>
+            <span class="text-xs font-medium text-zinc-500">16:40–18:05</span>
+          </div>
+          <ul class="mt-3 space-y-3">
+            <li>
+              <p class="text-xs font-medium text-zinc-400">16:40–17:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Leki przeciwhistaminowe: praktyczne aspekty opieki nad pacjentem</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Henryk Mazurek</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:00–17:20</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Kiedy zlecać i jak interpretować panel alergologiczny dostępny w POZ?</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Bolesław Samoliński</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:20–17:40</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-500 italic">Tytuł i wykładowca — wkrótce</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">17:40–18:00</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Panel dyskusyjny</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Mazurek, prof. Samoliński</p>
+            </li>
+            <li>
+              <p class="text-xs font-medium text-zinc-400">18:00–18:05</p>
+              <p class="mt-0.5 text-sm font-medium text-zinc-900">Zakończenie konferencji</p>
+              <p class="mt-0.5 text-xs text-zinc-500">prof. Mazurek, prof. Walecka</p>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="mt-6 flex flex-col gap-2 border-t border-zinc-100 pt-5">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="dermatologia-alergologia" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- SPEAKER DIALOGS -->
+  <dialog id="dialog-dermatologia-alergologia" class="app-dialog" aria-labelledby="dialog-dermatologia-alergologia-title">
+    <div class="dialog-card has-hero">
+      <button type="button" class="dialog-close is-over-image" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <div class="dialog-hero">
+        <img src="assets/profile-dermatologia-alergologia.png" alt="prof. Walecka, prof. Mazurek" />
+      </div>
+      <div class="dialog-body">
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">21.05.2026 · czwartek · 12:00–18:00</p>
+      <h2 id="dialog-dermatologia-alergologia-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">Dermatologia i alergologia</h2>
+      <p class="mt-1 text-sm text-zinc-600">Pierwsze kroki w POZ · 4 sesje · online · bezpłatne</p>
+      <button type="button" data-dialog-next="agenda-dermatologia-alergologia"
+              class="group mt-3 inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:bg-black hover:text-white">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="4" cy="4.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 4.5h6.5"/>
+          <circle cx="4" cy="8" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 8h6.5"/>
+          <circle cx="4" cy="11.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 11.5h4.5"/>
+        </svg>
+        Pełna agenda 4 sesji
+        <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+      </button>
+      <ul class="mt-4 flex flex-wrap gap-1.5">
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">łysienie plackowate</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">hidradenitis suppurativa</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">alergie u niemowląt</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">leki przeciwhistaminowe</li>
+      </ul>
+      <dl class="mt-5 grid gap-3 text-sm">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Prelegenci</dt>
+          <dd class="mt-1 font-medium text-zinc-900">prof. Walecka, prof. Mazurek + 6 ekspertów</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Certyfikat</dt>
+          <dd class="mt-1 font-medium text-zinc-900">obecność ≥80%</dd>
+        </div>
+      </dl>
+      <div class="mt-6 flex flex-col gap-2">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="dermatologia-alergologia" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="dialog-pediatria" class="app-dialog" aria-labelledby="dialog-pediatria-title">
+    <div class="dialog-card has-hero">
+      <button type="button" class="dialog-close is-over-image" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <div class="dialog-hero">
+        <img src="assets/profile-pediatria.png" alt="prof. Ernest Kuchar" />
+      </div>
+      <div class="dialog-body">
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">27.05.2026 · środa · 12:00–18:00</p>
+      <h2 id="dialog-pediatria-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">Pediatria</h2>
+      <p class="mt-1 text-sm text-zinc-600">Pierwsze kroki w POZ · 4 sesje · online · bezpłatne</p>
+      <button type="button" data-dialog-next="agenda-pediatria"
+              class="group mt-3 inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:bg-black hover:text-white">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="4" cy="4.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 4.5h6.5"/>
+          <circle cx="4" cy="8" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 8h6.5"/>
+          <circle cx="4" cy="11.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 11.5h4.5"/>
+        </svg>
+        Pełna agenda 4 sesji
+        <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+      </button>
+      <ul class="mt-4 flex flex-wrap gap-1.5">
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">kaszel</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">szczepienia</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">gorączka u niemowląt</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">borelioza</li>
+      </ul>
+      <dl class="mt-5 grid gap-3 text-sm">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Prelegenci</dt>
+          <dd class="mt-1 font-medium text-zinc-900">prof. Ernest Kuchar<br /><span class="font-normal text-zinc-600">+ dr Piwowarczyk, dr Wanke-Rytt, dr Mierzewska-Schmidt, dr hab. Okarska-Napierała, prof. Zajkowska</span></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Certyfikat</dt>
+          <dd class="mt-1 font-medium text-zinc-900">INFARMA · obecność ≥80%</dd>
+        </div>
+      </dl>
+      <div class="mt-6 flex flex-col gap-2">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="pediatria" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="dialog-medycyna-rodzinna" class="app-dialog" aria-labelledby="dialog-medycyna-rodzinna-title">
+    <div class="dialog-card has-hero">
+      <button type="button" class="dialog-close is-over-image" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <div class="dialog-hero">
+        <img src="assets/profile-medycyna-rodzinna.png" alt="dr Aleksander Biesiada" />
+      </div>
+      <div class="dialog-body">
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">02.06.2026 · wtorek · 12:00–18:00</p>
+      <h2 id="dialog-medycyna-rodzinna-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">Medycyna rodzinna</h2>
+      <p class="mt-1 text-sm text-zinc-600">Specjalista w praktyce · 4 sesje · online · bezpłatne</p>
+      <button type="button" data-dialog-next="agenda-medycyna-rodzinna"
+              class="group mt-3 inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:bg-black hover:text-white">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="4" cy="4.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 4.5h6.5"/>
+          <circle cx="4" cy="8" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 8h6.5"/>
+          <circle cx="4" cy="11.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 11.5h4.5"/>
+        </svg>
+        Pełna agenda 4 sesji
+        <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+      </button>
+      <ul class="mt-4 flex flex-wrap gap-1.5">
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">choroby tarczycy</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">ból stawów</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">CGM</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">choroby odkleszczowe</li>
+      </ul>
+      <dl class="mt-5 grid gap-3 text-sm">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Prelegenci</dt>
+          <dd class="mt-1 font-medium text-zinc-900">dr Aleksander Biesiada <span class="text-xs font-normal text-zinc-500">· wiceprezes PTMR</span><br /><span class="font-normal text-zinc-600">+ lek. Ledwoch, dr Pietrzak, dr Babicki, dr hab. Straburzyński, lek. Matusiak-Jońska, dr hab. Woroń, lek. Boruch, prof. Kłoda, dr Iskra-Trifunović, lek. Krzyżanowski</span></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Certyfikat</dt>
+          <dd class="mt-1 font-medium text-zinc-900">obecność ≥80%</dd>
+        </div>
+      </dl>
+      <div class="mt-6 flex flex-col gap-2">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="medycyna-rodzinna" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="dialog-psychiatria-neurologia-bol" class="app-dialog" aria-labelledby="dialog-psychiatria-neurologia-bol-title">
+    <div class="dialog-card has-hero">
+      <button type="button" class="dialog-close is-over-image" data-dialog-close aria-label="Zamknij">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2 L12 12 M12 2 L2 12"/></svg>
+      </button>
+      <div class="dialog-hero">
+        <img src="assets/profile-psychiatria-neurologia-bol.png" alt="prof. Marcin Siwek" />
+      </div>
+      <div class="dialog-body">
+      <p class="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">10.06.2026 · środa · 12:00–18:00</p>
+      <h2 id="dialog-psychiatria-neurologia-bol-title" class="mt-2 text-[24px] font-semibold leading-tight tracking-display text-black">Psychiatria, neurologia, ból</h2>
+      <p class="mt-1 text-sm text-zinc-600">Pierwsze kroki w POZ · 4 sesje · online · bezpłatne</p>
+      <button type="button" data-dialog-next="agenda-psychiatria-neurologia-bol"
+              class="group mt-3 inline-flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:bg-black hover:text-white">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="4" cy="4.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 4.5h6.5"/>
+          <circle cx="4" cy="8" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 8h6.5"/>
+          <circle cx="4" cy="11.5" r="0.7" fill="currentColor" stroke="none"/>
+          <path d="M6.5 11.5h4.5"/>
+        </svg>
+        Pełna agenda 4 sesji
+        <span aria-hidden="true" class="transition group-hover:translate-x-0.5">→</span>
+      </button>
+      <ul class="mt-4 flex flex-wrap gap-1.5">
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">myśli samobójcze</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">depresja poporodowa</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">drżenia · padaczka</li>
+        <li class="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-700">leczenie bólu</li>
+      </ul>
+      <dl class="mt-5 grid gap-3 text-sm">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Prelegenci</dt>
+          <dd class="mt-1 font-medium text-zinc-900">prof. Marcin Siwek <span class="text-xs font-normal text-zinc-500">· kier. naukowy</span><br /><span class="font-normal text-zinc-600">+ prof. Dudek, dr hab. Woroń, dr Sawczyńska, lek. Wężyk, dr Kocot-Kępska</span></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">Certyfikat</dt>
+          <dd class="mt-1 font-medium text-zinc-900">obecność ≥80%</dd>
+        </div>
+      </dl>
+      <div class="mt-6 flex flex-col gap-2">
+        <a href="#" data-bigmarker="all-series" data-dialog="all-series" class="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#e5ff44] px-5 text-sm font-semibold tracking-pill text-black transition hover:bg-black hover:text-[#e5ff44] active:scale-[0.97]">
+          Zapisz się
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="#" data-bigmarker="psychiatria-neurologia-bol" class="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-5 text-xs font-semibold tracking-pill text-zinc-700 transition hover:border-black hover:text-black">
+          Tylko ta konferencja
+        </a>
+      </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- STICKY MOBILE CTA -->
+  <div class="fixed bottom-0 left-0 right-0 z-40 border-t border-white/15 bg-[#1e1926]/95 backdrop-blur-md md:hidden" style="padding-bottom: env(safe-area-inset-bottom);">
+    <div class="flex items-center justify-between gap-3 px-4 py-3">
+      <div class="flex min-w-0 flex-col">
+        <span class="truncate text-sm font-semibold text-white">Cała seria · 4 wydarzenia</span>
+        <span class="text-xs text-white/70">1 zapis · cała seria · bezpłatnie</span>
+      </div>
+      <a id="sticky-cta" href="#" data-bigmarker="all-series" data-dialog="all-series"
+         class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-[#e5ff44] px-4 text-[13px] font-semibold tracking-pill text-black active:scale-[0.97] transition-transform">
+        Zapisz się
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@11.13.5/+esm";
+
+    /* ---------- Preloader: hide on full load (after fonts + images settle) ---------- */
+    const preloader = document.getElementById("preloader");
+    if (preloader) {
+      const hide = () => {
+        // Give at least 500ms for fonts and initial paint, even on fast connections
+        setTimeout(() => preloader.classList.add("is-hidden"), 500);
+      };
+      if (document.readyState === "complete") {
+        hide();
+      } else {
+        window.addEventListener("load", hide, { once: true });
+      }
+      // Safety: hide preloader after 4s no matter what
+      setTimeout(() => preloader.classList.add("is-hidden"), 4000);
+    }
+
+    /* ---------- Motion reveal — 2-phase intro: H1 first, then everything else ---------- */
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const wordTargets = document.querySelectorAll("[data-motion-word]");
+    const blockTargets = document.querySelectorAll("[data-motion]");
+
+    if (prefersReducedMotion) {
+      [...wordTargets, ...blockTargets].forEach((el) => {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+        el.style.filter = "none";
+      });
+    } else {
+      // Phase 1 — H1 reveal (intro WOW moment)
+      if (wordTargets.length) {
+        animate(
+          wordTargets,
+          {
+            opacity: [0, 1],
+            transform: ["translateY(12px)", "translateY(0px)"],
+            filter: ["blur(12px)", "blur(0px)"],
+          },
+          {
+            duration: 0.65,
+            delay: stagger(0.08, { start: 0.2 }),
+            easing: [0.23, 1, 0.32, 1],
+          }
+        );
+      }
+      // Phase 2 — rest of hero appears after H1 settles (~1.15s)
+      if (blockTargets.length) {
+        animate(
+          blockTargets,
+          {
+            opacity: [0, 1],
+            transform: ["translateY(10px)", "translateY(0px)"],
+            filter: ["blur(8px)", "blur(0px)"],
+          },
+          {
+            duration: 0.7,
+            delay: stagger(0.12, { start: 1.15 }),
+            easing: [0.23, 1, 0.32, 1],
+          }
+        );
+      }
+    }
+
+    /* ---------- Event data ---------- */
+    const EVENTS = {
+      "dermatologia-alergologia": {
+        label: "Dermatologia i alergologia",
+        shortDate: "21.05",
+        date: new Date("2026-05-21T12:00:00+02:00"),
+      },
+      "pediatria": {
+        label: "Pediatria",
+        shortDate: "27.05",
+        date: new Date("2026-05-27T12:00:00+02:00"),
+      },
+      "medycyna-rodzinna": {
+        label: "Medycyna rodzinna",
+        shortDate: "02.06",
+        date: new Date("2026-06-02T12:00:00+02:00"),
+      },
+      "psychiatria-neurologia-bol": {
+        label: "Psychiatria, neurologia, ból",
+        shortDate: "10.06",
+        date: new Date("2026-06-10T12:00:00+02:00"),
+        soon: true,
+      },
+    };
+
+    /* ---------- Sticky top: scroll-triggered visibility ---------- */
+    const stickyTop = document.getElementById("sticky-top");
+    let stickyVisible = false;
+    function updateStickyTopVisibility() {
+      const shouldShow = window.scrollY > 400;
+      if (shouldShow !== stickyVisible) {
+        stickyVisible = shouldShow;
+        stickyTop.classList.toggle("is-visible", shouldShow);
+      }
+    }
+    updateStickyTopVisibility();
+    window.addEventListener("scroll", updateStickyTopVisibility, { passive: true });
+
+    /* ---------- Speaker dialogs (ported from motion-primitives/dialog) ---------- */
+    function openDialog(key) {
+      const dialog = document.getElementById(`dialog-${key}`);
+      if (!dialog || typeof dialog.showModal !== "function") return;
+      dialog.showModal();
+      requestAnimationFrame(() => dialog.classList.add("is-open"));
+    }
+
+    function closeDialog(dialog, after) {
+      if (!dialog) return;
+      dialog.classList.remove("is-open");
+      const card = dialog.querySelector(".dialog-card");
+      const onEnd = () => {
+        dialog.close();
+        card?.removeEventListener("transitionend", onEnd);
+        if (after) after();
+      };
+      if (card) {
+        card.addEventListener("transitionend", onEnd, { once: true });
+      } else {
+        dialog.close();
+        if (after) after();
+      }
+    }
+
+    document.querySelectorAll("[data-dialog]").forEach((trigger) => {
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        openDialog(trigger.dataset.dialog);
+      });
+    });
+
+    // Sequenced transition: close current dialog, then open next
+    document.querySelectorAll("[data-dialog-next]").forEach((trigger) => {
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        const next = trigger.dataset.dialogNext;
+        const current = trigger.closest("dialog");
+        closeDialog(current, () => openDialog(next));
+      });
+    });
+
+    document.querySelectorAll(".app-dialog").forEach((dialog) => {
+      // Close on backdrop click (clicking the dialog element itself, not its children)
+      dialog.addEventListener("click", (e) => {
+        if (e.target === dialog) closeDialog(dialog);
+      });
+      // Close buttons
+      dialog.querySelectorAll("[data-dialog-close]").forEach((btn) => {
+        btn.addEventListener("click", () => closeDialog(dialog));
+      });
+      // ESC key — prevent default native close (no animation), animate out instead
+      dialog.addEventListener("cancel", (e) => {
+        e.preventDefault();
+        closeDialog(dialog);
+      });
+    });
+
+    /* ---------- In-view reveal (ported from motion-primitives/in-view) ---------- */
+    document.querySelectorAll("[data-in-view-stagger]").forEach((group) => {
+      const step = parseInt(group.dataset.inViewStagger || "80", 10);
+      Array.from(group.children).forEach((el, i) => {
+        el.setAttribute("data-in-view", "");
+        el.style.setProperty("--reveal-delay", `${i * step}ms`);
+      });
+    });
+
+    const inViewEls = document.querySelectorAll("[data-in-view]");
+    if (prefersReducedMotion || !("IntersectionObserver" in window)) {
+      inViewEls.forEach((el) => el.classList.add("is-revealed"));
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-revealed");
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+      );
+      inViewEls.forEach((el) => io.observe(el));
+    }
+
+    /* ---------- Add to calendar (.ics download) ---------- */
+    function pad(n) { return String(n).padStart(2, "0"); }
+    function toICS(date) {
+      // Format: YYYYMMDDTHHmmssZ (UTC)
+      return (
+        date.getUTCFullYear() +
+        pad(date.getUTCMonth() + 1) +
+        pad(date.getUTCDate()) + "T" +
+        pad(date.getUTCHours()) +
+        pad(date.getUTCMinutes()) +
+        pad(date.getUTCSeconds()) + "Z"
+      );
+    }
+    function buildICS() {
+      const calEvents = [
+        { uid: "wiosna26-derm@remedium.pl", title: "POZ 26 WIOSNA — Dermatologia i alergologia", start: new Date("2026-05-21T12:00:00+02:00"), end: new Date("2026-05-21T18:00:00+02:00") },
+        { uid: "wiosna26-ped@remedium.pl",  title: "POZ 26 WIOSNA — Pediatria",                  start: new Date("2026-05-27T12:00:00+02:00"), end: new Date("2026-05-27T18:00:00+02:00") },
+        { uid: "wiosna26-mr@remedium.pl",   title: "POZ 26 WIOSNA — Medycyna rodzinna",          start: new Date("2026-06-02T12:00:00+02:00"), end: new Date("2026-06-02T18:00:00+02:00") },
+        { uid: "wiosna26-psy@remedium.pl",  title: "POZ 26 WIOSNA — Psychiatria, neurologia, ból", start: new Date("2026-06-10T12:00:00+02:00"), end: new Date("2026-06-10T18:00:00+02:00") },
+      ];
+      const now = toICS(new Date());
+      const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Remedium//POZ 26 Wiosna//PL", "CALSCALE:GREGORIAN"];
+      calEvents.forEach((e) => {
+        lines.push("BEGIN:VEVENT");
+        lines.push(`UID:${e.uid}`);
+        lines.push(`DTSTAMP:${now}`);
+        lines.push(`DTSTART:${toICS(e.start)}`);
+        lines.push(`DTEND:${toICS(e.end)}`);
+        lines.push(`SUMMARY:${e.title}`);
+        lines.push("DESCRIPTION:Online · bezpłatnie · certyfikat za obecność ≥80%. Szczegóły: https://remedium.md/konferencje");
+        lines.push("LOCATION:Online (Remedium)");
+        lines.push("END:VEVENT");
+      });
+      lines.push("END:VCALENDAR");
+      return lines.join("\r\n");
+    }
+    document.querySelectorAll("[data-add-to-calendar]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const blob = new Blob([buildICS()], { type: "text/calendar;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "poz26-wiosna.ics";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    });
+
+    /* ---------- Marquee — JS-driven for smooth hover slowdown (no jump) ---------- */
+    const marqueeEl = document.querySelector(".marquee");
+    const marqueeTrack = document.querySelector(".marquee-track");
+    if (marqueeEl && marqueeTrack && !prefersReducedMotion) {
+      marqueeTrack.classList.add("is-js");
+      const FAST = 0.05;   // px per ms
+      const SLOW = 0.012;
+      const EASE = 0.06;
+      let target = FAST;
+      let speed = FAST;
+      let x = 0;
+      let halfWidth = 0;
+      const measure = () => { halfWidth = marqueeTrack.scrollWidth / 2; };
+      measure();
+      window.addEventListener("resize", measure);
+      let last = performance.now();
+      function loop(now) {
+        const dt = Math.min(now - last, 50);
+        last = now;
+        speed += (target - speed) * EASE;
+        x -= speed * dt;
+        if (halfWidth > 0) {
+          if (x <= -halfWidth) x += halfWidth;
+          if (x > 0) x -= halfWidth;
+        }
+        marqueeTrack.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`;
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+      marqueeEl.addEventListener("mouseenter", () => { target = SLOW; });
+      marqueeEl.addEventListener("mouseleave", () => { target = FAST; });
+    }
+
+    /* ---------- Cursor parallax on hero spheres ---------- */
+    const hero = document.querySelector(".hero");
+    const spheres = document.querySelector(".hero-spheres");
+    const fineCursor = window.matchMedia("(pointer: fine)").matches;
+
+    if (hero && spheres && !prefersReducedMotion && fineCursor) {
+      let tx = 0, ty = 0, cx = 0, cy = 0, rafId = null;
+      const MAX_X = 28;
+      const MAX_Y = 18;
+      const EASE = 0.08;
+
+      function tick() {
+        cx += (tx - cx) * EASE;
+        cy += (ty - cy) * EASE;
+        spheres.style.setProperty("--cursor-x", cx.toFixed(2) + "px");
+        spheres.style.setProperty("--cursor-y", cy.toFixed(2) + "px");
+        if (Math.abs(tx - cx) > 0.1 || Math.abs(ty - cy) > 0.1) {
+          rafId = requestAnimationFrame(tick);
+        } else {
+          rafId = null;
+        }
+      }
+
+      hero.addEventListener("mousemove", (e) => {
+        const rect = hero.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / rect.width - 0.5;
+        const ny = (e.clientY - rect.top) / rect.height - 0.5;
+        tx = -nx * MAX_X;
+        ty = -ny * MAX_Y;
+        if (!rafId) rafId = requestAnimationFrame(tick);
+      }, { passive: true });
+
+      hero.addEventListener("mouseleave", () => {
+        tx = 0; ty = 0;
+        if (!rafId) rafId = requestAnimationFrame(tick);
+      });
+    }
+  </script>
+
+</body>
+</html>
