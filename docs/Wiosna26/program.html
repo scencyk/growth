@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Program konferencji — Pierwsze kroki w POZ · Dermatologia i alergologia · Wiosna 2026</title>
+  <meta name="description" content="Pełny program konferencji Dermatologia i alergologia · 21.05.2026 · 4 sesje · 12:00–18:00." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] },
+          colors: {
+            ink: '#1e1926',
+            iris: '#5e37ef',
+            'iris-50': '#efeafe',
+            'iris-100': '#e1d8fd',
+            blush: '#fc3e84',
+            sun: '#e5ff44',
+          },
+          letterSpacing: { pill: '-0.01em', display: '-0.02em' },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      background:
+        radial-gradient(120% 80% at 50% -10%, #f4f0ff 0%, #ffffff 50%, #fafafa 100%);
+      color: #18181b;
+      min-height: 100vh;
+    }
+    /* Stepper rail — horizontal line connecting numbered dots */
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      position: relative;
+      max-width: 920px;
+      margin: 0 auto;
+    }
+    .stepper::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 2px;
+      background: #e1d8fd;
+      z-index: 0;
+    }
+    .stepper-node { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .stepper-dot {
+      width: 28px; height: 28px;
+      border-radius: 9999px;
+      background: white;
+      border: 2px solid #5e37ef;
+      color: #5e37ef;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px -6px rgba(94, 55, 239, 0.35);
+    }
+    .stepper-meta { text-align: center; }
+    .stepper-time { font-size: 11px; color: #71717a; font-weight: 500; }
+    .stepper-label { font-size: 11px; color: #3f3f46; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* Break chips between sessions */
+    .break-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 9999px;
+      background: white;
+      border: 1px dashed #d4d4d8;
+      color: #71717a;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .break-chip svg { color: #5e37ef; }
+
+    /* Session card */
+    .session-card {
+      background: white;
+      border: 1px solid #e4e4e7;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 4px 18px -10px rgba(30, 25, 38, 0.08);
+    }
+    .session-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: #efeafe;
+      color: #4e2cd6;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .session-time {
+      font-size: 13px;
+      color: #52525b;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .talk-item {
+      padding: 12px 0;
+      border-top: 1px solid #f4f4f5;
+    }
+    .talk-item:first-child { border-top: 0; }
+    .talk-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: #5e37ef;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+    .talk-kind {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: #71717a;
+    }
+    .talk-title { font-size: 14px; font-weight: 600; color: #18181b; line-height: 1.4; margin-top: 4px; }
+    .talk-title-tbd { font-style: italic; color: #a1a1aa; font-weight: 500; }
+    .talk-speakers { font-size: 12px; color: #71717a; margin-top: 4px; line-height: 1.5; }
+
+    /* Horizontal break between two session columns */
+    .h-break {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 80px;
+    }
+    @media (max-width: 767px) {
+      .h-break, .v-break { display: flex; justify-content: center; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <main class="mx-auto max-w-[1180px] px-5 py-12 md:px-8 md:py-16">
+
+    <!-- HEADER -->
+    <header class="text-center">
+      <p class="text-xs font-semibold uppercase tracking-[0.18em] text-iris">21.05.2026 · czwartek · 12:00–18:00</p>
+      <h1 class="mt-3 text-[28px] font-bold tracking-display text-ink md:text-[36px]">Program konferencji</h1>
+      <p class="mt-2 text-base text-zinc-600">
+        Pierwsze kroki w POZ · <span class="font-semibold text-ink">Dermatologia i alergologia</span>
+      </p>
+
+      <!-- STEPPER -->
+      <div class="stepper mt-10">
+        <div class="stepper-node">
+          <span class="stepper-dot">1</span>
+          <span class="stepper-meta"><span class="stepper-label block">Sesja I</span><span class="stepper-time">12:00–13:20</span></span>
+        </div>
+        <div class="stepper-node">
+          <span class="stepper-dot">2</span>
+          <span class="stepper-meta"><span class="stepper-label block">Sesja II</span><span class="stepper-time">13:30–14:50</span></span>
+        </div>
+        <div class="stepper-node">
+          <span class="stepper-dot">3</span>
+          <span class="stepper-meta"><span class="stepper-label block">Sesja III</span><span class="stepper-time">15:10–16:30</span></span>
+        </div>
+        <div class="stepper-node">
+          <span class="stepper-dot">4</span>
+          <span class="stepper-meta"><span class="stepper-label block">Sesja IV</span><span class="stepper-time">16:40–18:05</span></span>
+        </div>
+      </div>
+      <p class="mt-3 text-[11px] uppercase tracking-[0.16em] text-zinc-400">→ Sesje odbywają się sekwencyjnie, jedna po drugiej</p>
+    </header>
+
+    <!-- SESSIONS GRID -->
+    <div class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto_1fr] md:gap-4">
+
+      <!-- SESJA I -->
+      <section class="session-card">
+        <header class="flex items-center justify-between gap-2">
+          <span class="session-tag">Sesja 1 z 4</span>
+          <span class="session-time">12:00–13:20</span>
+        </header>
+        <ul class="mt-4">
+          <li class="talk-item">
+            <p><span class="talk-time">12:00–12:05</span><span class="talk-kind">· Rozpoczęcie konferencji</span></p>
+            <p class="talk-speakers">prof. Mazurek, prof. Walecka</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">12:05–12:20</span><span class="talk-kind">· wykład plenarny kierownika naukowego</span></p>
+            <p class="talk-title">Łysienie plackowate – dermatolog na ratunek</p>
+            <p class="talk-speakers">prof. Irena Walecka</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">12:20–12:40</span><span class="talk-kind">· wykład społeczności Remedium</span></p>
+            <p class="talk-title">Choroby SOG – naprawdę, aż tak wiele</p>
+            <p class="talk-speakers">lek. Anna Czaplicka</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">12:40–13:00</span><span class="talk-kind">· wykład sponsorowany · Magna Pharm</span></p>
+            <p class="talk-title">Zastosowanie sterydów w zmianach skórnych</p>
+            <p class="talk-speakers">prof. Irena Walecka</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">13:00–13:20</span><span class="talk-kind">· panel dyskusyjny</span></p>
+            <p class="talk-speakers">lek. Czaplicka, prof. Walecka</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- → 10 min przerwy → (between Sesja I and Sesja II, horizontal on desktop) -->
+      <div class="h-break md:flex-col">
+        <div class="break-chip">
+          <svg class="rotate-90 md:rotate-0" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10"/><path d="M9 4l4 4-4 4"/></svg>
+          10 min przerwy
+        </div>
+      </div>
+
+      <!-- SESJA II -->
+      <section class="session-card">
+        <header class="flex items-center justify-between gap-2">
+          <span class="session-tag">Sesja 2 z 4</span>
+          <span class="session-time">13:30–14:50</span>
+        </header>
+        <ul class="mt-4">
+          <li class="talk-item">
+            <p><span class="talk-time">13:30–13:50</span><span class="talk-kind">· wykład plenarny Remedium</span></p>
+            <p class="talk-title">To nie alergia – najczęstsze objawy ze strony układu oddechowego u niemowląt</p>
+            <p class="talk-speakers">dr Wojciech Durlak</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">13:50–14:10</span><span class="talk-kind">· wykład plenarny Remedium</span></p>
+            <p class="talk-title">Stany nagłe w alergologii – postępowanie w POZ</p>
+            <p class="talk-speakers">prof. Marek Kulus</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">14:10–14:30</span><span class="talk-kind">· wykład sponsorowany</span></p>
+            <p class="talk-title talk-title-tbd">Tytuł zostanie ogłoszony wkrótce</p>
+            <p class="talk-speakers">Wykładowca zostanie ogłoszony wkrótce</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">14:30–14:50</span><span class="talk-kind">· panel dyskusyjny</span></p>
+            <p class="talk-speakers">prof. Mazurek, prof. Kulus, dr Durlak</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ↓ 20 min przerwy ↓ (between row 1 and row 2, spans full width) -->
+      <div class="md:col-span-3">
+        <div class="relative my-2 flex items-center justify-center">
+          <div class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-zinc-200"></div>
+          <div class="relative bg-white px-3">
+            <span class="break-chip">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><polyline points="8 5 8 8 10 9.5"/></svg>
+              20 min przerwy
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESJA III -->
+      <section class="session-card">
+        <header class="flex items-center justify-between gap-2">
+          <span class="session-tag">Sesja 3 z 4</span>
+          <span class="session-time">15:10–16:30</span>
+        </header>
+        <ul class="mt-4">
+          <li class="talk-item">
+            <p><span class="talk-time">15:10–15:30</span><span class="talk-kind">· wykład plenarny</span></p>
+            <p class="talk-title">HS – co lekarz rodzinny wiedzieć powinien</p>
+            <p class="talk-speakers">prof. Irena Walecka</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">15:30–15:50</span><span class="talk-kind">· wykład plenarny</span></p>
+            <p class="talk-title">Zmiany skórne okolicy krocza u juniorów i seniorów – ratunku!</p>
+            <p class="talk-speakers">dr Klaudia Dopytalska</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">15:50–16:10</span><span class="talk-kind">· wykład plenarny</span></p>
+            <p class="talk-title">Trądzik i trądzik różowaty – co lekarz rodzinny powinien wiedzieć</p>
+            <p class="talk-speakers">prof. Witold Owczarek</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">16:10–16:30</span><span class="talk-kind">· panel dyskusyjny</span></p>
+            <p class="talk-speakers">prof. Walecka, prof. Owczarek, dr Dopytalska</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- → 10 min przerwy → (between Sesja III and Sesja IV) -->
+      <div class="h-break md:flex-col">
+        <div class="break-chip">
+          <svg class="rotate-90 md:rotate-0" width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10"/><path d="M9 4l4 4-4 4"/></svg>
+          10 min przerwy
+        </div>
+      </div>
+
+      <!-- SESJA IV -->
+      <section class="session-card">
+        <header class="flex items-center justify-between gap-2">
+          <span class="session-tag">Sesja 4 z 4</span>
+          <span class="session-time">16:40–18:05</span>
+        </header>
+        <ul class="mt-4">
+          <li class="talk-item">
+            <p><span class="talk-time">16:40–17:00</span><span class="talk-kind">· wykład plenarny</span></p>
+            <p class="talk-title">Leki przeciwhistaminowe: praktyczne aspekty opieki nad pacjentem</p>
+            <p class="talk-speakers">prof. Henryk Mazurek</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">17:00–17:20</span><span class="talk-kind">· wykład plenarny</span></p>
+            <p class="talk-title">Kiedy zlecać i jak interpretować panel alergologiczny dostępny w POZ?</p>
+            <p class="talk-speakers">prof. Bolesław Samoliński</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">17:20–17:40</span><span class="talk-kind">· wykład sponsorowany</span></p>
+            <p class="talk-title talk-title-tbd">Tytuł i wykładowca zostaną ogłoszeni wkrótce</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">17:40–18:00</span><span class="talk-kind">· panel dyskusyjny</span></p>
+            <p class="talk-speakers">prof. Mazurek, prof. Samoliński</p>
+          </li>
+          <li class="talk-item">
+            <p><span class="talk-time">18:00–18:05</span><span class="talk-kind">· Zakończenie konferencji</span></p>
+            <p class="talk-speakers">prof. Mazurek, prof. Walecka</p>
+          </li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- LEGEND / FOOTNOTE -->
+    <footer class="mt-10 rounded-2xl border border-zinc-200 bg-white/60 p-5 text-center">
+      <p class="text-sm text-zinc-600">
+        <span class="font-semibold text-ink">Cztery sesje · jeden dzień.</span>
+        Każda sesja po 4 wykładach plus panel dyskusyjny. Pomiędzy sesjami 10 lub 20 minut przerwy.
+      </p>
+      <p class="mt-2 text-xs uppercase tracking-[0.12em] text-zinc-500">Konferencja online · live · bezpłatnie · certyfikat za obecność ≥80%</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>
