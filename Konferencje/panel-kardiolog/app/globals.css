@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+:root {
+  /* Remedium Workspace palette */
+  --background:  #ECECE8;
+  --surface:     #FFFFFF;
+  --surface-2:   #FAFAF8;
+  --line:        #E6E6E2;
+  --line-2:      #EDEDE9;
+  --ink:         #121212;
+  --ink-2:       #3A3A38;
+  --muted:       #6E6E68;
+  --muted-2:     #9A9A93;
+  --accent:      #111111;
+  --ok:          #1E5A3A;
+  --ok-bg:       #E7EFE9;
+  --warn:        #7A3B0E;
+  --warn-bg:     #F5EDE3;
+
+  /* Map to semantic tokens used by Tailwind classes throughout the app */
+  --foreground: var(--ink);
+  --panel:      var(--surface);
+  --panel-2:    var(--surface-2);
+  --border:     var(--line);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel:      var(--panel);
+  --color-panel-2:    var(--panel-2);
+  --color-border:     var(--border);
+  --color-muted:      var(--muted);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+}
+
+body {
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* JetBrains Mono utility — used for category labels, codes, shortcuts */
+.mono {
+  font-family: var(--font-jetbrains), 'JetBrains Mono', ui-monospace, monospace;
+  font-feature-settings: "ss01", "cv11";
+}
+
+kbd {
+  font-family: var(--font-jetbrains), 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-bottom-width: 1.5px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  min-width: 16px;
+  justify-content: center;
+}
+
+/* LIVE pulse */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.2); }
+}
+.live-dot { animation: live-pulse 1.6s ease-in-out infinite; }
+
+/* Custom scrollbar — warm style */
+::-webkit-scrollbar       { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
