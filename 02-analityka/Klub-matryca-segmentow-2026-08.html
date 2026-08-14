@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klub Medyka — plan operacyjny: reklama do ofert (notatka, 14.08.2026)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#2E35FF;--ink:#14172B;--muted:#6A7086;--faint:#9AA0B5;--line:#E9EBF2;--track:#F0F1F7;--ok:#0E9F6E;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--ink);font-size:14px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 30px 80px}
+.kicker{color:var(--brand);font-weight:700;font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--muted);margin-top:8px;max-width:720px;font-size:13.5px}
+h2{font-size:16.5px;font-weight:750;margin:52px 0 4px}
+.lead{color:var(--muted);font-size:13px;margin-bottom:16px;max-width:720px}
+
+.meta{display:flex;gap:22px;flex-wrap:wrap;font-size:12px;color:var(--muted);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0;margin:18px 0 26px}
+.meta b{color:var(--ink)}
+h2.note{font-size:15px;font-weight:750;margin:34px 0 8px}
+.note-p{font-size:13.5px;max-width:760px;margin-bottom:10px}
+.stack{display:flex;height:38px;border-radius:9px;overflow:hidden;margin:16px 0 10px;max-width:960px}
+.stack div{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;white-space:nowrap}
+.stacklegend{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 18px;max-width:960px;margin-bottom:14px}
+.stacklegend div{font-size:12.5px;color:var(--muted)}
+.stacklegend b{color:var(--ink);font-variant-numeric:tabular-nums}
+.stacklegend .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+.overlay{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.ochip{border:1px dashed var(--line);border-radius:999px;padding:5px 14px;font-size:12px;color:var(--muted)}
+.ochip b{color:var(--ink)}
+.headline{display:flex;gap:26px;align-items:baseline;margin-top:6px;flex-wrap:wrap}
+.headline .h{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.headline .h small{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0}
+#tt{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:#fff;font-size:12px;line-height:1.45;padding:10px 12px;border-radius:9px;max-width:280px;opacity:0;transition:opacity .1s}
+#tt b{color:#fff}
+#tt .of{color:#A9C7FF;font-weight:700}
+#tt hr{border:none;border-top:1px solid rgba(255,255,255,.25);margin:7px 0}
+.cell{cursor:default}
+ol.banery{margin:8px 0 0 18px;max-width:800px}
+ol.banery li{font-size:13.5px;margin-bottom:12px}
+ol.banery .uz{color:var(--muted);font-size:13px}
+.tagbox{background:#FAFBFF;border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;max-width:800px;margin-top:14px}
+.tagbox code{background:#fff;border:1px solid var(--line);color:var(--brand);padding:1px 6px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:11px}
+/* toggle */
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin:18px 0 14px}
+.toggle button{border:none;background:#fff;padding:7px 16px;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--muted)}
+.toggle button.active{background:var(--brand);color:#fff}
+.hint{font-size:12px;color:var(--faint);margin-left:12px}
+/* matrix */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:right;padding:8px 6px;font-size:11.5px;color:var(--muted);font-weight:700;border-bottom:1.5px solid var(--line)}
+th:first-child{text-align:left}
+th .tot{display:block;font-weight:500;color:var(--faint);font-size:10.5px}
+td{padding:0;border-bottom:1px solid #F4F5F9}
+td.lbl{padding:7px 6px;font-weight:600;font-size:12.5px;white-space:nowrap}
+td.grp{padding:16px 6px 4px;font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);border-bottom:none}
+.cell{display:block;text-align:right;padding:7px 8px;font-variant-numeric:tabular-nums;font-weight:600}
+tr:hover td{background:#FAFBFF}
+tr:hover .cell{outline:1px solid #D9DCFF;outline-offset:-1px}
+/* needs cards */
+.needs{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px;margin-top:6px}
+.nc{border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+.nc h4{font-size:13px;font-weight:750}
+.nc .size{font-size:11px;color:var(--faint);margin-bottom:8px}
+.nc .need{font-size:12px;margin-bottom:8px;color:var(--ink)}
+.nc .need b{color:var(--brand)}
+.nc .prod{font-size:11.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:7px}
+/* proof chains */
+.proof{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.proof .ph{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 18px;background:#FAFBFF;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.proof .ph h4{font-size:13.5px;font-weight:750}
+.proof .ph h4 span{color:var(--brand)}
+.proof .est{font-size:11.5px;font-weight:700;color:var(--ok);white-space:nowrap}
+.proof .chain{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.proof .step{padding:12px 18px;font-size:12px;border-left:1px solid var(--line);color:var(--ink)}
+.proof .step:first-child{border-left:none}
+.proof .step em{display:block;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.proof .step b{font-variant-numeric:tabular-nums}
+.proof .verify{padding:10px 18px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted)}
+.proof .verify code{background:var(--track);padding:1px 6px;border-radius:5px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px}
+.proof .verify b{color:var(--ink)}
+.assump{font-size:11.5px;color:var(--faint);margin:10px 0 0;max-width:760px}
+@media(max-width:760px){.proof .chain{grid-template-columns:1fr}.proof .step{border-left:none;border-top:1px solid var(--line)}}
+/* loop */
+.loop{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:6px}
+.loop>div{padding:15px 17px;border-left:1px solid var(--line);font-size:12.5px}
+.loop>div:first-child{border-left:none}
+.loop b{display:block;font-size:12px;margin-bottom:4px}
+.loop .n{display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--brand);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-bottom:8px}
+.loop span{color:var(--muted)}
+@media(max-width:860px){.loop{grid-template-columns:1fr 1fr}}
+/* ─── prototyp: spersonalizowany widget ofertowy ─── */
+.wstage{background:#FAFBFF;border:1px solid var(--line);border-radius:14px;padding:34px 24px 110px;margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:24px;position:relative;overflow:visible}
+.wchips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.wchips button{padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--muted);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:background .16s,color .16s,border-color .16s}
+.wchips button.active{background:#0A0A0A;border-color:#0A0A0A;color:#fff}
+.wsignal{font-size:11.5px;color:var(--faint);text-align:center}
+.kmw{position:relative;display:inline-block}
+.kmw-pill{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 4px;border-radius:999px;background:#0A0A0A;color:#fff;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.08),inset 0 0 0 1px rgba(255,255,255,.04);transition:transform .2s ease;cursor:pointer}
+.kmw.open .kmw-pill{transform:scale(1.02)}
+.kmw-sygnet{position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px;flex-shrink:0;border-radius:50%;background:#CEFF3E}
+.kmw-pulse{position:absolute;inset:0;border-radius:50%;pointer-events:none;animation:kmwPulse .9s ease-out 1}
+@keyframes kmwPulse{0%{box-shadow:0 0 0 0 rgba(206,255,62,.55)}70%{box-shadow:0 0 0 10px rgba(206,255,62,0)}100%{box-shadow:0 0 0 0 rgba(206,255,62,0)}}
+.kmw-label{position:relative;display:inline-block;height:14px;overflow:hidden;transition:width .32s cubic-bezier(.22,1,.36,1)}
+.kmw-label span{position:absolute;left:0;top:0;white-space:nowrap;font-size:13px;font-weight:500;line-height:1;opacity:0;transform:translateY(8px);transition:opacity .28s cubic-bezier(.22,1,.36,1),transform .28s cubic-bezier(.22,1,.36,1)}
+.kmw-label span.on{opacity:1;transform:translateY(0)}
+.kmw-label .l0{color:#fff}.kmw-label .l1{color:#CEFF3E}
+.kmw-arrow{display:flex;align-items:center;color:rgba(255,255,255,.7);margin-left:2px}
+.kmw-panel{position:absolute;top:calc(100% + 10px);left:50%;width:340px;opacity:0;transform:translate(-50%,-6px);pointer-events:none;transition:opacity .2s cubic-bezier(.22,1,.36,1),transform .2s cubic-bezier(.22,1,.36,1);z-index:40}
+.kmw.open .kmw-panel{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.kmw-tip{position:absolute;top:-6px;left:50%;margin-left:-6px;width:12px;height:12px;background:#fff;transform:rotate(45deg);border:1px solid #E4E4E7;border-right:none;border-bottom:none;border-top-left-radius:2px}
+.kmw-card{position:relative;background:#fff;border-radius:18px;border:1px solid #E4E4E7;box-shadow:0 20px 40px -10px rgba(0,0,0,.12),0 8px 16px -6px rgba(0,0,0,.06);padding:14px 14px 10px;overflow:hidden;text-align:left}
+.kmw-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.kmw-headsyg{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#0A0A0A}
+.kmw-headtxt{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#52525B}
+.kmw-offer{display:flex;gap:12px;align-items:flex-start}
+.kmw-tile{flex-shrink:0;width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;line-height:1.15;text-align:center;white-space:pre-line;letter-spacing:.02em}
+.kmw-title{font-size:15px;font-weight:700;line-height:1.25;color:#0A0A0A}
+.kmw-sub{font-size:13px;line-height:1.4;color:#52525B;margin-top:4px}
+.kmw-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #F4F4F5}
+.kmw-all{font-size:12px;font-weight:500;color:#71717A;text-decoration:none}
+.kmw-cta{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#0A0A0A;text-decoration:none}
+@media(prefers-reduced-motion:reduce){.kmw-pulse{animation:none}.kmw-label,.kmw-label span,.kmw-panel,.kmw-pill{transition:none}}
+footer{margin-top:52px;color:var(--faint);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px;max-width:760px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="kicker">Notatka wewnętrzna · zespół Growth</div>
+<h1>Klub Medyka — plan operacyjny: reklama do ofert</h1>
+<div class="meta"><span>Data: <b>14.08.2026</b></span><span>Od: <b>Sebastian</b></span><span>Horyzont: <b>następny tydzień (precyzyjne linkowanie do ofert)</b></span><span>Dane: <b>PostHog, 90 dni</b></span></div>
+
+<h2 class="note" style="margin-top:0">Problem, który rozwiązujemy w pierwszej kolejności</h2>
+<p class="note-p" style="font-size:14.5px"><b>Remedium ma ruch i intencję, Klub ma oferty — ale nie ma między nimi połączenia.</b> Zanim zaczniemy poprawiać sam Klub czy kupować zasięg, budujemy mierzalne mosty: baner → konkretna oferta, we właściwym miejscu, dla właściwej grupy.</p>
+
+<h2 class="note">Bazowe liczby: 26% zna Klub, wraca 13%</h2>
+<div class="headline"><div class="h">4 902<small>aktywnych lekarzy zna Klub</small></div><div class="h" style="color:var(--brand)">26%<small>aktywnej bazy</small></div><div class="h" style="color:#B45309">13%<small>znających wraca (30 d)</small></div></div>
+<p class="note-p" style="margin-top:14px">Kiedy byli ostatnio (suma = 100% znających):</p>
+<div class="stack">
+<div style="width:46.7%;background:#C9CDF5;color:#3A3F66">2 288 · 47%</div>
+<div style="width:21.6%;background:#8E96EC;">1 059 · 22%</div>
+<div style="width:18.7%;background:#5A62E8">915 · 19%</div>
+<div style="width:13%;background:#2E35FF">640 · 13%</div>
+</div>
+<div class="stacklegend">
+<div><span class="sw" style="background:#C9CDF5"></span><b>ponad pół roku temu</b> — nie widzieli wersji po relaunchu; komunikat = premiera, nie przypomnienie</div>
+<div><span class="sw" style="background:#8E96EC"></span><b>3–6 miesięcy temu</b> — okolice relaunchu</div>
+<div><span class="sw" style="background:#5A62E8"></span><b>1–3 miesiące temu</b> — świeża pamięć, najcieplejsi do reaktywacji</div>
+<div><span class="sw" style="background:#2E35FF"></span><b>ostatnie 30 dni</b> — jedyni „aktywni" w Klubie</div>
+</div>
+<div class="overlay">
+<span class="ochip">Przekroje poprzeczne (nakładają się na powyższe): <b>55%</b> było w Klubie tylko raz w życiu · <b>26%</b> widziało wyłącznie landing · <b>29%</b> kiedykolwiek skonwertowało</span>
+</div>
+
+<h2 class="note">Decyzja</h2>
+<p class="note-p">Na ten moment kierujemy ruch <b>do konkretnych ofert, nie do Klubu</b>. Strona główna Klubu wymaga przebudowy — podejmiemy się jej równolegle na poziomie projektu, ale nie egzekucji, bo potrzeba ciut więcej czasu. To, co możemy zrobić teraz, to precyzyjna reklama do ofert.</p>
+
+<h2 class="note">Plan: 4 banery — precyzyjne linkowanie do ofert (przyszły tydzień)</h2>
+<p class="note-p">Skupiamy się na: <b>inFakt · Medicover · Ubezpieczenia · Samochody</b> — wtopione precyzyjnie tam, gdzie mają największą szansę na konwersję: w miejscach, w których dana grupa bywa najczęściej i jest we właściwym momencie. Dobór miejsc wynika z matrycy segmentów (tabela poniżej, w załączniku).</p>
+<ol class="banery">
+<li><b>inFakt → kalkulatory zarobków + mapa wynagrodzeń</b> · grupa: rezydenci i bez specjalizacji.<br>
+<span class="uz">Uzasadnienie: 78% użytkowników kalkulatora to persona JDG, liczą swoje netto w momencie kliknięcia — najwyższa intencja finansowa na platformie (8,2 tys. UU/90 d). Banner pod wynikiem, nie obok.</span></li>
+<li><b>Medicover → main-panel (web) + channels w apce</b> · grupa: wszyscy, akcent na studentów i stażystów.<br>
+<span class="uz">Uzasadnienie: produkt o najniższym progu = jedyny, który ma sens przy szerokim zasięgu bez intencji (9,6 tys. + 3,9 tys. UU/30 d). Wrzesień = „wracam do formy".</span></li>
+<li><b>Ubezpieczenia → encyklopedia rezydentur + sekcja egzaminów</b> · grupa: stażyści i rezydenci.<br>
+<span class="uz">Uzasadnienie: stażyści zaglądają do ubezpieczeń Klubu 1,8× częściej niż przeciętny użytkownik, a LEK 5.09 i start stażu 1.10 to ich moment decyzji; INTER ma gotowe pakiety per status. Zasięg 4,5 tys. + 2,1 tys. UU/30 d z pikiem właśnie teraz.</span></li>
+<li><b>Samochody → strony VOD i webinarów</b> · grupa: specjaliści.<br>
+<span class="uz">Uzasadnienie: jedyne miejsce koncentracji specjalistów — webinary oglądają 2,2× częściej niż ogół, wideo 1,5×, a w sekcjach kariery praktycznie ich nie ma (0,2–0,3× średniej). Kampania startująca teraz domyka się w XI–XII, na wyprzedaży rocznika i kosztach przed 31.12. Format: dyskretna belka przy treści.</span></li>
+</ol>
+<div class="tagbox"><b>Tagowanie (warunek startu):</b> tworzymy tagi <code>?ref=calc-zarobki</code>, <code>?ref=panel-kafel</code>, <code>?ref=encyklopedia</code>, <code>?ref=webinar</code> i <b>deep-linki do konkretnej oferty, nie do landingu</b> — inaczej za tydzień nie wiemy, który banner pracuje.</div>
+
+<p class="note-p" style="margin-top:14px"><b>Dalej:</b> po precyzyjnym linkowaniu do ofert rozważymy kolejne kanały — reklamy płatne, mailing, influencerów i social media. Najpierw banery, bo są najtańsze i mierzalne od pierwszego dnia.</p>
+
+<h2 class="note" style="margin-top:44px">Załącznik: matryca segmentów (dane pod decyzje)</h2>
+<p class="sub" style="margin-top:0">Pięć grup × obszary aktywności. Trzy widoki: <b>krotność (×)</b> — jak często grupa tam bywa vs średnia (1,0×), <b>% grupy</b>, <b>UU</b>. <b>Najedź na komórkę</b>, żeby zobaczyć, którą ofertę Klubu adresować w tym miejscu i dlaczego.</p>
+
+<div class="toggle" id="toggle">
+  <button data-m="idx" class="active">Krotność (× średniej)</button>
+  <button data-m="pct">% grupy</button>
+  <button data-m="uu">UU</button>
+</div><span class="hint" id="hint">powyżej 1,5× = grupa bywa tam wyraźnie częściej niż ogół → tam mieszka jej potrzeba</span>
+
+<table id="mx"></table>
+
+<h2 class="note" style="margin-top:44px">Co potem?</h2>
+<p class="note-p">Stworzymy pierwszy system rekomendacji dla użytkowników. Tak, żeby na podstawowym poziomie w zależności od roli użytkownika (stażysta, rezydent itd.) proponować mu odpowiednie oferty. Popracujemy też nad formą wyświetlania tych ofert.</p>
+<p class="note-p">Poniżej działający prototyp tej mechaniki: <b>pill do headera Remedium, który pokazuje jedną ofertę dobraną do profilu użytkownika</b> — bez rotacji katalogu. Przełącz profil, żeby zobaczyć, jak zmienia się przekaz; najedź na pill po szczegóły oferty.</p>
+<div class="wstage">
+  <div class="wchips" id="wchips"></div>
+  <span class="kmw" id="kmw"></span>
+  <div class="wsignal" id="wsignal"></div>
+</div>
+
+<footer>Źródło: PostHog, $pageview, 16.05–14.08.2026, użytkownicy z rolą doctor (status) i student; obszary po rmd_feature i properties.path (zarobki = kalkulatory zarobków + mapa wynagrodzeń; Klub rozbity po podstronach). Krotność (×) = % grupy docierający do obszaru podzielony przez % wszystkich użytkowników; 1,0× = średnia platformy. UU między obszarami się nie sumują (jedna osoba jest w wielu obszarach).</footer>
+
+</div>
+
+<script>
+const SEGS=["Student","Stażysta","Rezydent","Bez spec.","Specjalista"];
+const TOT=[13429,2883,7612,12080,5596];
+const ROWS=[
+ ["g","Kariera i pieniądze"],
+ ["Zarobki (kalkulatory + mapa)",[3304,1587,1717,2660,279]],
+ ["Egzaminy (LEK/PES)",[5143,747,1226,1515,357]],
+ ["Encyklopedia rezydentur",[6073,1950,2332,3693,285]],
+ ["Mapa rezydentur",[3246,1251,866,1579,180]],
+ ["g","Narzędzia codzienne"],
+ ["Kalkulatory medyczne",[7005,2298,4275,6396,1889]],
+ ["ICD-10",[2048,921,2834,3861,1092]],
+ ["Wyszukiwarka leków",[1835,554,1353,1566,446]],
+ ["g","Edukacja"],
+ ["Artykuły",[7700,2263,4749,6951,2666]],
+ ["VOD",[1623,905,2283,2475,1790]],
+ ["Konferencje",[306,1007,1987,2484,1414]],
+ ["Webinary",[106,187,477,494,532]],
+ ["Kursy",[1073,436,994,995,627]],
+ ["Przypadki kliniczne",[949,464,933,1052,461]],
+ ["g","Klub Medyka"],
+ ["Klub — całość",[760,324,699,652,328]],
+ ["→ Medicover Sport",[464,146,216,197,52]],
+ ["→ Samochody",[201,148,299,305,110]],
+ ["→ Wirtualny Gabinet",[76,57,203,150,128]],
+ ["→ inFakt / praktyka",[119,88,210,239,77]],
+ ["→ Ubezpieczenia",[84,40,88,64,43]],
+ ["→ Zniżki",[295,154,234,216,90]]
+];
+const ALL=TOT.reduce((a,b)=>a+b,0);
+const fmt=n=>n.toLocaleString('pl-PL');
+let metric='idx';
+function cellVal(v,si,row){
+  const pct=v/TOT[si]*100;
+  if(metric==='uu')return{t:fmt(v),x:v/Math.max(...row)};
+  if(metric==='pct')return{t:pct.toFixed(0)+'%',x:Math.min(pct/70,1)};
+  const rowShare=row.reduce((a,b)=>a+b,0)/ALL;
+  const idx=(v/TOT[si])/rowShare*100;
+  return{t:(idx/100).toFixed(1).replace('.', ',')+'\u00d7',x:Math.min(idx/250,1),idx};
+}
+function shade(x){
+  // single-hue sequential: white -> brand
+  const l=1-x*0.82;
+  const r=Math.round(46+ (255-46)*l), g=Math.round(53+(255-53)*l), b=Math.round(255);
+  return{bg:`rgb(${Math.round(255-(255-46)*x)},${Math.round(255-(255-53)*x)},255)`,ink:x>0.55?'#fff':'#14172B'};
+}
+function render(){
+  const mx=document.getElementById('mx');
+  let h='<tr><th style="width:220px">Obszar aktywności</th>'+SEGS.map((s,i)=>`<th>${s}<span class="tot">${fmt(TOT[i])} UU</span></th>`).join('')+'</tr>';
+  ROWS.forEach(r=>{
+    if(r[0]==='g'){h+=`<tr><td class="grp" colspan="6">${r[1]}</td></tr>`;return;}
+    h+=`<tr><td class="lbl">${r[0]}</td>`+r[1].map((v,i)=>{
+      const c=cellVal(v,i,r[1]);const s=shade(c.x);
+      return`<td><span class="cell" data-row="${r[0]}" data-si="${i}" data-uu="${v}" style="background:${s.bg};color:${s.ink}">${c.t}</span></td>`;
+    }).join('')+'</tr>';
+  });
+  mx.innerHTML=h;
+  document.getElementById('hint').textContent = metric==='idx' ? 'powyżej 1,5× = grupa bywa tam wyraźnie częściej niż ogół → tam mieszka jej potrzeba' : metric==='pct' ? '% aktywnych użytkowników grupy, którzy dotarli do obszaru w 90 dni' : 'unikalni użytkownicy w 90 dni — skala, nie charakterystyka';
+}
+const SUGGEST={
+"Zarobki (kalkulatory + mapa)":{of:"inFakt + pakiet startowy praktyki",why:"liczy swoje netto = decyzja finansowa podejmowana teraz; banner pod wynikiem"},
+"Egzaminy (LEK/PES)":{of:"INTER Student/Sta\u017cysta + \u201eCo po LEK?\u201d",why:"moment egzaminu \u2192 pierwsze decyzje ubezpieczeniowe i zawodowe"},
+"Encyklopedia rezydentur":{of:"Ubezpieczenia INTER + finanse rezydenta",why:"planuje nast\u0119pny etap kariery \u2014 decyzja o formie pracy blisko"},
+"Mapa rezydentur":{of:"Ubezpieczenia INTER + pakiet startowy",why:"wybiera miejsce rezydentury \u2192 zmiana pracy tu\u017c-tu\u017c"},
+"Kalkulatory medyczne":{of:"Medicover \u2014 dyskretnie, szeroko",why:"praca kliniczna, niska intencja zakupowa \u2192 tylko produkt niskiego progu"},
+"ICD-10":{of:"nie wiesza\u0107 banera",why:"\u015brodek pracy klinicznej \u2014 reklama by\u0142aby szumem i kosztem zaufania"},
+"Wyszukiwarka lek\u00f3w":{of:"nie wiesza\u0107 banera",why:"\u015brodek pracy klinicznej (kontekst pharma)"},
+"Artyku\u0142y":{of:"inFakt \u2014 tylko pod tekstami o zarobkach/kontraktach",why:"intencj\u0119 daje temat artyku\u0142u, nie sekcja"},
+"VOD":{of:"Samochody + ubezpieczenie dochodu (belka)",why:"koncentracja specjalist\u00f3w przy tre\u015bci eksperckiej"},
+"Konferencje":{of:"benefit Klubu w mailu rejestracyjnym",why:"wej\u015bcie do lejka \u2014 oferta dobrana do tematyki konferencji"},
+"Webinary":{of:"Samochody + ubezpieczenie dochodu",why:"specjali\u015bci 2,2\u00d7 cz\u0119\u015bciej ni\u017c og\u00f3\u0142 \u2014 jedyne miejsce ich koncentracji"},
+"Kursy":{of:"Medicover / INTER wg statusu",why:"tryb nauki, m\u0142odzi \u2014 produkty niskiego progu"},
+"Przypadki kliniczne":{of:"Medicover / INTER Sta\u017cysta",why:"m\u0142odzi klinicy\u015bci w trybie nauki"},
+"Klub \u2014 ca\u0142o\u015b\u0107":{of:"remarketing do ogl\u0105daj\u0105cych",why:"sekcja Klubu \u2014 tu mierzymy konwersj\u0119 i budujemy website audience"},
+"\u2192 Medicover Sport":{of:"cel deep-link\u00f3w kampanii wrze\u015bniowej",why:"najsilniejszy magnes Klubu \u2014 mierzy\u0107 kody, nie wizyty"},
+"\u2192 Samochody":{of:"website audience \u2192 kampania aut (XI\u2013XII)",why:"ogl\u0105daj\u0105cy auta = gotowa pula remarketingowa"},
+"\u2192 Wirtualny Gabinet":{of:"banner dunningowy + oferta dla rezydent\u00f3w",why:"kupuj\u0105 bez spec. i rezydenci; nieudane p\u0142atno\u015bci dzi\u015b bez komunikatu"},
+"\u2192 inFakt / praktyka":{of:"cel deep-link\u00f3w z kalkulator\u00f3w zarobk\u00f3w",why:"domkni\u0119cie \u0142a\u0144cucha intencji finansowej"},
+"\u2192 Ubezpieczenia":{of:"cel z encyklopedii i egzamin\u00f3w",why:"\u26a0 przed\u0142u\u017cy\u0107 oferty INTER przed 16\u201320.10"},
+"\u2192 Zni\u017cki":{of:"magnes powrotu (newsletter Klubu)",why:"sta\u017cy\u015bci 2,2\u00d7 \u2014 budowa\u0107 nawyk zagl\u0105dania"}
+};
+const tt=document.createElement('div');tt.id='tt';document.body.appendChild(tt);
+const mxEl=document.getElementById('mx');
+mxEl.addEventListener('mousemove',e=>{
+  const c=e.target.closest('.cell');
+  if(!c){tt.style.opacity=0;return;}
+  const row=c.dataset.row,si=+c.dataset.si,v=+c.dataset.uu;
+  const r=ROWS.find(x=>x[0]===row);if(!r){tt.style.opacity=0;return;}
+  const rowShare=r[1].reduce((a,b)=>a+b,0)/ALL;
+  const mult=((v/TOT[si])/rowShare).toFixed(1).replace('.',',');
+  const pct=(v/TOT[si]*100).toFixed(1).replace('.',',');
+  const sg=SUGGEST[row]||{of:"\u2014",why:"\u2014"};
+  tt.innerHTML=`<b>${row} \u00d7 ${SEGS[si]}</b><br>${fmt(v)} os\u00f3b \u00b7 ${pct}% grupy \u00b7 ${mult}\u00d7 vs \u015brednia<hr><span class="of">Oferta: ${sg.of}</span><br>${sg.why}`;
+  let x=e.clientX+14,y=e.clientY+14;
+  if(x+290>window.innerWidth)x=e.clientX-296;
+  if(y+130>window.innerHeight)y=e.clientY-130;
+  tt.style.left=x+'px';tt.style.top=y+'px';tt.style.opacity=1;
+});
+mxEl.addEventListener('mouseleave',()=>tt.style.opacity=0);
+document.querySelectorAll('#toggle button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#toggle button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');metric=b.dataset.m;render();
+});
+render();
+</script>
+<script>
+/* ─── prototyp: spersonalizowany widget ofertowy (vanilla port widgetu z km-baner-preview) ─── */
+(function(){
+const OFFERS={
+ oc:{brand:{label:'ERGO\nHESTIA',bg:'#FFFFFF',fg:'#DC2626',border:'#E4E4E7'},teaser:'OC od 89 zł/mies.',title:'OC zawodowe od 89 zł/mies.',sub:'Obowiązkowe — klasa ryzyka automatycznie z NIL.',href:'https://remedium.md/klubmedyka/uslugi/ubezpieczenie'},
+ ksiegowosc:{brand:{label:'inFakt',bg:'#FB923C',fg:'#FFFFFF',border:'transparent'},teaser:'Księgowość inFakt',title:'inFakt — księgowość online dla lekarzy',sub:'Faktury, rozliczenia, podatki — bez papierologii.',href:'https://remedium.md/klubmedyka/uslugi/praktyka-lekarska/infakt'},
+ gabinet:{brand:{label:'Wirtualny\ngabinet',bg:'#2E35FF',fg:'#FFFFFF',border:'transparent'},teaser:'Gabinet za 29 zł',title:'Wirtualny gabinet — 29 zł/mies.',sub:'Recepty, konsultacje, druki — w jednym miejscu.',href:'https://remedium.md/klubmedyka/subskrypcja/wirtualne-biuro'},
+ event:{brand:{label:'POZ\n26',bg:'#CEFF3E',fg:'#0A0A0A',border:'transparent'},teaser:'POZ 26 za 2 dni',title:'POZ Wiosna 26 — start za 2 dni',sub:'Bezpłatny dostęp do live & nagrań w pakiecie.',href:'https://remedium.md/klubmedyka'},
+ sport:{brand:{label:'Medicover\nSport',bg:'#0E7490',fg:'#FFFFFF',border:'transparent'},teaser:'Medicover Sport',title:'MedicoverSport w cenie pakietu',sub:'Dostęp do 4 500+ obiektów sportowych w Polsce.',href:'https://remedium.md/klubmedyka/uslugi/sport-i-aktywnosc/medicover-sport'}
+};
+const PERSONAS=[
+ {id:'rezydent',label:'Rezydent po LEK',reason:'brak polisy OC w profilu',offer:'oc'},
+ {id:'jdg',label:'Prowadzi praktykę (JDG)',reason:'NIP w profilu, brak księgowości',offer:'ksiegowosc'},
+ {id:'erecepty',label:'Wystawia recepty online',reason:'korzysta z modułu recept',offer:'gabinet'},
+ {id:'konf',label:'Bywa na konferencjach',reason:'rejestracja na POZ Wiosna 26',offer:'event'},
+ {id:'nowy',label:'Nowy w Klubie',reason:'najpopularniejszy benefit na start',offer:'sport'}
+];
+const SYG='M11.5447 11.0658L16.8498 7.54338L14.6465 3.75L5.96875 9.24042L5.99014 9.27607C5.99014 9.27607 5.97588 9.27607 5.96875 9.27607V13.6613C8.89222 13.6613 11.2667 16.0928 11.2667 19.0733H15.6519C15.6519 15.7719 14.0261 12.8484 11.5447 11.0729V11.0658Z';
+const sygnet=(s,c)=>`<svg viewBox="0 0 23 23" width="${s}" height="${s}" aria-hidden="true"><path d="${SYG}" fill="${c}"/></svg>`;
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const kmw=document.getElementById('kmw'),chipsEl=document.getElementById('wchips'),signalEl=document.getElementById('wsignal');
+let timers=[],closeT=null,activeId=PERSONAS[0].id;
+function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+/* hover/focus — listenery raz, na kontenerze */
+const openP=()=>{clearTimeout(closeT);kmw.classList.add('open');};
+const closeP=()=>{clearTimeout(closeT);closeT=setTimeout(()=>kmw.classList.remove('open'),120);};
+kmw.addEventListener('mouseenter',openP);kmw.addEventListener('mouseleave',closeP);
+kmw.addEventListener('focusin',openP);kmw.addEventListener('focusout',closeP);
+function renderWidget(offer){
+  clearTimers();kmw.classList.remove('open');
+  kmw.innerHTML=
+   `<a class="kmw-pill" href="${offer.href}" target="_blank" rel="noopener">`+
+    `<span class="kmw-sygnet">${sygnet(16,'#0A0A0A')}</span>`+
+    `<span class="kmw-label"><span class="l0">Klub Medyka</span><span class="l1">${offer.teaser}</span></span>`+
+    `<span class="kmw-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>`+
+   `</a>`+
+   `<div class="kmw-panel"><span class="kmw-tip"></span><div class="kmw-card">`+
+    `<div class="kmw-head"><span class="kmw-headsyg">${sygnet(14,'#CEFF3E')}</span><span class="kmw-headtxt">Dla Ciebie w Klubie</span></div>`+
+    `<div class="kmw-offer"><div class="kmw-tile" style="background:${offer.brand.bg};color:${offer.brand.fg};border:1px solid ${offer.brand.border}">${offer.brand.label}</div>`+
+    `<div style="min-width:0;flex:1;padding-top:2px"><div class="kmw-title">${offer.title}</div><div class="kmw-sub">${offer.sub}</div></div></div>`+
+    `<div class="kmw-foot"><a class="kmw-all" href="https://remedium.md/klubmedyka" target="_blank" rel="noopener">Wszystkie benefity</a>`+
+    `<a class="kmw-cta" href="${offer.href}" target="_blank" rel="noopener">Zobacz ofertę <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>`+
+   `</div></div>`;
+  const lbl=kmw.querySelector('.kmw-label'),l0=lbl.querySelector('.l0'),l1=lbl.querySelector('.l1'),syg=kmw.querySelector('.kmw-sygnet');
+  const w0=Math.ceil(l0.getBoundingClientRect().width),w1=Math.ceil(l1.getBoundingClientRect().width);
+  function setStep(teaser){
+    lbl.style.width=(teaser?w1:w0)+'px';
+    l0.classList.toggle('on',!teaser);l1.classList.toggle('on',teaser);
+    syg.querySelectorAll('.kmw-pulse').forEach(p=>p.remove());
+    if(teaser&&!reduced){const p=document.createElement('span');p.className='kmw-pulse';syg.appendChild(p);}
+  }
+  /* skończona sekwencja: Klub Medyka → teaser → Klub Medyka → teaser (stop) */
+  if(reduced){setStep(true);}
+  else{
+    setStep(false);
+    timers.push(setTimeout(()=>setStep(true),1600));
+    timers.push(setTimeout(()=>setStep(false),3800));
+    timers.push(setTimeout(()=>setStep(true),5400));
+  }
+}
+function renderChips(){
+  chipsEl.innerHTML='';
+  PERSONAS.forEach(p=>{
+    const b=document.createElement('button');
+    b.type='button';b.textContent=p.label;
+    if(p.id===activeId)b.classList.add('active');
+    b.onclick=()=>{activeId=p.id;select();};
+    chipsEl.appendChild(b);
+  });
+}
+function select(){
+  const p=PERSONAS.find(x=>x.id===activeId);
+  renderChips();
+  renderWidget(OFFERS[p.offer]);
+  signalEl.textContent='sygnał targetujący: '+p.reason+' · w produkcji dobór oferty po stronie backendu / PostHog';
+}
+select();
+})();
+</script>
+</body>
+</html>
