@@ -1,0 +1,365 @@
+<!-- KM baner ofertowy · 2c-medicover-lime · format banera KM (2424x400).
+     Osadzenie: wklej całość; podmień ścieżki ./assets/… na docelowe zasoby. -->
+<style>
+  /* ═══ KM baner ofertowy — format 1:1 z banerem KM (2424×400) ═══ */
+  :root { --km-lime: #ceff3e; --km-cream: #f5f4ef; }
+
+  .km-banner, .km-banner * { box-sizing: border-box; margin: 0; padding: 0; }
+  .km-banner {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    width: 100%;
+    max-width: 1400px;
+    aspect-ratio: 2424 / 400;
+    position: relative;
+    border-radius: clamp(20px, 2.5vw, 48px);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--km-cream);
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  }
+
+  .km-banner__bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center 28%;
+    pointer-events: none; transform: scale(1.02);
+    animation: bg-drift 24s ease-in-out infinite;
+  }
+  .km-banner__overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 30%, rgba(0,0,0,.15) 70%, rgba(0,0,0,.55) 100%),
+      linear-gradient(180deg, rgba(0,0,0,.05) 60%, rgba(0,0,0,.45) 100%);
+  }
+
+  /* pozycje kadru per zdjęcie (jak w km-baner-preview) */
+  .km-banner--of-infakt .km-banner__bg { object-position: left 47%; }
+  .km-banner--of-medicover .km-banner__bg { object-position: center 66%; }
+  .km-banner--of-inter .km-banner__bg { object-position: center 28%; }
+  .km-banner--of-auto .km-banner__bg { object-position: center 59%; }
+
+  /* ─── close ─── */
+  .km-close {
+    position: absolute; top: 9.5%; right: 2.06%;
+    width: clamp(24px, 2vw, 32px); height: clamp(24px, 2vw, 32px);
+    display: inline-flex; align-items: center; justify-content: center;
+    opacity: .7; transition: opacity .18s ease, transform .18s ease;
+    background: none; border: 0; padding: 0; cursor: pointer; z-index: 5;
+  }
+  .km-close:hover { opacity: 1; transform: scale(1.08); }
+  .km-close img { width: 50%; height: 50%; display: block; }
+
+  /* ─── komunikat po lewej: beat A (hook) → beat B (oferta) ─── */
+  .km-side {
+    position: absolute; left: 6%; top: 48%;
+    transform: translateY(-50%); transform-origin: 0% 50%;
+    display: flex; align-items: center;
+    gap: clamp(8px, 0.86vw, 21px);
+    color: #fff; white-space: nowrap; z-index: 3;
+  }
+  .km-side__icon { flex: 0 0 auto; aspect-ratio: 1; }
+  .km-side__title {
+    font-size: clamp(14px, 2.15vw, 31px);
+    line-height: 1.11; letter-spacing: -0.01em;
+  }
+  .km-side__title b { font-weight: 700; }
+  .km-side__icon, .km-side__title {
+    animation-duration: 7s;
+    animation-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+  .km-side--a .km-side__icon { width: clamp(20px, 2.51vw, 35px); animation-name: side-out; animation-delay: 0ms; }
+  .km-side--a .km-side__title { animation-name: side-out; animation-delay: 150ms; }
+  .km-side--b .km-side__icon { width: clamp(19px, 2.38vw, 33px); animation-name: side-in; animation-delay: 0ms; }
+  .km-side--b .km-side__title { animation-name: side-in; animation-delay: 150ms; }
+
+  /* ─── CTA pill ─── */
+  .km-cta {
+    position: absolute; right: 6%; top: 48%; transform: translateY(-50%);
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: clamp(6px, 0.6vw, 9px);
+    padding: clamp(6px, 0.95vw, 13px) clamp(11px, 1.95vw, 27px);
+    border-radius: 999px; background: var(--km-lime); color: #000;
+    font-weight: 500; font-size: clamp(9px, 1.25vw, 17px);
+    line-height: 1.4; letter-spacing: -0.005em;
+    text-decoration: none; white-space: nowrap;
+    box-shadow: 0 4px 14px -4px rgba(206, 255, 62, 0.45);
+    transition: transform .2s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease, background .2s ease;
+    z-index: 5;
+  }
+  .km-cta__icon { width: clamp(12px, 1.18vw, 17px); height: clamp(12px, 1.18vw, 17px); flex-shrink: 0; transition: transform .25s cubic-bezier(0.34,1.56,0.64,1); }
+  .km-cta:hover { transform: translateY(-50%) scale(1.04); box-shadow: 0 10px 28px -6px rgba(206,255,62,.65); background: #d8ff5a; }
+  .km-cta:hover .km-cta__icon { transform: translate(2px, -2px); }
+  .km-cta:active { transform: translateY(-50%) scale(0.98); }
+  .km-cta:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+  /* ─── marquee ─── */
+  .km-marquee {
+    position: absolute; left: 0; right: 0; bottom: 7.5%;
+    overflow: hidden; z-index: 4;
+    mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
+  }
+  .km-marquee__track { display: flex; width: max-content; animation: marquee 55s linear infinite; will-change: transform; }
+  .km-marquee:hover .km-marquee__track { animation-play-state: paused; }
+  .km-marquee__group { display: flex; align-items: center; flex-shrink: 0; color: #fff; font-size: clamp(12px, 0.98vw, 23.92px); line-height: 1.11; }
+  .km-marquee__group a { color: inherit; text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; transition: color .18s ease; }
+  .km-marquee__group a:hover { color: var(--km-lime); }
+  .km-marquee__sep { display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.55); margin: 0 1em; flex-shrink: 0; }
+
+  @keyframes side-out {
+    0%, 30% { opacity: 1; transform: translateY(0); }
+    38%     { opacity: 0; transform: translateY(-16px); }
+    94%     { opacity: 0; transform: translateY(12px); }
+    100%    { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes side-in {
+    0%, 30% { opacity: 0; transform: translateY(12px); }
+    38%     { opacity: 1; transform: translateY(0); }
+    94%     { opacity: 1; transform: translateY(0); }
+    100%    { opacity: 0; transform: translateY(-16px); }
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes bg-drift { 0%, 100% { transform: scale(1.02) translateX(0); } 50% { transform: scale(1.05) translateX(-1.5%); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .km-side__icon, .km-side__title, .km-banner__bg, .km-marquee__track { animation: none !important; }
+    .km-side--a { opacity: 0; } /* statycznie: pokazujemy beat B (ofertę) */
+    .km-side--b { opacity: 1; }
+  }
+
+  /* ─── wariant "sport" — układ centralny wg Figmy (Branding · 21920:13311) ─── */
+  .km-banner--sport .km-banner__bg { object-position: center 50%; }
+  .km-sport__badge {
+    position: absolute; top: 12%; right: 2.47%;
+    width: clamp(96px, 10.78vw, 261px); height: auto; z-index: 4;
+  }
+  .km-sport__title {
+    position: absolute; left: 50%; top: 37.5%; transform: translate(-50%, -50%);
+    color: #fff; font-weight: 400; text-align: center;
+    font-size: clamp(15px, 2.06vw, 50px); line-height: 1.11;
+    white-space: nowrap; z-index: 3;
+  }
+  .km-sport__cta {
+    position: absolute; left: 50%; top: 61.7%; transform: translate(-50%, -50%);
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: clamp(5px, 0.623vw, 15.1px) clamp(12px, 1.41vw, 34.2px);
+    border-radius: 999px; background: rgba(206, 255, 62, 0.95); color: #000;
+    font-weight: 500; font-size: clamp(9px, 0.908vw, 22px); line-height: 1;
+    text-decoration: none; white-space: nowrap; z-index: 5;
+    box-shadow: 0 4px 14px -4px rgba(206, 255, 62, 0.45);
+    transition: transform .2s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease, background .2s ease;
+  }
+  .km-sport__cta b { font-weight: 700; }
+  .km-sport__cta:hover { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 10px 28px -6px rgba(206,255,62,.65); background: rgba(216,255,90,.97); }
+  .km-sport__cta:active { transform: translate(-50%, -50%) scale(0.98); }
+  .km-sport__cta:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .km-sport__sub {
+    position: absolute; left: 50%; top: 88.6%; transform: translate(-50%, -50%);
+    color: #fff; font-weight: 400; text-align: center;
+    font-size: clamp(9px, 0.98vw, 23.92px); line-height: 1.11;
+    white-space: nowrap; z-index: 3;
+  }
+  .km-sport__logo {
+    position: absolute; top: 50%; right: 5.86%; transform: translateY(-50%);
+    width: clamp(140px, 16.25vw, 394px); height: auto; z-index: 3;
+  }
+  .km-sport__tip {
+    position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(4px);
+    background: #0A0A0A; color: #fff; font-weight: 500;
+    font-size: clamp(9px, 0.72vw, 17px); line-height: 1.35;
+    padding: clamp(4px, 0.45vw, 11px) clamp(9px, 0.9vw, 22px);
+    border-radius: 999px; white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s cubic-bezier(.22,1,.36,1), transform .2s cubic-bezier(.22,1,.36,1);
+  }
+  .km-sport__tip::after {
+    content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 5px solid transparent; border-top-color: #0A0A0A; border-bottom: none;
+  }
+  /* border trail + glow (port efektu Motion Primitives do czystego CSS) */
+  @property --km-trail { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+  .km-sport__tip::before {
+    content: ''; position: absolute; inset: -1.5px; border-radius: 999px;
+    padding: 1.5px; pointer-events: none;
+    background-color: rgba(206, 255, 62, 0.16);
+    background-image: conic-gradient(from var(--km-trail),
+      rgba(206, 255, 62, 0) 0deg,
+      rgba(206, 255, 62, 0) 250deg,
+      rgba(206, 255, 62, 0.9) 315deg,
+      #ECFFB0 335deg,
+      rgba(206, 255, 62, 0) 360deg);
+    /* maska wycina środek — zostaje sam obrys */
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    filter: drop-shadow(0 0 7px rgba(206, 255, 62, 0.65));
+    animation: km-tip-trail 2.4s linear infinite;
+  }
+  @keyframes km-tip-trail { to { --km-trail: 360deg; } }
+  .km-sport__cta:hover .km-sport__tip,
+  .km-sport__cta:focus-visible .km-sport__tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .km-sport__tip { transition: none; } .km-sport__tip::before { animation: none; } }
+
+  /* ─── wariant "msb" — Medicover niebieski wg Figmy (Branding · 22004:13296) ─── */
+  .km-banner--msb { background: #3678F3; }
+  .km-msb__blob {
+    position: absolute; left: 28.71%; top: -44.75%; width: 55.24%; height: 177.45%;
+    -webkit-mask: url('./assets/blob-mask.svg') no-repeat 0 0 / 100% 100%;
+    mask: url('./assets/blob-mask.svg') no-repeat 0 0 / 100% 100%;
+    pointer-events: none;
+  }
+  .km-msb__foto { position: absolute; left: -3.88%; top: -33.11%; width: 132.19%; height: 166.24%; object-fit: cover; }
+  .km-msb__chip {
+    position: absolute; top: 16%; right: 2.89%; z-index: 4;
+    display: inline-flex; align-items: center;
+    background: linear-gradient(137deg, #FFFFFF 7.5%, #999999 152%);
+    color: #000; border-radius: 999px;
+    font-size: clamp(10px, 0.99vw, 23.92px); line-height: 1.11;
+    padding: clamp(4px, 0.41vw, 10px) clamp(12px, 1.24vw, 30px);
+  }
+  .km-msb__col {
+    position: absolute; left: 5.4%; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: clamp(8px, 0.91vw, 22px); z-index: 3;
+  }
+  .km-msb__title { color: #fff; font-weight: 700; font-size: clamp(17px, 2.68vw, 65px); line-height: 1.11; white-space: nowrap; }
+  .km-msb__sub { color: #fff; font-weight: 400; font-size: clamp(11px, 1.72vw, 41.63px); line-height: 1.11; white-space: nowrap; }
+  .km-msb__cta {
+    display: inline-flex; align-items: center; margin-top: clamp(4px, 0.45vw, 11px);
+    padding: clamp(5px, 0.623vw, 15.1px) clamp(12px, 1.41vw, 34.2px);
+    border-radius: 999px; background: #B8EB22; color: #000;
+    font-weight: 500; font-size: clamp(9px, 0.908vw, 22px); line-height: 1;
+    text-decoration: none; white-space: nowrap;
+    box-shadow: 0 4px 14px -4px rgba(184, 235, 34, 0.45);
+    transition: transform .2s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease, background .2s ease;
+  }
+  .km-msb__cta b { font-weight: 700; }
+  .km-msb__cta:hover { transform: scale(1.04); box-shadow: 0 10px 28px -6px rgba(184,235,34,.6); background: #C4F53A; }
+  .km-msb__cta:active { transform: scale(0.98); }
+  .km-msb__cta:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .km-msb__lockup { position: absolute; top: 75.25%; right: 3.7%; display: flex; align-items: center; gap: clamp(9px, 0.95vw, 23px); z-index: 3; }
+  .km-msb__lk-km { width: clamp(70px, 7.54vw, 183px); height: auto; }
+  .km-msb__lk-x { width: clamp(4px, 0.4vw, 9.6px); height: auto; }
+  .km-msb__lk-med { width: clamp(68px, 7.3vw, 177px); height: auto; }
+  @media (prefers-reduced-motion: reduce) { .km-msb__cta { transition: none; } }
+
+  /* ─── wariant "lmv" — limonkowy z wideo wg Figmy (Branding · 22027:13633) ─── */
+  .km-banner--lmv { background: var(--km-lime); }
+  .km-lmv__panel {
+    position: absolute; left: 1.567%; top: 4.25%; width: 96.82%; height: 86%;
+    animation: km-panel-float 12s ease-in-out infinite;
+  }
+  .km-lmv__shape {
+    position: absolute; inset: 0;
+    -webkit-mask: url('./assets/panel-runner.svg') no-repeat 50% 50% / 100% 100%;
+    mask: url('./assets/panel-runner.svg') no-repeat 50% 50% / 100% 100%;
+    background: linear-gradient(115deg, #0A2430 0%, #14424F 55%, #0D2F3C 100%);
+    overflow: hidden; will-change: transform;
+    animation: km-panel-breathe 12s ease-in-out infinite;
+  }
+  /* organiczny oddech: transform (GPU, subpikselowo) zamiast mask-size (repaint co klatkę) */
+  @keyframes km-panel-breathe {
+    0%, 100% { transform: scale(1, 1); }
+    33%      { transform: scale(0.988, 0.996); }
+    66%      { transform: scale(0.997, 0.985); }
+  }
+  @keyframes km-panel-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    40%      { transform: translateY(-2px) rotate(0.1deg); }
+    75%      { transform: translateY(1.5px) rotate(-0.08deg); }
+  }
+  .km-lmv__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .km-lmv__foto-static { position: absolute; left: -8.18%; top: -179.9%; width: 139.33%; height: 409.88%; object-fit: cover; }
+  .km-lmv__foto-dim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.42); }
+  .km-lmv__foto-static--infakt { left: -35.58%; top: -152.9%; }
+  .km-lmv__lockup--low { top: 27.3%; gap: clamp(9px, 1.09vw, 26.5px); }
+  .km-lmv__lk-if { width: clamp(30px, 3.32vw, 80.5px); height: auto; }
+  .km-lmv__lockup {
+    position: absolute; left: 50%; top: 25.4%; transform: translate(-50%, -50%); z-index: 4;
+    display: flex; align-items: center; gap: clamp(8px, 0.946vw, 23px);
+  }
+  .km-lmv__lk-km { width: clamp(69px, 7.49vw, 182px); height: auto; }
+  .km-lmv__lk-x { width: clamp(4px, 0.394vw, 9.5px); height: auto; }
+  .km-lmv__lk-med { width: clamp(66px, 7.25vw, 176px); height: auto; }
+  .km-lmv__title {
+    position: absolute; left: 50%; top: 48.9%; transform: translate(-50%, -50%);
+    color: #fff; font-weight: 700; text-align: center;
+    font-size: clamp(13px, 2.035vw, 49.3px); line-height: 1.11; white-space: nowrap; z-index: 3;
+  }
+  /* rotacja claimu — port TextLoop (Motion Primitives): slide Y + blur, cykl 8 s */
+  .km-lmv__claim { display: inline-block; will-change: transform, opacity, filter; }
+  .km-lmv__claim--a { animation: km-claim-a 8s cubic-bezier(0.65, 0.05, 0.36, 1) infinite; }
+  .km-lmv__claim--b {
+    position: absolute; left: 50%; top: 0; opacity: 0;
+    animation: km-claim-b 8s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
+  }
+  @keyframes km-claim-a {
+    0%, 44%  { opacity: 1; transform: translateY(0); filter: blur(0); }
+    50%      { opacity: 0; transform: translateY(-16px); filter: blur(6px); }
+    94%      { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+    100%     { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+  @keyframes km-claim-b {
+    0%, 44%  { opacity: 0; transform: translate(-50%, 14px); filter: blur(6px); }
+    50%      { opacity: 1; transform: translate(-50%, 0); filter: blur(0); }
+    94%      { opacity: 1; transform: translate(-50%, 0); filter: blur(0); }
+    100%     { opacity: 0; transform: translate(-50%, -16px); filter: blur(6px); }
+  }
+  .km-lmv__sub {
+    position: absolute; left: 50%; top: 63.9%; transform: translate(-50%, -50%);
+    color: #fff; font-weight: 400; text-align: center;
+    font-size: clamp(9px, 0.95vw, 23px); line-height: 1.11; white-space: nowrap; z-index: 3;
+  }
+  .km-lmv__cta {
+    position: absolute; left: 50%; top: 87.9%; transform: translate(-50%, -50%); z-index: 5;
+    display: inline-flex; align-items: center;
+    background: #000; color: #fff; border: 1px solid #000; border-radius: 999px;
+    padding: clamp(5px, 0.623vw, 15.1px) clamp(12px, 1.41vw, 34.2px);
+    font-weight: 500; font-size: clamp(9px, 0.908vw, 22px); line-height: 1;
+    text-decoration: none; white-space: nowrap;
+    box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.4);
+    transition: transform .2s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease, background .2s ease;
+  }
+  .km-lmv__cta b { font-weight: 700; }
+  .km-lmv__cta:hover { transform: translate(-50%, -50%) scale(1.04); box-shadow: 0 10px 28px -6px rgba(0,0,0,.5); background: #1c1c1c; }
+  .km-lmv__cta:active { transform: translate(-50%, -50%) scale(0.98); }
+  .km-lmv__cta:focus-visible { outline: 2px solid #000; outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .km-lmv__cta { transition: none; } .km-lmv__claim { animation: none !important; } .km-lmv__claim--b { opacity: 0; } .km-lmv__panel, .km-lmv__shape { animation: none !important; } }
+</style>
+
+<div class="km-banner km-banner--lmv" aria-label="Klub Medyka i Medicover — pakiet sportowy dla medyków">
+  <div class="km-lmv__panel" aria-hidden="true">
+    <div class="km-lmv__shape">
+      <video class="km-lmv__video" autoplay muted loop playsinline preload="metadata">
+        <source src="./assets/runner.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+
+  <div class="km-lmv__lockup">
+    <img class="km-lmv__lk-km" src="./assets/badge-km-dark.svg" alt="Klub Medyka" />
+    <img class="km-lmv__lk-x" src="./assets/badge-x-dark.svg" alt="×" />
+    <img class="km-lmv__lk-med" src="./assets/logo-medicover-dark.png" alt="Medicover" />
+  </div>
+
+  <p class="km-lmv__title">
+    <span class="km-lmv__claim km-lmv__claim--a">Pakiet sportowy w ofercie dla Medyków</span>
+    <span class="km-lmv__claim km-lmv__claim--b">4 800 obiektów do Twojej dyspozycji</span>
+  </p>
+  <p class="km-lmv__sub">Dotąd tylko dla organizacji. Teraz dla każdego medyka.</p>
+
+  <a class="km-lmv__cta" href="https://remedium.md/klubmedyka/uslugi/sport-i-aktywnosc/medicover-sport?ref=panel-kafel" target="_blank" rel="noopener">Rozpocznij już od&nbsp;<b>75 zł / mies.</b></a>
+
+  <script>
+    (function () {
+      var s = document.currentScript;
+      var v = s && s.parentElement ? s.parentElement.querySelector('.km-lmv__video') : null;
+      if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        v.removeAttribute('autoplay'); v.pause();
+      }
+    })();
+  </script>
+</div>
